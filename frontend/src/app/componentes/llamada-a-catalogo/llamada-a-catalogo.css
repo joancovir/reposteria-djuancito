@@ -1,0 +1,94 @@
+/* --- Sección Principal de Llamada a la Acción (CTA) --- */
+.call-to-action-section {
+  /* Usamos un color ligeramente más oscuro para sofisticación */
+  background-color: #f7e0d8; /* Rosa/Salmón claro con más cuerpo */
+  padding: 80px 40px; 
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  border-top: 1px solid #e57373; 
+  /* Añadimos un sutil degradado o sombra si tu diseño lo permite */
+}
+
+.cta-content {
+  max-width: 850px; 
+  margin: 0 auto;
+}
+
+.cta-content h2 {
+  font-size: 40px; 
+  color: #555; /* Color más neutral para el título */
+  margin-bottom: 10px;
+  font-weight: 700;
+  letter-spacing: 1px; /* Añade un poco de separación a las letras */
+}
+
+.cta-content p {
+  font-size: 17px;
+  color: #777; 
+  line-height: 1.6;
+  margin-bottom: 35px;
+}
+
+/* --- Estilo de Botones --- */
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 30px; 
+}
+
+.btn {
+  padding: 16px 35px; 
+  border-radius: 4px; /* Bordes un poco más rectos */
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  text-transform: uppercase;
+}
+
+/* Botón Primario: Resaltamos el color principal */
+.btn-primary {
+  background-color: #e57373; /* El color clave */
+  color: white;
+  border-color: #e57373;
+}
+
+.btn-primary:hover {
+  background-color: #c63737;
+  transform: translateY(-1px);
+}
+
+.cta-icon {
+  font-size: 60px; /* Tamaño grande para el ícono/emoji */
+  display: block;
+  margin-bottom: 20px;
+}
+
+.features-block {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 50px;
+  margin-top: 40px;
+}
+
+.feature-item {
+  flex: 1;
+  text-align: center;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.7); /* Fondo semi-transparente */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.feature-item h3 {
+  font-size: 18px;
+  color: #e57373; /* Título de la característica con color de marca */
+  margin-bottom: 5px;
+}
+
+.feature-item p {
+  font-size: 14px;
+  color: #777;
+}

@@ -1,0 +1,29 @@
+<section class="featured-products" id="productos-realizados">
+  <h2>Productos Realizados</h2>
+  <p class="subtitle">Elige el tipo de torta que deseas y descubre todas las opciones que tenemos para ti.</p>
+  
+  <div class="options-container">
+    
+    <div class="option-card" *ngIf="tortaPersonalizada">
+      <img [src]="tortaPersonalizada.imagenUrl" [alt]="tortaPersonalizada.nombre">
+      <div class="card-content">
+        <h3>Tortas Personalizadas</h3>
+        <p>
+            {{ tortaPersonalizada.descripcion }} 
+        </p>
+        <a [routerLink]="['/catalogo', { filtro: 'personalizable' }]" class="btn">Diseña tu Torta</a>
+      </div>
+    </div>
+
+    <div class="option-card" *ngIf="tortaPredeterminada">
+      <img [src]="tortaPredeterminada.imagenUrl" [alt]="tortaPredeterminada.nombre">
+      <div class="card-content">
+        <h3>Tortas Predeterminadas</h3>
+        <p>
+            {{ tortaPredeterminada.descripcion }}
+        </p>
+        <a [routerLink]="['/catalogo', { filtro: 'predeterminada' }]" class="btn">Ver catálogo</a>
+      </div>
+    </div>
+  </div>
+</section>

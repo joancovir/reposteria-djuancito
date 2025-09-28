@@ -1,0 +1,31 @@
+<div class="catalog-container">
+  <h1 class="catalog-title">Catálogo de Productos</h1>
+  
+  <div class="filter-bar">
+    <div class="search-box">
+      <input type="text" placeholder="BUSCAR PRODUCTO">
+      <button>BUSCAR</button>
+    </div>
+    <select class="filter-select">
+      <option value="">FILTRAR</option>
+      <option value="postres">Postres</option>
+      <option value="bocaditos">Bocaditos</option>
+    </select>
+    <a href="#" class="btn-personalizada">Pide tu Torta Personalizada</a>
+  </div>
+
+  <div class="product-grid">
+    <div class="product-card" *ngFor="let producto of listaDeProductos">
+      <img [src]="producto.imagenUrl" [alt]="producto.nombre">
+      <div class="product-info">
+        <h3>{{ producto.nombre }}</h3>
+        <p class="category">{{ producto.categoria }}</p>
+        <p class="description">{{ producto.descripcion }}</p>
+        <div class="price-action">
+          <span class="price">S/ {{ producto.precioBase }}</span>
+          <a href="#" class="btn-pide">Pide ahora</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

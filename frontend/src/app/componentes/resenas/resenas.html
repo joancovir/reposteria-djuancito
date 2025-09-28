@@ -1,0 +1,22 @@
+<section class="reviews-section" id="resenas">
+  <h2>Reseñas de Nuestros Clientes</h2>
+  
+  <div class="review-card" *ngFor="let resena of listaDeResenas"> 
+    <div class="review-image">
+      <img [src]="resena.fotoUrl" alt="Foto del producto reseñado">
+    </div>
+    <div class="review-content">
+      <blockquote>
+        "{{ resena.comentario }}"
+      </blockquote>
+      
+      <div class="review-rating">
+        <span>{{ '★'.repeat(resena.valoracion) }}</span> 
+      </div>
+<cite>
+    <span class="author">{{ resena.usuario.nombre }} </span>
+    <span class="product">Pedido realizado el: {{ resena.pedido.fechaPedido | date:'mediumDate' }}</span>
+</cite>
+    </div>
+  </div>
+</section>

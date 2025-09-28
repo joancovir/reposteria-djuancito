@@ -1,0 +1,112 @@
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 40px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+
+  position: fixed; 
+  top: 0;         
+  width: 97%;    
+  z-index: 1000;   
+}
+
+/* --- Logo --- */
+.logo a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.logo img {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%; /* Hace la imagen del logo circular */
+  border: 2px solid #e57373; /* Borde naranja/salmón claro */
+  object-fit: cover; /* Asegura que la imagen llene el círculo */
+}
+
+.logo span {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* --- Navegación --- */
+.main-nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  gap: 35px;
+  
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: #333; /* Color más oscuro para mejor contraste */
+  font-size: 16px;
+  font-weight: 600; /* Letras un poco más gruesas para la navegación */
+  transition: color 0.3s ease;
+}
+
+.main-nav a:hover {
+  color: #e57373; /* Mantenemos el color de marca al pasar el mouse */
+}
+
+/* --- Acciones de Usuario y Botones --- */
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre botones */
+}
+
+/* Estilo base para todos los botones */
+.btn {
+  padding: 10px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+  border: 2px solid transparent; /* Borde base transparente */
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espacio para el ícono */
+}
+
+/* Botones principales (naranja/salmón) */
+.btn-primary {
+  background-color: #efc79a; /* Color salmón claro */
+  color: #424242; /* Texto oscuro */
+}
+
+.btn-primary:hover {
+  background-color: #e57373;
+}
+
+/* Botón secundario (bordeado) */
+.btn-secondary {
+  background-color: #ffffff;
+  color: #424242;
+  border-color: #e0e0e0; /* Borde gris */
+}
+
+.btn-secondary:hover {
+  border-color: #424242;
+  background-color: #f5f5f5;
+}
+
+/* Botón de registrar (naranja muy claro) */
+.btn-light {
+  background-color: #ffebee; /* Fondo salmón muy pálido */
+  color: #424242;
+}
+
+.btn-light:hover {
+  background-color: #ffcdd2;
+}

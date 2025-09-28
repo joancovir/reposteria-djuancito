@@ -1,6 +1,7 @@
 package com.djuancito.reposteria.servicio;
 
 import com.djuancito.reposteria.entidad.Producto;
+import com.djuancito.reposteria.entidad.Personalizable;
 import com.djuancito.reposteria.repositorio.ProductoRepositorio; 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,4 +30,11 @@ public class ProductoServicio {
     public void eliminar(Integer id) {
         productoRepositorio.deleteById(id);
     }
+
+ // ProductoServicio.java (Línea crítica a corregir)
+public List<Producto> obtenerPorPersonalizable(String valor) {
+    // CORRECCIÓN: Usar directamente el valor, sin toUpperCase()
+    Personalizable personalizable = Personalizable.valueOf(valor); 
+    return productoRepositorio.findByPersonalizable(personalizable);
+}
 }

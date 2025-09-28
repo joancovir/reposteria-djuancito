@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/productos")
+@RequestMapping("/api/productos") 
 @CrossOrigin(origins = "*")
 public class ProductoControlador { 
 
@@ -36,5 +36,19 @@ public class ProductoControlador {
     public ResponseEntity<Void> eliminarProducto(@PathVariable Integer id) {
         productoServicio.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    // NUEVOS ENDPOINTS PARA LAS TARJETAS DESTACADAS:
+
+    @GetMapping("/personalizables")
+    public List<Producto> obtenerPersonalizables() {
+        // Llama al servicio con el valor "si"
+        return productoServicio.obtenerPorPersonalizable("si"); 
+    }
+
+    @GetMapping("/predeterminadas")
+    public List<Producto> obtenerPredeterminadas() {
+        // Llama al servicio con el valor "no"
+        return productoServicio.obtenerPorPersonalizable("no");
     }
 }
