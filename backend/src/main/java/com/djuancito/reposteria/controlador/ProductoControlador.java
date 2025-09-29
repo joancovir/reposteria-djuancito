@@ -38,17 +38,13 @@ public class ProductoControlador {
         return ResponseEntity.noContent().build();
     }
     
-    // NUEVOS ENDPOINTS PARA LAS TARJETAS DESTACADAS:
-
-    @GetMapping("/personalizables")
+@GetMapping("/personalizables")
     public List<Producto> obtenerPersonalizables() {
-        // Llama al servicio con el valor "si"
         return productoServicio.obtenerPorPersonalizable("si"); 
     }
 
-    @GetMapping("/predeterminadas")
+    @GetMapping("/predeterminados")
     public List<Producto> obtenerPredeterminadas() {
-        // Llama al servicio con el valor "no"
         return productoServicio.obtenerPorPersonalizable("no");
     }
 }

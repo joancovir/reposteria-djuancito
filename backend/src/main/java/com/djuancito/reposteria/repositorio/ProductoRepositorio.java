@@ -8,10 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ProductoRepositorio extends JpaRepository<Producto, Integer> {
-
-    /**
-     * Método automático de Spring Data JPA para filtrar productos 
-     * por el valor del campo 'personalizable'.
-     */
     List<Producto> findByPersonalizable(Personalizable personalizable);
 }

@@ -10,10 +10,9 @@ import java.util.List;
 public class ResenaServicio {
 
     @Autowired
-    private ResenaRepositorio resenaRepositorio; 
+    private ResenaRepositorio resenaRepositorio;
 
     public List<Resena> obtenerTodas() {
-        // En un caso real, aquí podrías filtrar para devolver solo las reseñas con estado 'aprobado'
         return resenaRepositorio.findAll();
     }
 }

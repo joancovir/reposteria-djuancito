@@ -8,11 +8,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/resenas") 
-@CrossOrigin(origins = "*") // ¡Importante para que Angular pueda acceder!
-public class ResenaControlador { 
+@CrossOrigin(origins = "*")
+public class ResenaControlador {
 
     @Autowired
-    private ResenaServicio resenaServicio; 
+    private ResenaServicio resenaServicio;
 
     @GetMapping
     public List<Resena> obtenerTodasLasResenas() {

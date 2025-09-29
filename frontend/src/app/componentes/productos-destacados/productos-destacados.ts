@@ -14,27 +14,26 @@ import { ProductoFiltroService } from '../../servicios/producto-filtro'; // <-- 
 })
 export class ProductosDestacados implements OnInit {
     
-    // Variables para almacenar el primer producto de cada filtro
     tortaPersonalizada: Producto | undefined;
     tortaPredeterminada: Producto | undefined;
 
-    constructor(private productoFiltroService: ProductoFiltroService) { } // Inyectar
+    // 💡 INYECTAR EL SERVICIO CORRECTO
+    constructor(private productoFiltroService: ProductoFiltroService) { } 
 
     ngOnInit(): void {
-        // Cargar el producto personalizable para la primera tarjeta
+        // Cargar el producto personalizable
         this.productoFiltroService.obtenerPersonalizables().subscribe(
             (data) => {
                 if (data.length > 0) {
-                    this.tortaPersonalizada = data[0]; // Tomar el primer producto
+                    this.tortaPersonalizada = data[0];
                 }
             }
         );
-
-        // Cargar el producto predeterminado para la segunda tarjeta
+        // Cargar el producto predeterminado
         this.productoFiltroService.obtenerPredeterminados().subscribe(
             (data) => {
                 if (data.length > 0) {
-                    this.tortaPredeterminada = data[0]; // Tomar el primer producto
+                    this.tortaPredeterminada = data[0]; 
                 }
             }
         );

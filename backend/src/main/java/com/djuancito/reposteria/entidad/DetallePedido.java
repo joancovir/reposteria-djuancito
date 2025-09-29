@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.Optional; // <-- Importamos para manejar Optional si el Producto no existe
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties; // <-- ¡IMPORTA ESTO!
 
 @Data
 @Entity
@@ -17,6 +18,7 @@ public class DetallePedido {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedidoId", referencedColumnName = "pedidoId")
+    @JsonIgnoreProperties("detalles") // Evita el bucle al convertir el pedido a JSON
     private Pedido pedido;
 
     @ManyToOne(fetch = FetchType.LAZY)

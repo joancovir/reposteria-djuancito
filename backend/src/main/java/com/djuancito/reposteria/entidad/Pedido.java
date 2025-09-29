@@ -1,10 +1,11 @@
 package com.djuancito.reposteria.entidad;
-
+import com.fasterxml.jackson.annotation.JsonIgnore; // <-- ¡IMPORTA ESTO!
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List; 
 import jakarta.persistence.*;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties; 
 
 @Data
 @Entity
@@ -18,11 +19,13 @@ public class Pedido {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuarioId", referencedColumnName = "usuarioId")
+    @JoinColumn(name = "usuarioId")
+    @JsonIgnore // <-- AÑADE ESTO
     private Usuario usuario; 
 
     
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore // <-- AÑADE ESTO
     private List<DetallePedido> detalles; 
 
     @Column(name = "fechaPedido")

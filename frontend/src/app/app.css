@@ -1,0 +1,13 @@
+/* Fija el contenedor del encabezado en la parte superior */
+.header-fijo-contenedor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Asegura que esté por encima de todo */
+}
+
+.contenido-principal {
+  /* Este valor debe ser la altura aproximada de tu barra de anuncios + tu header. Ajústalo si es necesario. */
+  padding-top: 125px; 
+}

@@ -1,6 +1,9 @@
 package com.djuancito.reposteria.entidad;
 
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,13 +16,15 @@ public class Resena {
     @Column(name = "resenaId")
     private Integer resenaId;
 
-@ManyToOne(fetch = FetchType.EAGER) // Usamos EAGER para este ejemplo simple
-@JoinColumn(name = "usuarioId")
-private Usuario usuario; // <-- ¡Añade esto!
+@ManyToOne(fetch = FetchType.LAZY) // Es LAZY
+    @JoinColumn(name = "usuarioId")
+    @JsonIgnore // <-- AÑADE ESTO
+    private Usuario usuario;
 
-@ManyToOne(fetch = FetchType.EAGER) // Usamos EAGER para este ejemplo simple
-@JoinColumn(name = "pedidoId")
-private Pedido pedido; // <-- ¡Añade esto!
+    @ManyToOne(fetch = FetchType.LAZY) // Es LAZY
+    @JoinColumn(name = "pedidoId")
+    @JsonIgnore // <-- AÑADE ESTO
+    private Pedido pedido;
 
     @Column(name = "comentario")
     private String comentario;

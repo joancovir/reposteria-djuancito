@@ -31,10 +31,12 @@ public class ProductoServicio {
         productoRepositorio.deleteById(id);
     }
 
- // ProductoServicio.java (Línea crítica a corregir)
 public List<Producto> obtenerPorPersonalizable(String valor) {
-    // CORRECCIÓN: Usar directamente el valor, sin toUpperCase()
-    Personalizable personalizable = Personalizable.valueOf(valor); 
-    return productoRepositorio.findByPersonalizable(personalizable);
-}
+        try {
+            Personalizable personalizableEnum = Personalizable.valueOf(valor.toLowerCase()); 
+            return productoRepositorio.findByPersonalizable(personalizableEnum);
+        } catch (IllegalArgumentException e) {
+            return java.util.Collections.emptyList();
+        }
+    }
 }
