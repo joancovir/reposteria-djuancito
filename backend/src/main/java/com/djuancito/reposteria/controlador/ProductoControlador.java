@@ -38,13 +38,18 @@ public class ProductoControlador {
         return ResponseEntity.noContent().build();
     }
     
-@GetMapping("/personalizables")
+    @GetMapping("/personalizables")
     public List<Producto> obtenerPersonalizables() {
-        return productoServicio.obtenerPorPersonalizable("si"); 
-    }
+        return productoServicio.obtenerPorPersonalizable(true); 
+}
 
     @GetMapping("/predeterminados")
     public List<Producto> obtenerPredeterminadas() {
-        return productoServicio.obtenerPorPersonalizable("no");
-    }
+     return productoServicio.obtenerPorPersonalizable(false); 
+}
+@GetMapping("/categoria/{categoria}")
+public List<Producto> obtenerPorCategoria(@PathVariable String categoria) {
+    return productoServicio.obtenerPorCategoria(categoria);
+}
+    
 }

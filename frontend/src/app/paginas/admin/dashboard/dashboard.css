@@ -1,0 +1,46 @@
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Hace el grid responsivo */
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background-color: white;
+  padding: 25px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef; /* Borde sutil */
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h4 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: #6c757d; /* Texto gris */
+  font-weight: 500;
+}
+
+.stat-card .stat-number {
+  font-size: 38px;
+  font-weight: 700;
+  color: #343a40; /* Texto oscuro */
+}
+
+.widgets-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+.widget-card {
+  background-color: white;
+  padding: 25px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  min-height: 300px;
+}

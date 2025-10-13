@@ -1,0 +1,17 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Promocion } from '../modelos/promocion';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PromocionService {
+  private apiUrl = 'http://localhost:8080/api/promociones';
+
+  constructor(private http: HttpClient) { }
+
+  getPromocionesActivas(): Observable<Promocion[]> {
+    return this.http.get<Promocion[]>(`${this.apiUrl}/activas`);
+  }
+}

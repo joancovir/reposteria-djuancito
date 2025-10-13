@@ -1,0 +1,107 @@
+.admin-layout {
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* --- Barra Lateral (Sidebar) --- */
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background-color: #212529; /* Fondo negro/gris oscuro */
+  border-radius: 10px;
+  padding: 20px;
+  color: #f8f9fa;
+}
+.sidebar-header {
+  padding: 20px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffffff; /* Texto blanco */
+  border-bottom: 1px solid #343a40;
+}
+.user-profile {
+  text-align: center;
+  padding: 25px 20px;
+  border-bottom: 1px solid #343a40;
+}
+.user-name {
+  font-weight: bold;
+  font-size: 18px;
+  color: #f8f9fa;
+  display: block;
+  margin-bottom: 10px;
+}
+.manage-account-link {
+  font-size: 14px;
+  color: #fd7e14; /* Color naranja para el enlace */
+  text-decoration: none;
+  font-weight: bold;
+}
+.manage-account-link:hover {
+  text-decoration: underline;
+}
+
+/* --- Navegación de la Barra Lateral --- */
+.sidebar-nav ul { list-style: none; padding: 10px 0; margin: 0; }
+.sidebar-nav a {
+  display: block;
+  padding: 15px 25px;
+  color: #ced4da; /* Texto de enlaces gris claro */
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-left: 4px solid transparent;
+}
+.sidebar-nav a:hover {
+  background-color: #343a40;
+  color: white;
+  border-left: 4px solid #fd7e14; /* Borde naranja al pasar el mouse */
+}
+.user-profile img {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  border: 2px solid #e5b473;
+  object-fit: cover; 
+}
+/* Contenedor del botón de logout para mandarlo al final */
+.sidebar-footer {
+  margin-top: auto; /* Empuja este elemento hacia abajo */
+  padding: 20px;
+}
+.logout-button {
+  width: 100%;
+  padding: 12px;
+  background-color: transparent;
+  color: #adb5bd;
+  border: 1px solid #adb5bd;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.logout-button:hover {
+  background-color: #fd7e14;
+  color: white;
+  border-color: #fd7e14;
+}
+
+/* --- Contenido Principal --- */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+}
+.top-bar {
+  padding: 15px 30px;
+  background-color: white;
+  border-bottom: 1px solid #dee2e6;
+}
+.page-content {
+  flex-grow: 1;
+  padding: 30px;
+  overflow-y: auto;
+}

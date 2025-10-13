@@ -1,0 +1,59 @@
+<div class="customizer-container">
+  <div class="customizer-header">
+    <h2>Diseña tu Torta Personalizada</h2>
+    <div class="step-indicator">
+      <span class="step active">1. Sabores</span>
+      <span class="step">2. Entrega</span>
+      <span class="step">3. Confirmación</span>
+    </div>
+  </div>
+
+  <form [formGroup]="personalizacionForm" (ngSubmit)="onSubmit()" class="customizer-form">
+
+    <div class="form-section">
+      <h3>Sabor del Bizcocho</h3>
+      <p>Elige la base perfecta para tu torta.</p>
+      <select formControlName="saborBizcocho" class="form-control">
+  <option *ngFor="let bizcocho of bizcochos" [value]="bizcocho.nombre">
+    {{ bizcocho.nombre }}
+  </option>
+</select>
+    </div>
+
+    <div class="form-section">
+      <h3>Elige tus Rellenos</h3>
+      <p>Puedes seleccionar uno o varios.</p>
+      <div formArrayName="rellenos" class="options-grid">
+        <label *ngFor="let relleno of rellenos" class="option-card">
+          <input type="checkbox" [value]="relleno.nombre" (change)="onCheckboxChange($event, 'rellenos')">
+          <div class="option-content">
+            <span class="option-name">{{ relleno.nombre }}</span>
+            <span class="option-price">+ S/ {{ relleno.costoAdicional }}</span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-section">
+        <h3>Elige tus Toppings y Cobertura</h3>
+        <p>El toque final para una torta espectacular.</p>
+        <div formArrayName="toppings" class="options-grid">
+            <label *ngFor="let topping of toppings" class="option-card">
+                <input type="checkbox" [value]="topping.nombre" (change)="onCheckboxChange($event, 'toppings')">
+                <div class="option-content">
+                    <span class="option-name">{{ topping.nombre }}</span>
+                    <span class="option-price">+ S/ {{ topping.costoAdicional }}</span>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Instrucciones Especiales</h3>
+      <p>Dinos cualquier otro detalle que debamos saber.</p>
+      <textarea formControlName="instrucciones" rows="4" class="form-control" placeholder="Ej: 'Escribir Feliz Cumpleaños, Carlos' o 'Sin nueces, por favor'"></textarea>
+    </div>
+
+    <button type="submit" class="btn-submit">seguir con el pedido</button>
+  </form>
+</div>

@@ -26,7 +26,7 @@
 
 .hero-text p {
   font-size: 16px;
-  color: #666;
+  color: #3d3d3d;
   line-height: 1.7;
   margin-bottom: 35px;
 }
@@ -47,12 +47,12 @@
 }
 
 .hero-buttons .btn-primary {
-  background-color: #ef9a9a;
-  color: #424242;
+  background-color: #eb7221;
+  color: #ffffff;
 }
 
 .hero-buttons .btn-primary:hover {
-  background-color: #e57373;
+  background-color: #eb7221;
 }
 
 .hero-buttons .btn-secondary {
@@ -62,9 +62,9 @@
 }
 
 .hero-buttons .btn-secondary:hover {
-  background-color: #e57373; 
+  background-color: #eb7221; 
   color: white; 
-  border-color: #e57373; 
+  border-color: #eb7221; 
 }
 
 .hero-image {
@@ -74,4 +74,5 @@
 .hero-image img {
   width: 100%;
   border-radius: 50%;
+  
 }

@@ -1,4 +1,3 @@
-// PromocionProducto.java (CÓDIGO FINAL CRÍTICO)
 package com.djuancito.reposteria.entidad;
 
 import jakarta.persistence.*;
@@ -11,16 +10,14 @@ public class PromocionProducto {
 
     @EmbeddedId
     private PromocionProductoId id;
-    
-    // Campo de conveniencia para navegar al Producto
-    @MapsId("producto")
-    @ManyToOne
-    @JoinColumn(name = "productoId", insertable = false, updatable = false)
-    private Producto producto;
 
-    // Campo de conveniencia para navegar a la Promocion
-    @MapsId("promocion")
     @ManyToOne
-    @JoinColumn(name = "promocionId", insertable = false, updatable = false)
+    @MapsId("promocionId") // Se enlaza con la propiedad 'promocionId' de la clase Id
+    @JoinColumn(name = "promocionId")
     private Promocion promocion;
+
+    @ManyToOne
+    @MapsId("productoId") // Se enlaza con la propiedad 'productoId' de la clase Id
+    @JoinColumn(name = "productoId")
+    private Producto producto;
 }

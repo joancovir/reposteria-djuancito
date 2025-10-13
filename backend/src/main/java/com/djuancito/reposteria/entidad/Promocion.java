@@ -21,6 +21,9 @@ public class Promocion {
     @Column(name = "descripcion")
     private String descripcion;
 
+    @Column(name = "imagenUrl") 
+    private String imagenUrl;
+
     @Column(name = "fechaInicio")
     private LocalDate fechaInicio;
 

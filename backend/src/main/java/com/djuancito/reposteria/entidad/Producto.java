@@ -11,7 +11,7 @@ public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "productoId") // <-- ESTA LÍNEA ES ESENCIAL
+    @Column(name = "productoId") 
     private Integer productoId;
 
     @Column(name = "nombre")
@@ -20,19 +20,18 @@ public class Producto {
     @Column(name = "descripcion")
     private String descripcion;
 
-    @Column(name = "precioBase") // <-- Y ESTA
+    @Column(name = "precioBase") 
     private BigDecimal precioBase;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "categoria")
     private Categoria categoria;
 
-    @Column(name = "imagenUrl") // <-- Y ESTA
+    @Column(name = "imagenUrl") 
     private String imagenUrl;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "personalizable")
-    private Personalizable personalizable;
+    private boolean personalizable; 
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado")

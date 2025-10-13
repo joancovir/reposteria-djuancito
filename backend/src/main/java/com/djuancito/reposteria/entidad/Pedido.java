@@ -24,9 +24,9 @@ public class Pedido {
     private Usuario usuario; 
 
     
+    // En la clase Pedido.java
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore // <-- AÑADE ESTO
-    private List<DetallePedido> detalles; 
+    private List<DetallePedido> detalles;
 
     @Column(name = "fechaPedido")
     private LocalDateTime fechaPedido;
@@ -42,6 +42,3 @@ public class Pedido {
     private String nota;
 }
 
-enum EstadoPedido {
-    pendiente, aceptado, en_preparacion, entregado, cancelado
-}

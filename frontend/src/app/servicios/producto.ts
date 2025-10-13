@@ -7,14 +7,24 @@ import { Producto } from '../modelos/producto';
   providedIn: 'root'
 })
 export class ProductoService {
-  // La URL de tu endpoint en el backend
   private apiUrl = 'http://localhost:8080/api/productos';
 
-  // Inyecta HttpClient para poder hacer llamadas
   constructor(private http: HttpClient) { }
 
-  // El método ahora devuelve un Observable con una lista de productos
+  // Obtiene TODOS los productos
   getProductos(): Observable<Producto[]> {
     return this.http.get<Producto[]>(this.apiUrl);
+  }
+getProductosPorCategoria(categoria: string): Observable<Producto[]> {
+    return this.http.get<Producto[]>(`${this.apiUrl}/categoria/${categoria}`);
+}
+  // Obtiene solo productos personalizables
+  getProductosPersonalizables(): Observable<Producto[]> {
+    return this.http.get<Producto[]>(`${this.apiUrl}/personalizables`);
+  }
+
+  // Obtiene solo productos predeterminados
+  getProductosPredeterminados(): Observable<Producto[]> {
+    return this.http.get<Producto[]>(`${this.apiUrl}/predeterminados`);
   }
 }

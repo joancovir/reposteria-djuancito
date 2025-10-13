@@ -4,10 +4,8 @@
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000; /* Asegura que esté por encima de todo */
+  z-index: 1000; 
 }
-
 .contenido-principal {
-  /* Este valor debe ser la altura aproximada de tu barra de anuncios + tu header. Ajústalo si es necesario. */
-  padding-top: 125px; 
+  padding-top: 10px; 
 }

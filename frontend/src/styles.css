@@ -1,0 +1,17 @@
+/* Estilos personalizados para los controles del carrusel principal */
+app-carrusel-principal .carousel-control-prev,
+app-carrusel-principal .carousel-control-next {
+    background-color: rgba(0, 0, 0, 0.3); /* Fondo semitransparente */
+    width: 45px;
+    height: 45px;
+    border-radius: 50%; /* Lo hace circular */
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+app-carrusel-principal .carousel-control-prev:hover,
+app-carrusel-principal .carousel-control-next:hover {
+    opacity: 1;
+}

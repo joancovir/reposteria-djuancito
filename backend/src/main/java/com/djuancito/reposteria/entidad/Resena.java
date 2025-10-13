@@ -1,9 +1,6 @@
 package com.djuancito.reposteria.entidad;
 
 import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,14 +13,14 @@ public class Resena {
     @Column(name = "resenaId")
     private Integer resenaId;
 
-@ManyToOne(fetch = FetchType.LAZY) // Es LAZY
+    // --- CORRECCIÓN AQUÍ ---
+    @ManyToOne(fetch = FetchType.EAGER) // Cambiado de LAZY (por defecto) a EAGER
     @JoinColumn(name = "usuarioId")
-    @JsonIgnore // <-- AÑADE ESTO
     private Usuario usuario;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Es LAZY
+    // --- CORRECCIÓN AQUÍ ---
+    @ManyToOne(fetch = FetchType.EAGER) // Cambiado de LAZY (por defecto) a EAGER
     @JoinColumn(name = "pedidoId")
-    @JsonIgnore // <-- AÑADE ESTO
     private Pedido pedido;
 
     @Column(name = "comentario")
@@ -43,4 +40,5 @@ public class Resena {
     private EstadoResena estado;
 }
 
+// El enum no necesita estar en un archivo separado si solo se usa aquí.
 enum EstadoResena { pendiente, aprobado, rechazado }

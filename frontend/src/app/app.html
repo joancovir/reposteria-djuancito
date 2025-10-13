@@ -1,11 +1,11 @@
-<div class="header-fijo-contenedor">
-    <app-header></app-header>
-    <app-barra-anuncios></app-barra-anuncios>
-</div>
-<main class="contenido-principal">
+<ng-container *ngIf="usaLayoutPrincipal">
+  <app-header></app-header>
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+  <app-pie-pagina></app-pie-pagina>
+</ng-container>
 
-<router-outlet></router-outlet>
-
-</main>
-
-<app-pie-pagina></app-pie-pagina> 
+<ng-container *ngIf="!usaLayoutPrincipal">
+  <router-outlet></router-outlet>
+</ng-container>

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BarraAnuncios } from './barra-anuncios';
+import { ModalAdicionalesComponent } from './modal-adicionales';
 
-describe('BarraAnuncios', () => {
-  let component: BarraAnuncios;
-  let fixture: ComponentFixture<BarraAnuncios>;
+describe('ModalAdicionales', () => {
+  let component: ModalAdicionalesComponent;
+  let fixture: ComponentFixture<ModalAdicionalesComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BarraAnuncios]
+      imports: [ModalAdicionalesComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(BarraAnuncios);
+    fixture = TestBed.createComponent(ModalAdicionalesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

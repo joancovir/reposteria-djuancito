@@ -1,0 +1,70 @@
+.client-layout-container {
+  padding: 40px 20px;
+  background-color: #f8f9fa; 
+  font-family: Arial, sans-serif;
+  min-height: 80vh;
+}
+.client-layout {
+  display: flex;
+  gap: 30px;
+
+}
+
+.user-profile img {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  border: 2px solid #e5b473;
+  object-fit: cover; 
+}
+
+/* --- Barra Lateral --- */
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background-color: #212529; 
+  border-radius: 10px;
+  padding: 20px;
+  color: #f8f9fa;
+}
+.user-profile {
+  text-align: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #495057;
+}
+.user-profile h3 {
+  margin-top: 0;
+  color: #ffffff;
+}
+.user-profile span {
+  color: #adb5bd;
+}
+.sidebar-nav ul {
+  list-style: none;
+  padding: 15px 0;
+  margin: 0;
+}
+.sidebar-nav a {
+  display: block;
+  padding: 15px 20px;
+  color: #ced4da;
+  text-decoration: none;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+.sidebar-nav a:hover,
+.sidebar-nav a.active { /* Para resaltar la página activa */
+  background-color: #fd7e14; /* Fondo naranja */
+  color: #ffffff;
+}
+
+/* --- Contenido Principal --- */
+.main-content {
+  flex-grow: 1;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 30px;
+}

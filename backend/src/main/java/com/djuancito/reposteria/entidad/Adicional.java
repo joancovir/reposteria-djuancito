@@ -26,5 +26,5 @@ public class Adicional {
 }
 
 enum CategoriaAdicional {
-    relleno, decorado, topping, mensaje, extra
+    relleno, decorado, topping, mensaje, extra, bizcocho
 }

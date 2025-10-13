@@ -6,19 +6,41 @@
     </a>
   </div>
 
- <nav class="main-nav">
-  <ul>
-    <li><a routerLink="/">Inicio</a></li> 
-    <li><a href="#productos-realizados">Productos Realizados</a></li>
-    <li><a href="#resenas">Reseñas</a></li>
-    <li><a href="#contacto">Contacto</a></li>
-    <li><a routerLink="/catalogo">Catálogos de Productos</a></li>
-  </ul>
-</nav>
+  <button class="mobile-nav-toggle" (click)="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 
-  <div class="user-actions">
-    <a routerLink="/promociones" class="btn btn-primary">PROMOCIONES</a>
-    <a routerLink="/registrar" class="btn btn-light">Registrar</a>
-    <a routerLink="/iniciar-sesion" class="btn btn-primary">Iniciar Sesión</a>
+  <div class="nav-container" [class.nav-open]="isMenuOpen">
+    <nav class="main-nav">
+      <ul>
+        <li><a routerLink="/" (click)="closeMenu()">Inicio</a></li>
+        <li><a href="#productos-realizados" (click)="closeMenu()">Productos Realizados</a></li>
+        <li><a href="#resenas" (click)="closeMenu()">Reseñas</a></li>
+        <li><a href="#contacto" (click)="closeMenu()">Contacto</a></li>
+        <li><a routerLink="/catalogo" (click)="closeMenu()">Nuestro Catálogo</a></li>
+      </ul>
+    </nav>
+
+    <div class="user-actions">
+      <ng-container *ngIf="!authService.estaLogueado()">
+        <a routerLink="/promociones" class="btn btn-primary" (click)="closeMenu()">PROMOCIONES</a>
+        <a routerLink="/mi-pedido" class="btn btn-secondary" (click)="closeMenu()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag" viewBox="0 0 16 16">
+            <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
+          </svg>
+          <span>Mi pedido</span>
+        </a>
+        <a routerLink="/registrar" class="btn btn-light" (click)="closeMenu()">Registrar</a>
+        <a routerLink="/iniciar-sesion" class="btn btn-primary" (click)="closeMenu()">Iniciar Sesión</a>
+      </ng-container>
+
+      <ng-container *ngIf="authService.estaLogueado()">
+<span class="welcome-message">Hola, {{ authService.obtenerUsuarioActual }}</span>
+        <a routerLink="/cliente/pedidos" class="btn btn-secondary" (click)="closeMenu()">Mis Pedidos</a>
+        <button (click)="cerrarSesion()" class="btn btn-light">Cerrar Sesión</button>
+      </ng-container>
+    </div>
   </div>
 </header>

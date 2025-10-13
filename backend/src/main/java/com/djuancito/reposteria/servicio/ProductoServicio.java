@@ -30,13 +30,11 @@ public class ProductoServicio {
     public void eliminar(Integer id) {
         productoRepositorio.deleteById(id);
     }
-
-public List<Producto> obtenerPorPersonalizable(String valor) {
-        try {
-            Personalizable personalizableEnum = Personalizable.valueOf(valor.toLowerCase()); 
-            return productoRepositorio.findByPersonalizable(personalizableEnum);
-        } catch (IllegalArgumentException e) {
-            return java.util.Collections.emptyList();
-        }
-    }
+public List<Producto> obtenerPorCategoria(String categoria) {
+    return productoRepositorio.findByCategoria(categoria);
+}
+// El método ahora recibe un boolean directamente
+public List<Producto> obtenerPorPersonalizable(boolean esPersonalizable) {
+    return productoRepositorio.findByPersonalizable(esPersonalizable);
+}
 }

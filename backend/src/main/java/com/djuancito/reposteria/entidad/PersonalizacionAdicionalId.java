@@ -1,19 +1,17 @@
 package com.djuancito.reposteria.entidad;
 
-import jakarta.persistence.*; 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import lombok.Data;
 
 @Data
 @Embeddable
 public class PersonalizacionAdicionalId implements Serializable {
-    
 
-    @ManyToOne
-    @JoinColumn(name = "personalizacionId")
-    private Personalizacion personalizacion; 
+    @Column(name = "personalizacionId")
+    private Integer personalizacionId;
 
-    @ManyToOne
-    @JoinColumn(name = "adicionalId")
-    private Adicional adicional; 
+    @Column(name = "adicionalId")
+    private Integer adicionalId;
 }

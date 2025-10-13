@@ -1,0 +1,21 @@
+<div class="welcome-dashboard">
+  <h1>¡Bienvenido de vuelta, {{ nombreUsuario }}!</h1>
+  <p>Desde aquí puedes gestionar tus pedidos, actualizar tu perfil y mucho más.</p>
+
+  <div class="dashboard-grid">
+    <a routerLink="/cliente/pedidos" class="dashboard-card">
+      <h3>Mis Pedidos</h3>
+      <p>Revisa tu historial de compras y el estado de tus pedidos actuales.</p>
+    </a>
+
+    <a routerLink="/cliente/perfil" class="dashboard-card">
+      <h3>Mi Perfil</h3>
+      <p>Actualiza tus datos personales, dirección y contraseña.</p>
+    </a>
+
+    <a routerLink="../catalogo" class="dashboard-card">
+      <h3>Ver Catálogo</h3>
+      <p>Explora nuestros productos y encuentra tu próximo postre favorito.</p>
+    </a>
+  </div>
+</div>

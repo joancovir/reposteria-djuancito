@@ -8,5 +8,8 @@ import java.util.List;
 
 @Repository
 public interface ProductoRepositorio extends JpaRepository<Producto, Integer> {
-    List<Producto> findByPersonalizable(Personalizable personalizable);
+    // MÉTODO NUEVO PARA FILTRAR
+    List<Producto> findByPersonalizable(boolean personalizable);
+    List<Producto> findByCategoria(String categoria);
+
 }

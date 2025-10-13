@@ -1,5 +1,5 @@
 package com.djuancito.reposteria.entidad;
-
+import java.util.Set; 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -39,7 +39,17 @@ public class Usuario {
 
     @Column(name = "fechaRegistro")
     private LocalDateTime fechaRegistro;
+
+     // --- RELACIÓN NUEVA AÑADIDA ---
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "UsuarioRol",
+        joinColumns = @JoinColumn(name = "usuarioId"),
+        inverseJoinColumns = @JoinColumn(name = "rolId")
+    )
+    private Set<Rol> roles;
 }
+
 
 enum TipoCliente {
     nuevo, recurrente

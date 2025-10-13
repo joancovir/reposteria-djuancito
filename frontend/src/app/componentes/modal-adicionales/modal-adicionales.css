@@ -1,0 +1,31 @@
+.modal-body h5 {
+  margin-bottom: 15px;
+}
+
+.list-group-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.costo-adicional {
+  margin-left: auto; /* Empuja el costo a la derecha */
+  font-weight: bold;
+  color: #007bff;
+}
+
+.form-group {
+  margin-top: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}

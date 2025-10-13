@@ -6,6 +6,7 @@ export interface Producto {
   descripcion: string;
   precioBase: number;
   imagenUrl: string;
-  personalizable: 'si' | 'no';
+  personalizable: boolean;
+  personalizacion?: any; 
 
 }

@@ -39,8 +39,8 @@
 }
 
 .btn-personalizada {
-    background-color: #ef9a9a; 
-    color: #424242; 
+    background-color: #ee965b; 
+    color: #ffffff; 
     padding: 10px 20px; 
     text-decoration: none; 
     border-radius: 5px; 
@@ -66,44 +66,99 @@
     object-fit: cover; 
 }
 
-.product-info { 
-    padding: 15px; 
+.product-info {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
-
 .product-info h3 { 
     font-size: 18px; 
     margin: 0 0 5px 0; 
 }
 
 .product-info .category { 
-    font-size: 14px; 
-    color: #888; 
+    font-size: 16px; 
+    color: #f86363; 
     margin-bottom: 15px; 
 }
 
-.price-action { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
+.price-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap; 
 }
 
+@media (max-width: 480px) {
+  .price-action {
+    flex-direction: column; 
+    align-items: stretch;   
+  }
+
+  .price-action .price {
+    margin-bottom: 10px; 
+    text-align: center; 
+    width: 100%;
+  }
+
+  .price-action button,
+  .price-action .btn-adicionales { 
+    width: 100%; 
+    text-align: center;
+    justify-content: center; 
+  }
+}
 .price { 
     font-size: 18px; 
     font-weight: bold; 
 }
 
 .btn-pide { 
-    background-color: #6a5acd; 
-    color: white; 
+    background-color: #ee965b; 
+    color: rgb(0, 0, 0); 
     padding: 8px 15px; 
     text-decoration: none; 
-    border-radius: 5px; 
-    font-size: 14px; 
+    border-radius: 11px; 
+    font-size: 19px; 
 }
 
 .product-info .description {
-    font-size: 14px;
-    color: #555; 
+    font-size: 16px;
+    color: #000000; 
     margin-bottom: 10px; 
     min-height: 40px;
+}
+.product-card {
+  position: relative; /* Necesario para posicionar la insignia */
+}
+
+.badge-personalizable {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #fd7e14; /* Naranja */
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.btn-adicionales { background-color: #948578; color: white; }.price-action-wrapper {
+  margin-top: auto; /* Empuja esta sección al final de la tarjeta */
+  padding-top: 15px;
+}
+.buttons-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.buttons-container button {
+  flex-grow: 1; /* Hace que los botones compartan el espacio */
+}
+.product-info {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }

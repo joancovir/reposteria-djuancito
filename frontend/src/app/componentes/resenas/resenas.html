@@ -13,9 +13,9 @@
       <div class="review-rating">
         <span>{{ '★'.repeat(resena.valoracion) }}</span> 
       </div>
-<cite>
-  <span class="author">{{ resena.usuario?.nombre }} </span>
-<span class="product">Pedido realizado el: {{ resena.pedido?.fechaPedido | date:'mediumDate' }}</span>
+ <cite>
+  <span class="author">{{ resena.nombreUsuario }}</span>
+  <span class="product">Pedido realizado el: {{ resena.fechaPedido | date:'mediumDate' }}</span>
 </cite>
     </div>
   </div>

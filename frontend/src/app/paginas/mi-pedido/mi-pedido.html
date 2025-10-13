@@ -1,0 +1,45 @@
+<div class="cart-page">
+  <div class="cart-container">
+    <h1>Resumen de tu Pedido</h1>
+    
+    <div class="cart-layout">
+
+      <div class="cart-items">
+        <div *ngIf="(itemsDelCarrito$ | async)?.length === 0" class="empty-cart">
+          <p>Tu carrito está vacío.</p>
+          <a routerLink="/catalogo" class="btn">Explorar productos</a>
+        </div>
+
+        <div class="item" *ngFor="let item of (itemsDelCarrito$ | async)">
+          <img [src]="item.imagenUrl" [alt]="item.nombre">
+          <div class="item-details">
+            <h4>{{ item.nombre }}</h4>
+            <p>{{ item.categoria }}</p>
+          </div>
+          
+          <div *ngIf="item.personalizacion" class="custom-details">
+    <small><strong>Sabor:</strong> {{ item.personalizacion.saborBizcocho }}</small><br>
+    <small><strong>Rellenos:</strong> {{ item.personalizacion.rellenos.join(', ') }}</small>
+  </div>
+</div>
+
+      <div class="cart-summary">
+        <h3>Resumen</h3>
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>S/ {{ total }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Envío</span>
+          <span>S/ 0.00</span> </div>
+        <hr>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span>S/ {{ total }}</span>
+        </div>
+        <button class="btn btn-checkout" [disabled]="total === 0">Finalizar Compra</button>
+      </div>
+
+    </div>
+  </div>
+</div>

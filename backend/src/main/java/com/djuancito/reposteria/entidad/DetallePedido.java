@@ -17,8 +17,7 @@ public class DetallePedido {
     private Integer detalleId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pedidoId", referencedColumnName = "pedidoId")
-    @JsonIgnoreProperties("detalles") // Evita el bucle al convertir el pedido a JSON
+    @JoinColumn(name = "pedidoId")
     private Pedido pedido;
 
     @ManyToOne(fetch = FetchType.LAZY)
