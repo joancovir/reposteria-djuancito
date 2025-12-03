@@ -1,17 +1,19 @@
 #!/bin/bash
+set -e
 
-echo "Iniciando D.Juancito Repostería - Modo Railway PRO"
+echo "Iniciando D.Juancito Repostería - Versión Railway 100% funcional"
 
-# Compila el backend
-cd backend || exit
+# Compilar backend con Maven Wrapper (dándole permiso primero)
+cd backend
+chmod +x mvnw
 ./mvnw clean package -DskipTests -q
 
-# Copia el build de Angular al JAR para que Spring Boot lo sirva
-echo "Copiando frontend al backend..."
+# Copiar el build de Angular al JAR para que Spring Boot lo sirva
+echo "Moviendo Angular al backend..."
 mkdir -p target/classes/static
-rm -rf target/classes/static/* 2>/dev/null || true
-cp -r ../frontend/dist/reposteria-djuancito/browser/* target/classes/static/ 2>/dev/null || cp -r ../frontend/dist/reposteria-djuancito/browser/. target/classes/static/ 2>/dev/null || true
+rm -rf target/classes/static/*
+cp -r ../frontend/dist/reposteria-djuancito/browser/* target/classes/static/ || true
 
-# Arranca solo Spring Boot
-echo "Arrancando Spring Boot en puerto $PORT..."
+# Arrancar Spring Boot
+echo "Iniciando Spring Boot..."
 exec java -jar target/*.jar
