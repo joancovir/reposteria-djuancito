@@ -19,18 +19,28 @@ public class Contacto {
     @Column(name = "telefono")
     private String telefono;
 
+
+    @Column(name = "respuesta")
+    private String respuesta; 
+
+    @Column(name = "fecha_respuesta") 
+    private LocalDateTime fechaRespuesta;
+
     @Column(name = "email")
     private String email;
 
     @Column(name = "mensaje")
     private String mensaje;
 
+    @Column(name = "motivo") 
+    private String motivo;
     @Column(name = "fecha")
-    private LocalDateTime fecha;
+    private LocalDateTime fecha = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado")
-    private EstadoContacto estado;
+    private EstadoContacto estado = EstadoContacto.pendiente;
+
 }
 
 enum EstadoContacto { pendiente, respondido }

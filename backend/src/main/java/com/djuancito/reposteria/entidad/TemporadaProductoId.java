@@ -8,12 +8,10 @@ import lombok.Data;
 @Embeddable
 public class TemporadaProductoId implements Serializable {
     
-    // 1. Relación Many-to-One a Temporada
     @ManyToOne
     @JoinColumn(name = "temporadaId")
-    private Temporada temporada; // ¡Resuelve el error 'temporada'!
+    private Temporada temporada; 
 
-    // 2. Relación Many-to-One a Producto
     @ManyToOne
     @JoinColumn(name = "productoId")
     private Producto producto;

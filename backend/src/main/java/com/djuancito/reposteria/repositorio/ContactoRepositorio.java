@@ -8,5 +8,5 @@ import java.util.List;
 @Repository
 public interface ContactoRepositorio extends JpaRepository<Contacto, Integer> {
     List<Contacto> findByEmailOrderByFechaDesc(String email);
-
+    List<Contacto> findAllByOrderByFechaDesc();
 }

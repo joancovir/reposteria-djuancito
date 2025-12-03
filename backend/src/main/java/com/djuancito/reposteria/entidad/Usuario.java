@@ -40,7 +40,6 @@ public class Usuario {
     @Column(name = "fechaRegistro")
     private LocalDateTime fechaRegistro;
 
-     // --- RELACIÓN NUEVA AÑADIDA ---
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "UsuarioRol",

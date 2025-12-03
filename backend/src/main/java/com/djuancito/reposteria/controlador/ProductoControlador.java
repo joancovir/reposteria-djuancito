@@ -1,7 +1,8 @@
+
 package com.djuancito.reposteria.controlador;
 import com.djuancito.reposteria.entidad.Producto;
 import com.djuancito.reposteria.servicio.ProductoServicio;
-
+import com.djuancito.reposteria.entidad.Categoria; 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +30,21 @@ public class ProductoControlador {
 
     @PostMapping
     public Producto crearProducto(@RequestBody Producto producto) {
+        producto.setProductoId(null); 
         return productoServicio.guardar(producto);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> actualizarProducto(@PathVariable Integer id, @RequestBody Producto producto) {
+        
+        if (productoServicio.obtenerPorId(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        producto.setProductoId(id);
+                Producto productoActualizado = productoServicio.guardar(producto);
+        return ResponseEntity.ok(productoActualizado);
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarProducto(@PathVariable Integer id) {
         productoServicio.eliminar(id);
@@ -41,15 +54,23 @@ public class ProductoControlador {
     @GetMapping("/personalizables")
     public List<Producto> obtenerPersonalizables() {
         return productoServicio.obtenerPorPersonalizable(true); 
-}
+    }
 
     @GetMapping("/predeterminados")
     public List<Producto> obtenerPredeterminadas() {
-     return productoServicio.obtenerPorPersonalizable(false); 
-}
-@GetMapping("/categoria/{categoria}")
-public List<Producto> obtenerPorCategoria(@PathVariable String categoria) {
-    return productoServicio.obtenerPorCategoria(categoria);
-}
+        return productoServicio.obtenerPorPersonalizable(false); 
+    }
+
+    @GetMapping("/categoria/{categoria}")
+    public List<Producto> obtenerPorCategoria(@PathVariable Categoria categoria) {
+        return productoServicio.obtenerPorCategoria(categoria);
+    }
+    
+    @GetMapping("/buscar/{termino}")
+    public List<Producto> buscarPorNombre(@PathVariable String termino) {
+        return productoServicio.obtenerPorNombre(termino);
+    }
+
+
     
 }

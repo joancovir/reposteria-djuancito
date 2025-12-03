@@ -1,13 +1,17 @@
+
 package com.djuancito.reposteria.servicio;
 
 import com.djuancito.reposteria.entidad.Usuario;
 import com.djuancito.reposteria.repositorio.UsuarioRepositorio;
+import org.springframework.security.core.GrantedAuthority; 
+import org.springframework.security.core.authority.SimpleGrantedAuthority; 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import java.util.Collections;
+import java.util.Set; 
+import java.util.stream.Collectors; 
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -20,11 +24,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Buscamos el usuario en nuestra base de datos por su email
         Usuario usuario = usuarioRepositorio.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + username));
 
-        // Creamos un UserDetails de Spring Security con los datos de nuestro usuario
-        return new User(usuario.getEmail(), usuario.getPassword(), Collections.emptyList());
+        Set<GrantedAuthority> authorities = usuario.getRoles().stream()
+                .map(rol -> new SimpleGrantedAuthority("ROLE_" + rol.getNombre())) 
+                .collect(Collectors.toSet());
+
+        return new User(usuario.getEmail(), usuario.getPassword(), authorities);
     }
 }

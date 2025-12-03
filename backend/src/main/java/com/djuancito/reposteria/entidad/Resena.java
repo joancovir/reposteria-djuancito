@@ -13,13 +13,11 @@ public class Resena {
     @Column(name = "resenaId")
     private Integer resenaId;
 
-    // --- CORRECCIÓN AQUÍ ---
-    @ManyToOne(fetch = FetchType.EAGER) // Cambiado de LAZY (por defecto) a EAGER
+    @ManyToOne(fetch = FetchType.EAGER) 
     @JoinColumn(name = "usuarioId")
     private Usuario usuario;
 
-    // --- CORRECCIÓN AQUÍ ---
-    @ManyToOne(fetch = FetchType.EAGER) // Cambiado de LAZY (por defecto) a EAGER
+    @ManyToOne(fetch = FetchType.EAGER) 
     @JoinColumn(name = "pedidoId")
     private Pedido pedido;
 
@@ -40,5 +38,3 @@ public class Resena {
     private EstadoResena estado;
 }
 
-// El enum no necesita estar en un archivo separado si solo se usa aquí.
-enum EstadoResena { pendiente, aprobado, rechazado }

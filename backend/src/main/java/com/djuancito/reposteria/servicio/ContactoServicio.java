@@ -5,7 +5,7 @@ import com.djuancito.reposteria.repositorio.ContactoRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-
+import java.util.Optional;
 @Service
 public class ContactoServicio {
 
@@ -13,10 +13,18 @@ public class ContactoServicio {
     private ContactoRepositorio contactoRepositorio;
 
     public Contacto guardarMensaje(Contacto contacto) {
-        // Aquí podrías añadir lógica en el futuro, como enviar un email de notificación.
         return contactoRepositorio.save(contacto);
     }
+    
     public List<Contacto> obtenerPorEmail(String email) {
     return contactoRepositorio.findByEmailOrderByFechaDesc(email);
-}
+    }
+
+    public Optional<Contacto> obtenerPorId(Integer contactoId) {
+        return contactoRepositorio.findById(contactoId);
+    }
+
+    public List<Contacto> obtenerTodasLasConsultas() {
+        return contactoRepositorio.findAllByOrderByFechaDesc();
+    }    
 }

@@ -1,3 +1,4 @@
+
 package com.djuancito.reposteria.entidad;
 
 import java.math.BigDecimal;
@@ -25,7 +26,7 @@ public class Producto {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "categoria")
-    private Categoria categoria;
+    private Categoria categoria; 
 
     @Column(name = "imagenUrl") 
     private String imagenUrl;
@@ -35,9 +36,6 @@ public class Producto {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado")
-    private EstadoProducto estado;
+    private EstadoProducto estado; 
 }
 
-// Enums que necesita la clase Producto
-enum Categoria { torta, postre, bocadito }
-enum EstadoProducto { activo, inactivo }

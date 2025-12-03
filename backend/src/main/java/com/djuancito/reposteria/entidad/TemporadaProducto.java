@@ -9,13 +9,10 @@ import lombok.Data;
 public class TemporadaProducto {
     
     @EmbeddedId
-    private TemporadaProductoId id; // Contiene la Temporada y el Producto
+    private TemporadaProductoId id; 
 
-    // 💡 CAMPO FALTANTE PARA NAVEGACIÓN:
-    // Este campo nos permite acceder al Producto directamente a través del ID
-    @MapsId("producto") // Indica que mapee este campo usando el objeto 'producto' del EmbeddedId
+    @MapsId("producto") 
     @ManyToOne
-    @JoinColumn(name = "productoId", insertable = false, updatable = false) // Columna de la BD
+    @JoinColumn(name = "productoId", insertable = false, updatable = false) 
     private Producto producto;
-    // La consulta HQL: 'SELECT tp.producto' ahora funcionará gracias a este campo.
 }

@@ -1,11 +1,16 @@
-package com.djuancito.reposteria.entidad.dto;
+    package com.djuancito.reposteria.entidad.dto;
 
-import java.util.List;
-import lombok.Data;
+    import java.math.BigDecimal;
+    import java.util.List;
+    import lombok.Data;
 
-@Data
-public class PedidoRequestDTO {
-    private Integer usuarioId;
-    private String nota;
-    private List<DetalleRequestDTO> detalles;
-}
+    @Data
+    public class PedidoRequestDTO {
+        private Integer usuarioId;
+        private String nota;
+        private List<DetalleRequestDTO> detalles;
+        private BigDecimal subtotal;
+        private BigDecimal garantiaPagada;
+        private BigDecimal resto;          
+        private BigDecimal total;  
+    }

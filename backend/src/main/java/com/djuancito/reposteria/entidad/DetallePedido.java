@@ -1,10 +1,11 @@
+
 package com.djuancito.reposteria.entidad;
 
 import java.math.BigDecimal;
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.Optional; // <-- Importamos para manejar Optional si el Producto no existe
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties; // <-- ¡IMPORTA ESTO!
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties; 
 
 @Data
 @Entity
@@ -16,19 +17,28 @@ public class DetallePedido {
     @Column(name = "detalleId")
     private Integer detalleId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "pedidoId")
+    @JsonIgnore 
     private Pedido pedido;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) 
     @JoinColumn(name = "productoId", referencedColumnName = "productoId")
     private Producto producto;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) 
     @JoinColumn(name = "promocionId", referencedColumnName = "promocionId")
+    @JsonIgnoreProperties({
+    "hibernateLazyInitializer", 
+    "handler", 
+    "promocionProductos",  
+    "promocionProducto"        
+    })
     private Promocion promocion;
 
-    @OneToOne(mappedBy = "detalle", cascade = CascadeType.ALL, orphanRemoval = true)
+ 
+
+    @OneToOne(mappedBy = "detalle", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER) 
     private Personalizacion personalizacion;
 
     @Column(name = "cantidad")
@@ -42,6 +52,4 @@ public class DetallePedido {
 
     @Column(name = "descuentoAplicado")
     private BigDecimal descuentoAplicado;
-    
-
 }

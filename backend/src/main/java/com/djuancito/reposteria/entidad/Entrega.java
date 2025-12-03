@@ -1,6 +1,4 @@
 package com.djuancito.reposteria.entidad;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -29,9 +27,6 @@ public class Entrega {
     @Enumerated(EnumType.STRING)
     @Column(name = "metodo")
     private MetodoEntrega metodo;
-
-    @Column(name = "costoDelivery")
-    private BigDecimal costoDelivery;
 
     @Column(name = "recibidoPor")
     private String recibidoPor;

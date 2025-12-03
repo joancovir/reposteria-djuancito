@@ -1,6 +1,6 @@
 package com.djuancito.reposteria.entidad;
 
-public enum EstadoPedido { // <-- Palabra "public" añadida
+public enum EstadoPedido { 
     pendiente,
     aceptado,
     en_preparacion,

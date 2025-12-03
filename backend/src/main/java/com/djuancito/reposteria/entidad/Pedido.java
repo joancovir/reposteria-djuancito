@@ -1,11 +1,9 @@
 package com.djuancito.reposteria.entidad;
-import com.fasterxml.jackson.annotation.JsonIgnore; // <-- ¡IMPORTA ESTO!
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List; 
 import jakarta.persistence.*;
 import lombok.Data;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties; 
 
 @Data
 @Entity
@@ -18,14 +16,14 @@ public class Pedido {
     private Integer pedidoId;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) 
     @JoinColumn(name = "usuarioId")
-    @JsonIgnore // <-- AÑADE ESTO
-    private Usuario usuario; 
+    private Usuario usuario;
 
+   @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // Carga EAGER
+    private List<Pago> pagos;
     
-    // En la clase Pedido.java
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER) 
     private List<DetallePedido> detalles;
 
     @Column(name = "fechaPedido")
@@ -38,7 +36,19 @@ public class Pedido {
     @Column(name = "total")
     private BigDecimal total;
 
+    @Column(name = "montoGarantia") 
+    private BigDecimal montoGarantia;
+
     @Column(name = "nota")
     private String nota;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal subtotal = BigDecimal.ZERO;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal garantiaPagada = BigDecimal.ZERO;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal resto = BigDecimal.ZERO;
+
 }
 
