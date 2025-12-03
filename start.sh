@@ -1,20 +1,16 @@
 #!/bin/bash
 
-# Script para Railway - arranca frontend y backend en paralelo
+echo "Iniciando D.Juancito Repostería (modo producción Railway)"
 
-echo "🚀 Iniciando D.Juancito Repostería..."
-
-# Arranca el backend (Spring Boot)
-echo "Backend: Compilando y arrancando..."
+# 1. Compila el backend
 cd backend
 ./mvnw clean package -DskipTests
-java -jar target/*.jar &
 
-# Arranca el frontend (Angular)
-echo "Frontend: Compilando y sirviendo..."
-cd ../frontend
-npm run build
-npx serve -s dist/reposteria-djuancito/browser -l $PORT &
-echo "D.Juancito listo en https://reposteria-djuancito.up.railway.app"
-# Espera a que ambos terminen
-wait
+# 2. Copia el build del Angular dentro del JAR de Spring Boot
+echo "Copiando frontend al backend..."
+mkdir -p target/classes/static
+cp -r ../frontend/dist/reposteria-djuancito/browser/* target/classes/static/
+
+# 3. Arranca solo el backend (él va a servir el frontend estático)
+echo "Arrancando Spring Boot en puerto $PORT..."
+java -jar target/*.jar
