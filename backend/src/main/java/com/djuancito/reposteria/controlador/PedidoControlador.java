@@ -86,26 +86,22 @@ public class PedidoControlador {
         return ResponseEntity.ok(pedido);
     }
 
-    @PostMapping("/confirmar")
-public ResponseEntity<?> confirmarPedido(@RequestBody Map<String, Object> body) {
+@PostMapping("/confirmar")
+public ResponseEntity<?> confirmarPedido(@RequestBody PedidoRequestDTO request) {
     try {
-        Integer pedidoId = (Integer) body.get("pedidoId");
-
-        if (pedidoId == null) {
-            return ResponseEntity.badRequest().body("Falta pedidoId");
+        // Validación básica
+        if (request.getUsuarioId() == null || request.getDetalles() == null || request.getDetalles().isEmpty()) {
+            return ResponseEntity.badRequest().body("Faltan datos obligatorios");
         }
 
-        Pedido pedido = pedidoServicio.confirmarPedido(pedidoId);
-
-        if (pedido == null) {
-            return ResponseEntity.status(404).body("Pedido no encontrado");
-        }
-
-        return ResponseEntity.ok(pedido);
+        // Usa el mismo servicio que ya tienes en @PostMapping
+        Pedido pedidoCreado = pedidoServicio.crearPedidoConConfirmacion(request);
+        
+        return ResponseEntity.ok(pedidoCreado);
 
     } catch (Exception e) {
         e.printStackTrace();
-        return ResponseEntity.status(500).body("Error en el servidor");
+        return ResponseEntity.status(500).body("Error al confirmar: " + e.getMessage());
     }
 }
 

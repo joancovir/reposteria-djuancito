@@ -23,6 +23,8 @@ public class Adicional {
 
     @Column(name = "costoAdicional")
     private BigDecimal costoAdicional;
+
+    
 }
 
 enum CategoriaAdicional {

@@ -48,4 +48,10 @@ public class ResenaControlador {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado.");
         }
     }
+
+    @GetMapping
+public ResponseEntity<List<ResenaDTO>> obtenerResenasPublicas() {
+    List<ResenaDTO> resenas = resenaServicio.obtenerTodasAprobadasDTO();
+    return ResponseEntity.ok(resenas);
+}
 }

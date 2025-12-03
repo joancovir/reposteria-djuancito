@@ -49,7 +49,7 @@ export class PagoGarantia implements OnInit {
   }
 
   cargarQrDesdeBackend() {
-    this.http.get<QrPago[]>('http://localhost:8080/api/qr/activos').subscribe({
+    this.http.get<QrPago[]>('http://localhost:8080/api/config/qr/activos').subscribe({
       next: (data) => {
         this.qrList = data;
       },

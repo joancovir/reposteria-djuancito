@@ -8,24 +8,17 @@ import { Producto } from '../modelos/producto';
 })
 export class ProductoService {
 
-  // CAMBIA ESTO CUANDO ESTÉS EN PRODUCCIÓN (Railway)
-  private baseUrl = 'https://reposteria-djuancito-production.up.railway.app/api';
-
-  // PARA PRUEBAS LOCALES (descomenta la de abajo y comenta la de arriba)
-  // private baseUrl = 'http://localhost:8080/api';
+private baseUrl = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient) { }
 
-  // SUBIR IMAGEN A CLOUDINARY (AHORA SÍ FUNCIONA)
   subirImagen(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
 
     return this.http.post(`${this.baseUrl}/cloudinary/subir`, formData);
-    // Devuelve: { url: "https://...", public_id: "reposteria-djuancito/xxx" }
   }
 
-  // CRUD DE PRODUCTOS
   getProductos(): Observable<Producto[]> {
     return this.http.get<Producto[]>(`${this.baseUrl}/productos`);
   }

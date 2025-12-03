@@ -48,139 +48,116 @@
   </div>
 </div>
 
-<!-- MODAL DETALLE - VERSIÓN FINAL 100% CLARA Y PROFESIONAL -->
+<!-- MODAL DETALLE PEDIDO -->
 <div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
 
-      <!-- CABECERA -->
-      <div class="modal-header bg-primary text-white position-relative">
-        <div class="container-fluid px-4">
-          <div class="d-flex justify-content-between align-items-center">
-            <h4 class="mb-0 fw-bold fs-4">
-              Pedido #ORD{{ pedidoSeleccionado?.pedidoId | number:'3.0-0' }}
-            </h4>
-
-            <div class="d-flex align-items-center gap-4">
-              <span class="badge fs-5 px-4 py-2 rounded-pill fw-bold"
-                    [ngClass]="getEstadoClass(pedidoSeleccionado?.estado)">
-                {{ pedidoSeleccionado?.estado | titlecase }}
-              </span>
-              <button type="button" class="btn-close btn-close-white btn-close-lg" 
-                      data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-          </div>
-        </div>
+      <div class="modal-header bg-primary text-white">
+        <h4 class="mb-0 fw-bold">
+          Pedido #ORD{{ pedidoSeleccionado?.pedidoId | number:'3.0-0' }}
+        </h4>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
 
-      <div class="modal-body p-4 p-lg-5" *ngIf="pedidoSeleccionado as p">
+      <div class="modal-body p-5" *ngIf="pedidoSeleccionado as p">
         <div class="row g-5">
 
-          <!-- IZQUIERDA: PRODUCTOS -->
+          <!-- PRODUCTOS Y PERSONALIZACIÓN -->
           <div class="col-lg-7">
-            <h5 class="fw-bold text-primary mb-4 fs-4">Productos y Personalización</h5>
+            <h5 class="fw-bold text-primary mb-4">Productos y Personalización</h5>
 
-            <div class="bg-white rounded-4 shadow-sm p-4 mb-4" *ngFor="let detalle of p.detalles; let i = index">
-              <div class="d-flex align-items-start gap-4 mb-4">
-                <div class="bg-light rounded-4 d-flex align-items-center justify-content-center flex-shrink-0"
-                     style="width:85px;height:85px;">
-                  <i class="bi bi-cake2 fs-1 text-primary"></i>
-                </div>
-                <div class="flex-grow-1">
-                  <h6 class="fw-bold mb-1 fs-5">{{ detalle.nombreProducto }}</h6>
-                  <small class="text-muted">
-                    {{ detalle.cantidad }} × S/ {{ detalle.precioUnitario | number:'1.2-2' }}
-                  </small>
-
-                  <!-- DESCUENTO -->
-                  <div *ngIf="detalle.descuentoAplicado > 0" class="alert-descuento mt-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <div>
-                        <strong class="text-success">¡Descuento aplicado!</strong><br>
-                        <small class="text-muted">{{ obtenerNombrePromocion(detalle.promocionId) || 'Promoción especial' }}</small>
-                      </div>
-                      <strong class="text-danger fs-4">- S/ {{ detalle.descuentoAplicado | number:'1.2-2' }}</strong>
-                    </div>
+            <div class="bg-white rounded-4 shadow-sm p-4 mb-4" *ngFor="let detalle of p.detalles">
+              
+              <!-- Producto principal -->
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="bg-light rounded-3 d-flex align-items-center justify-content-center" style="width:70px;height:70px;">
+                    <i class="bi bi-cake2 fs-2 text-primary"></i>
+                  </div>
+                  <div>
+                    <h6 class="fw-bold mb-0">{{ detalle.producto?.nombre }}</h6>
+                    <small class="text-muted">{{ detalle.cantidad }} × S/ {{ detalle.precioUnitario | number:'1.2-2' }}</small>
                   </div>
                 </div>
-                <div class="text-end">
-                  <strong class="fs-3 text-primary">
-                    S/ {{ detalle.subtotal | number:'1.2-2' }}
-                  </strong>
-                </div>
+                <strong class="fs-4 text-primary">S/ {{ detalle.subtotal | number:'1.2-2' }}</strong>
               </div>
 
               <!-- PERSONALIZACIÓN -->
-              <div *ngIf="detalle.personalizacion" 
-                   class="p-4 rounded-4 bg-warning bg-opacity-10 border-start border-warning border-5">
+              <div *ngIf="detalle.personalizacion" class="border-start border-warning border-5 ps-4 pt-3 bg-warning bg-opacity-10 rounded-3">
                 <div class="d-flex justify-content-between align-items-start">
-                  <div>
-                    <span class="badge bg-warning text-dark mb-2">Personalización extra</span>
-                    <p class="fw-bold mb-1">{{ detalle.personalizacion.descripcionExtra }}</p>
+                  <div class="flex-grow-1">
+                    <span class="badge bg-warning text-dark mb-3">Personalización Extra</span>
+
+                    <!-- Instrucciones especiales -->
+                    <p class="fw-bold mb-2" *ngIf="detalle.personalizacion.descripcionExtra">
+                      {{ detalle.personalizacion.descripcionExtra }}
+                    </p>
+
+                    <!-- Adicionales -->
+                    <div *ngIf="detalle.personalizacion.adicionalesSeleccionados?.length > 0" class="mt-3">
+                      <strong class="text-success d-block mb-2">Adicionales:</strong>
+                      <ul class="list-unstyled mb-0">
+                        <li *ngFor="let ad of detalle.personalizacion.adicionalesSeleccionados" 
+                            class="d-flex justify-content-between py-1">
+                          <span>• {{ ad.nombre }}</span>
+                          <strong class="text-success">+ S/ {{ ad.costoAdicional | number:'1.2-2' }}</strong>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                  <strong class="text-success fs-3">+ S/ {{ detalle.personalizacion.costoAdicional | number:'1.2-2' }}</strong>
+                  <strong class="text-success fs-3 ms-4">
+                    + S/ {{ detalle.personalizacion.costoAdicional | number:'1.2-2' }}
+                  </strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RESUMEN -->
+          <div class="col-lg-5">
+            <h5 class="fw-bold text-primary mb-4">Resumen del Pedido</h5>
+            <div class="bg-light rounded-4 shadow p-5">
+
+              <div class="d-flex justify-content-between mb-3">
+                <span>Subtotal productos</span>
+                <strong>S/ {{ calcularSubtotalSinDescuento(p) | number:'1.2-2' }}</strong>
+              </div>
+
+              <div *ngIf="calcularTotalPersonalizacion(p) > 0" 
+                   class="d-flex justify-content-between text-success fw-bold mb-3">
+                <span>+ Personalización extra</span>
+                <strong>S/ {{ calcularTotalPersonalizacion(p) | number:'1.2-2' }}</strong>
+              </div>
+
+              <div *ngIf="calcularTotalDescuentos(p) > 0" 
+                   class="d-flex justify-content-between text-danger fw-bold mb-4">
+                <span>Descuentos</span>
+                <strong>- S/ {{ calcularTotalDescuentos(p) | number:'1.2-2' }}</strong>
+              </div>
+
+              <hr class="border-primary border-3">
+
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <strong class="fs-2 text-primary">Total</strong>
+                <strong class="text-success fs-2">S/ {{ p.total | number:'1.2-2' }}</strong>
+              </div>
+
+              <div class="pt-4 border-top">
+                <div class="d-flex justify-content-between mb-3">
+                  <span class="fs-5">Garantía pagada</span>
+                  <strong class="text-success fs-5">S/ {{ p.garantiaPagada | number:'1.2-2' }}</strong>
+                </div>
+                <div class="d-flex justify-content-between text-danger fw-bold">
+                  <span class="fs-5">Resto al recibir</span>
+                  <strong class="fs-4">S/ {{ p.resto | number:'1.2-2' }}</strong>
                 </div>
               </div>
 
-              <hr *ngIf="i < p.detalles.length - 1" class="my-4">
+              <p class="text-center text-muted small mt-4">
+                Pedido realizado el {{ p.fechaPedido | date:'dd MMMM yyyy' }} a las {{ p.fechaPedido | date:'HH:mm' }}
+              </p>
             </div>
-          </div>
-<!-- RESUMEN DEL PEDIDO - SIMPLE, CLARO Y COMO TÚ QUIERES -->
-<div class="col-lg-5">
-  <h5 class="fw-bold text-primary mb-4 fs-4">Resumen del Pedido</h5>
-
-  <div class="bg-light rounded-4 shadow p-5">
-
-    <!-- Productos base -->
-    <div class="d-flex justify-content-between mb-3">
-      <span class="text-muted">Productos</span>
-      <strong>S/ {{ calcularSubtotalSinDescuento(p) | number:'1.2-2' }}</strong>
-    </div>
-
-    <!-- Personalización extra (si tiene) -->
-    <div *ngIf="calcularTotalPersonalizacion(p) > 0" 
-         class="d-flex justify-content-between text-success fw-bold mb-3">
-      <span>+ Personalización extra</span>
-      <strong>S/ {{ calcularTotalPersonalizacion(p) | number:'1.2-2' }}</strong>
-    </div>
-
-    <!-- SUBTOTAL ANTES DE DESCUENTO -->
-    <div class="d-flex justify-content-between fw-bold border-top pt-3 mb-3">
-      <span>Subtotal</span>
-      <strong>S/ {{ (calcularSubtotalSinDescuento(p) + calcularTotalPersonalizacion(p)) | number:'1.2-2' }}</strong>
-    </div>
-
-    <!-- DESCUENTO SIMPLE Y CLARO (como texto normal) -->
-    <div *ngIf="calcularTotalDescuentos(p) > 0" 
-         class="d-flex justify-content-between text-danger fw-bold mb-4">
-      <span>Descuento aplicado</span>
-      <strong>- S/ {{ calcularTotalDescuentos(p) | number:'1.2-2' }}</strong>
-    </div>
-
-    <!-- LÍNEA GRANDE -->
-    <hr class="border-primary border-3 my-5">
-
-    <!-- TOTAL FINAL -->
-    <div class="d-flex justify-content-between align-items-center mb-5">
-      <strong class="fs-1 text-primary fw-bold">Total a pagar</strong>
-      <strong class="text-success fs-1 fw-bold">S/ {{ p.total | number:'1.2-2' }}</strong>
-    </div>
-
-    <!-- GARANTÍA Y RESTO -->
-    <div class="pt-4 border-top">
-      <div class="d-flex justify-content-between mb-3">
-        <span class="fs-5">Garantía pagada</span>
-        <strong class="text-success fs-5">S/ {{ p.garantiaPagada | number:'1.2-2' }}</strong>
-      </div>
-      <div class="d-flex justify-content-between text-danger fw-bold">
-        <span class="fs-5">Resto al recibir</span>
-        <strong class="fs-4">S/ {{ p.resto | number:'1.2-2' }}</strong>
-      </div>
-    </div>
-  </div>
-            <p class="text-center text-muted small mt-4">
-              Pedido realizado el {{ p.fechaPedido | date:'dd MMMM yyyy' }} a las {{ p.fechaPedido | date:'HH:mm' }}
-            </p>
           </div>
         </div>
       </div>

@@ -12,129 +12,143 @@ import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-catalogo',
-  standalone: true,
-  imports: [
-    CommonModule, 
-    ModalModule, 
-    RouterLink, 
-    FormsModule 
-  ],
-  templateUrl: './catalogo.html',
-  styleUrl: './catalogo.css'
+  selector: 'app-catalogo',
+  standalone: true,
+  imports: [
+    CommonModule, 
+    ModalModule, 
+    RouterLink, 
+    FormsModule 
+  ],
+  templateUrl: './catalogo.html',
+  styleUrl: './catalogo.css'
 })
 export class CatalogoComponent implements OnInit {
 
-  listaDeProductos: Producto[] = [];
-  listaDeAdicionales: Adicional[] = [];
-  bsModalRef?: BsModalRef;
-  
-  filtroActivo: string = '';
-  searchTerm: string = '';
-  isLoading = true;
+  listaDeProductos: Producto[] = [];
+  listaDeAdicionales: Adicional[] = [];
+  bsModalRef?: BsModalRef;
+  
+  filtroActivo: string = '';
+  searchTerm: string = '';
+  isLoading = true;
 
-  // 🔹 PAGINACIÓN
-  paginaActual: number = 1;
-  productosPorPagina: number = 8;
+  // 🔹 PAGINACIÓN
+  paginaActual: number = 1;
+  productosPorPagina: number = 8;
 
-  private productoService = inject(ProductoService);
-  private carritoService = inject(CarritoService);
-  private adicionalService = inject(AdicionalService);
-  private modalService = inject(BsModalService);
-  private route = inject(ActivatedRoute);
+  private productoService = inject(ProductoService);
+  private carritoService = inject(CarritoService);
+  private adicionalService = inject(AdicionalService);
+  private modalService = inject(BsModalService);
+  private route = inject(ActivatedRoute);
 
-  constructor() {}
+  constructor() {}
 
-  ngOnInit(): void {
-    this.adicionalService.getAdicionales().subscribe(data => this.listaDeAdicionales = data);
+  ngOnInit(): void {
+    this.adicionalService.getAdicionales().subscribe(data => this.listaDeAdicionales = data);
 
-    this.route.paramMap.subscribe((params: ParamMap) => {
-      const filtroUrl = params.get('filtro');
-      this.isLoading = true;
-      if (filtroUrl) {
-        this.filtroActivo = filtroUrl;
-        this.ejecutarFiltro(this.filtroActivo);
-      } else {
-        this.filtroActivo = '';
-        this.ejecutarFiltro('');
-      }
-    });
-  }
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      const filtroUrl = params.get('filtro');
+      this.isLoading = true;
+      if (filtroUrl) {
+        this.filtroActivo = filtroUrl;
+        this.ejecutarFiltro(this.filtroActivo);
+      } else {
+        this.filtroActivo = '';
+        this.ejecutarFiltro('');
+      }
+    });
+  }
 
-  ejecutarFiltro(filtro: string) {
-    this.isLoading = true;
-    let servicioObservable: Observable<Producto[]>;
+  ejecutarFiltro(filtro: string) {
+    this.isLoading = true;
+    let servicioObservable: Observable<Producto[]>;
 
-    switch(filtro) {
-      case 'personalizable':
-        servicioObservable = this.productoService.getProductosPersonalizables();
-        break;
-      case 'predeterminada':
-        servicioObservable = this.productoService.getProductosPredeterminados();
-        break;
-      case 'torta':
-      case 'postre':
-      case 'bocadito':
-        servicioObservable = this.productoService.getProductosPorCategoria(filtro);
-        break;
-      default: 
-        servicioObservable = this.productoService.getProductos();
-        break;
-    }
+    switch(filtro) {
+      case 'personalizable':
+        servicioObservable = this.productoService.getProductosPersonalizables();
+        break;
+      case 'predeterminada':
+        servicioObservable = this.productoService.getProductosPredeterminados();
+        break;
+      case 'torta':
+      case 'postre':
+      case 'bocadito':
+        servicioObservable = this.productoService.getProductosPorCategoria(filtro);
+        break;
+      default: 
+        servicioObservable = this.productoService.getProductos();
+        break;
+    }
 
-    servicioObservable.subscribe((data: Producto[]) => {
-      this.listaDeProductos = data;
-      this.paginaActual = 1; // reinicia a la primera página
-      this.isLoading = false;
-    });
-  }
+    servicioObservable.subscribe((data: Producto[]) => {
+      this.listaDeProductos = data;
+      this.paginaActual = 1; // reinicia a la primera página
+      this.isLoading = false;
+    });
+  }
 
-  filtrarProductos(event: any) {
-    this.filtroActivo = event.target.value;
-    this.searchTerm = ''; 
-    this.ejecutarFiltro(this.filtroActivo);
-  }
+  filtrarProductos(event: any) {
+    this.filtroActivo = event.target.value;
+    this.searchTerm = ''; 
+    this.ejecutarFiltro(this.filtroActivo);
+  }
 
-  buscarProductos(): void {
-    this.isLoading = true;
-    if (this.searchTerm.trim() === '') {
-      this.ejecutarFiltro(this.filtroActivo);
-    } else {
-      this.productoService.getProductosPorNombre(this.searchTerm).subscribe((data: Producto[]) => {
-        this.listaDeProductos = data;
-        this.filtroActivo = ''; 
-        this.paginaActual = 1; 
-        this.isLoading = false;
-      });
-    }
-  }
+  buscarProductos(): void {
+    this.isLoading = true;
+    if (this.searchTerm.trim() === '') {
+      this.ejecutarFiltro(this.filtroActivo);
+    } else {
+      this.productoService.getProductosPorNombre(this.searchTerm).subscribe((data: Producto[]) => {
+        this.listaDeProductos = data;
+        this.filtroActivo = ''; 
+        this.paginaActual = 1; 
+        this.isLoading = false;
+      });
+    }
+  }
 
-  agregarAlCarrito(producto: Producto): void {
-    this.carritoService.agregarAlCarrito(producto);
-    window.dispatchEvent(new CustomEvent('agregar-al-carrito', {
-      detail: `${producto.nombre} agregado al carrito`
-    }));
-  }
+  agregarAlCarrito(producto: Producto): void {
+    this.carritoService.agregarAlCarrito(producto);
+    window.dispatchEvent(new CustomEvent('agregar-al-carrito', {
+      detail: `${producto.nombre} agregado al carrito`
+    }));
+  }
 
-  abrirModalAdicionales() {
-    const initialState = { adicionales: this.listaDeAdicionales };
-    this.bsModalRef = this.modalService.show(ModalAdicionalesComponent, { initialState });
-  }
+  abrirModalAdicionales(producto: Producto) {
+    // 💡 CORRECCIÓN DE FLUJO: Antes de abrir el modal para PERSONALIZAR,
+    // nos aseguramos de que el producto ya exista en el carrito.
+    const itemEnCarrito = this.carritoService.obtenerItems().find(i => i.productoId === producto.productoId);
+    
+    if (!itemEnCarrito) {
+      // Si no está en el carrito, lo agregamos automáticamente
+      this.agregarAlCarrito(producto);
+    }
 
-  // 🔹 MÉTODOS DE PAGINACIÓN
-  get totalPaginas(): number {
-    return Math.ceil(this.listaDeProductos.length / this.productosPorPagina);
-  }
+    // Ahora, procedemos a abrir el modal, sabiendo que el ID del producto
+    // existe en la lista del carrito para la actualización.
+    const initialState = { 
+      adicionales: this.listaDeAdicionales, 
+      productoId: producto.productoId 
+    };
+    this.bsModalRef = this.modalService.show(ModalAdicionalesComponent, { initialState });
+  }
 
-  get productosPaginados(): Producto[] {
-    const inicio = (this.paginaActual - 1) * this.productosPorPagina;
-    return this.listaDeProductos.slice(inicio, inicio + this.productosPorPagina);
-  }
+  // 🔹 MÉTODOS DE PAGINACIÓN
+  get totalPaginas(): number {
+    return Math.ceil(this.listaDeProductos.length / this.productosPorPagina);
+  }
 
-  cambiarPagina(nuevaPagina: number): void {
-    if (nuevaPagina >= 1 && nuevaPagina <= this.totalPaginas) {
-      this.paginaActual = nuevaPagina;
-      window.scrollTo({ top: 0, behavior: 'smooth' }); 
-    }
-  }
+  get productosPaginados(): Producto[] {
+    const inicio = (this.paginaActual - 1) * this.productosPorPagina;
+    return this.listaDeProductos.slice(inicio, inicio + this.productosPorPagina);
+  }
+
+  cambiarPagina(nuevaPagina: number): void {
+    if (nuevaPagina >= 1 && nuevaPagina <= this.totalPaginas) {
+      this.paginaActual = nuevaPagina;
+      window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    }
+  }
 }

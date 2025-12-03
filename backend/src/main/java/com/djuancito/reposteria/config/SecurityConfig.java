@@ -40,53 +40,51 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
+       .authorizeHttpRequests(auth -> auth
+    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                // 1. OPTIONS siempre permitido
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+    // PÚBLICOS
+    .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
+    .requestMatchers("/api/qr/activos").permitAll()
+    .requestMatchers(HttpMethod.POST, "/api/contacto").permitAll()
+    .requestMatchers(HttpMethod.GET,
+        "/api/productos/**",
+        "/api/categorias/**",
+        "/api/resenas/**","/api/resenas/*","/api/resenas/todas",
+        "/api/promociones/**",
+        "/api/config/**",
+        "/api/confi/**",
+        "/api/productos-realizados",
+        "/api/adicionales",
+        "/api/temporada/**"
+    ).permitAll()
 
-                // 2. ENDPOINTS PÚBLICOS
-                .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
-                .requestMatchers("/api/qr/activos").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/contacto").permitAll()
-                .requestMatchers(HttpMethod.GET,
-                    "/api/productos/**",
-                    "/api/categorias/**",
-                    "/api/resenas/**",
-                    "/api/promociones/**",
-                    "/api/config/**",
-                    "/api/confi/**",
-                    "/api/productos-realizados",
-                    "/api/adicionales",
-                    "/api/temporada/**"
-                ).permitAll()
+    // CLIENTES AUTENTICADOS (cualquier usuario logueado)
+    .requestMatchers("/api/pedidos/**").authenticated()
+    .requestMatchers("/api/pedidos", "/api/pedidos/confirmar").authenticated()
+    .requestMatchers("/api/pedidos/usuario/**").authenticated()
+    .requestMatchers("/api/usuarios/mi-perfil").authenticated()
+    .requestMatchers("/api/contacto/mi-historial").authenticated()
+    .requestMatchers(HttpMethod.POST, "/api/resenas").authenticated()
 
-                // 3. ENDPOINTS QUE REQUIEREN AUTENTICACIÓN (cliente o admin)
-                .requestMatchers("/api/pedidos/**").authenticated()
-                .requestMatchers("/api/usuarios/mi-perfil").authenticated()
-                .requestMatchers("/api/contacto/mi-historial").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/resenas").authenticated() 
+    // SOLO ADMIN
+    .requestMatchers("/api/pedidos/todos").hasAuthority("ROLE_Administrador")
+    .requestMatchers("/api/pedidos/**/estado").hasAuthority("ROLE_Administrador")
+    .requestMatchers("/api/usuarios/todos", "/api/usuarios/modificar/**", "/api/usuarios/eliminar/**").hasAuthority("ROLE_Administrador")
+    .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_Administrador")
+    .requestMatchers("/api/contacto/todos").hasAuthority("ROLE_Administrador")
+    .requestMatchers("/api/pagos/**").hasAuthority("ROLE_Administrador")
+    .requestMatchers("/api/dashboard/admin").hasAuthority("ROLE_Administrador")
+    .requestMatchers("/api/promociones/todas").hasAuthority("ROLE_Administrador")
+    .requestMatchers("/api/resenas/todas").hasAuthority("ROLE_Administrador")
+    .requestMatchers("/api/resenas/**").hasAuthority("ROLE_Administrador")
+    .requestMatchers("/api/config/qr/**").hasAuthority("ROLE_Administrador")
+    .requestMatchers("/api/qr/admin").hasAuthority("ROLE_Administrador")
+    .requestMatchers("/api/config/garantias/**").hasAuthority("ROLE_Administrador")
 
-                // 4. ENDPOINTS SOLO PARA ADMIN
-                .requestMatchers("/api/pedidos/todos").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/usuarios/todos").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/contacto/todos").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/pagos/**/estado").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/pagos", "/api/pagos/**").hasAuthority("ROLE_Administrador")  
-                .requestMatchers("/api/pedidos/**/estado").hasAuthority("ROLE_Administrador")               
-                .requestMatchers("/api/pedidos/**/estado").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/dashboard/admin").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/promociones/todas").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/resenas/todas").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/resenas/**/estado").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/config/qr/**").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/qr/admin").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/config/garantias/admin").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/config/garantias/**").hasAuthority("ROLE_Administrador")
-                // ¡¡¡AL FINAL!!! 
-                .anyRequest().authenticated()
-            )
+    // Todo lo demás necesita autenticación
+    .anyRequest().authenticated()
+)
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -115,8 +113,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:4200"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
+        
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

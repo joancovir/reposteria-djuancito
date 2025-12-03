@@ -2,7 +2,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Producto } from '../modelos/producto';
-
+export interface Personalizacion {
+  descripcionExtra: string | null;
+  costoAdicional: number;
+  adicionalesSeleccionados: number[]; 
+}
 export interface ItemCarrito {
   productoId: number;
   nombre: string;
@@ -16,7 +20,7 @@ export interface ItemCarrito {
   descuentoAplicado?: number;
   esOfertaEspecial?: boolean;
   personalizable?: boolean;
-  personalizacion?: any;
+  personalizacion?: Personalizacion; // Usar la nueva interfaz Personalizacion
 }
 
 @Injectable({ providedIn: 'root' })
@@ -117,4 +121,28 @@ export class CarritoService {
       }
     }
   }
+
+  actualizarPersonalizacion(productoId: number, personalizacion: Personalizacion): void {
+    const items = this.items.getValue();
+    const item = items.find(i => i.productoId === productoId);
+
+    if (item) {
+      // 1. Actualizar el objeto de personalización
+      item.personalizacion = personalizacion;
+
+     
+      const costoAdicional = personalizacion.costoAdicional || 0;
+      item.precioUnitario = item.precioBase + costoAdicional;
+    
+      
+      // 3. Recalcular el subtotal
+      item.subtotal = item.precioUnitario * item.cantidad;
+
+      // 4. Notificar a los suscriptores y guardar
+      this.items.next(items);
+      this.guardar();
+    } else {
+      console.error(`No se encontró el producto con ID ${productoId} en el carrito.`);
+    }
+  }
 }

@@ -1,21 +1,40 @@
+/* Estilos generales para la estructura del modal */
 .modal-body h5 {
-  margin-bottom: 15px;
+  /* Margen estándar para el título de la sección */
+  margin-bottom: 15px; 
 }
 
+/* --- ESTILOS DE LA LISTA DE ADICIONALES --- */
+
 .list-group-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  /* CLAVE: Usar Flexbox para distribuir el contenido */
+  display: flex; 
+  align-items: center; /* Alinea verticalmente los elementos */
+  /* CLAVE: Empuja el costo al extremo derecho y mantiene el checkbox/nombre a la izquierda */
+  justify-content: space-between; 
+  padding: 12px 15px;
+  border: 1px solid #eee; 
+  margin-bottom: -1px; /* Para que parezca una lista unificada */
+  cursor: pointer;
+}
+
+/* Espacio entre el checkbox y el texto del adicional */
+.list-group-item input.form-check-input {
+  margin-right: 10px;
+  flex-shrink: 0; /* Evita que el checkbox se encoja */
 }
 
 .costo-adicional {
-  margin-left: auto; /* Empuja el costo a la derecha */
+  /* Se alinea automáticamente a la derecha por justify-content: space-between */
   font-weight: bold;
-  color: #007bff;
+  color: #007bff; /* Color azul */
+  flex-shrink: 0; /* Evita que el precio se comprima si el texto del nombre es muy largo */
 }
 
+/* --- ESTILOS DE INSTRUCCIONES ESPECIALES --- */
+
 .form-group {
-  margin-top: 20px;
+  margin-top: 20px; /* Separación de la lista de adicionales */
 }
 
 .form-group label {
@@ -28,4 +47,5 @@
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  resize: vertical; /* Permite redimensionar solo verticalmente */
 }

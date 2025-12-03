@@ -19,22 +19,22 @@
     <a routerLink="../personalizar-torta" class="btn-personalizada">Pide tu Torta Personalizada</a>
   </div>
 
-  <div class="product-grid">
-    <div class="product-card" *ngFor="let producto of productosPaginados">
-      <span *ngIf="producto.personalizable" class="badge-personalizable">Personalizable</span>
-      <img [src]="producto.imagenUrl" [alt]="producto.nombre">
-      <div class="product-info">
-        <h3>{{ producto.nombre }}</h3>
-        <p class="category">{{ producto.categoria }}</p>
-        <p class="description">{{ producto.descripcion }}</p>
-        <div class="price-action">
-          <span class="price">S/ {{ producto.precioBase }}</span>
-          <button *ngIf="producto.personalizable" (click)="abrirModalAdicionales()" class="btn-adicionales">Ver Adicionales</button>
-          <button (click)="agregarAlCarrito(producto)" class="btn-pide">Añadir al Carrito</button>
-        </div>
-      </div>
-    </div>
-  </div>
+ <div class="product-grid">
+    <div class="product-card" *ngFor="let producto of productosPaginados">
+      <span *ngIf="producto.personalizable" class="badge-personalizable">Personalizable</span>
+      <img [src]="producto.imagenUrl" [alt]="producto.nombre">
+      <div class="product-info">
+        <h3>{{ producto.nombre }}</h3>
+        <p class="category">{{ producto.categoria }}</p>
+        <p class="description">{{ producto.descripcion }}</p>
+        <div class="price-action">
+          <span class="price">S/ {{ producto.precioBase }}</span>
+          <button *ngIf="producto.personalizable" (click)="abrirModalAdicionales(producto)" class="btn-adicionales">Ver Adicionales</button>
+          <button (click)="agregarAlCarrito(producto)" class="btn-pide">Añadir al Carrito</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- 🔹 PAGINACIÓN -->
   <div class="pagination" *ngIf="totalPaginas > 1">
