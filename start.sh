@@ -1,16 +1,16 @@
 #!/bin/bash
 
-echo "Iniciando D.Juancito Repostería (modo producción Railway)"
+echo "Iniciando D.Juancito Repostería - Modo Railway PRO"
 
-# 1. Compila el backend
+# Compila el backend
 cd backend
-./mvnw clean package -DskipTests
+./mvnw clean package -DskipTests -q
 
-# 2. Copia el build del Angular dentro del JAR de Spring Boot
+# Copia el build de Angular dentro del JAR (para que Spring Boot lo sirva)
 echo "Copiando frontend al backend..."
 mkdir -p target/classes/static
-cp -r ../frontend/dist/reposteria-djuancito/browser/* target/classes/static/
+cp -r ../frontend/dist/reposteria-djuancito/browser/* target/classes/static/ 2>/dev/null || cp -r ../frontend/dist/reposteria-djuancito/browser/. target/classes/static/
 
-# 3. Arranca solo el backend (él va a servir el frontend estático)
+# Arranca solo Spring Boot (él sirve Angular + API)
 echo "Arrancando Spring Boot en puerto $PORT..."
-java -jar target/*.jar
+exec java -jar target/*.jar
