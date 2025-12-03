@@ -12,8 +12,6 @@ public interface ProductoRepositorio extends JpaRepository<Producto, Integer> {
     
     List<Producto> findByPersonalizable(boolean personalizable);
     
-    // --- 2. CORRECCIÓN AQUÍ ---
-    // El método debe buscar por el tipo Enum 'Categoria', no por 'String'
     List<Producto> findByCategoria(Categoria categoria);
 
     List<Producto> findByNombreContainingIgnoreCase(String nombre);

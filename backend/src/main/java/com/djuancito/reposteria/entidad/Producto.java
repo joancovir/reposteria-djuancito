@@ -31,6 +31,9 @@ public class Producto {
     @Column(name = "imagenUrl") 
     private String imagenUrl;
 
+    @Column(name = "cloudinary_public_id")  
+    private String cloudinaryPublicId;      
+
     @Column(name = "personalizable")
     private boolean personalizable; 
 
