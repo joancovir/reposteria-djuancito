@@ -9,6 +9,7 @@ export interface Producto {
   descripcion?: string; 
   precioBase: number;
   imagenUrl: string;
+  cloudinaryPublicId?: string;  
   personalizable: boolean;
   personalizacion?: any; 
   estado?: EstadoProducto | string; 

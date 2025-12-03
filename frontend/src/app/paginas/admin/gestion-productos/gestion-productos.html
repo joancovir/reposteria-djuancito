@@ -1,156 +1,116 @@
 <div class="gestion-container">
+
   <div class="header-section">
     <h2>Gestión de Productos</h2>
     <button class="btn-accion btn-crear" (click)="crearProducto()">+ Añadir Producto</button>
   </div>
-<!-- FILTROS -->
+
+  <!-- FILTROS -->
   <div class="filtros mb-4">
-    <input type="text" class="form-control d-inline-block w-50"
-           placeholder="Buscar por nombre..."
+    <input type="text" class="form-control d-inline-block w-50" placeholder="Buscar..." 
            [(ngModel)]="buscar" (input)="filtrarYPaginar()">
 
-    <select class="form-control d-inline-block w-25 ms-3"
-            [(ngModel)]="categoriaFiltro" (change)="filtrarYPaginar()">
+    <select class="form-control d-inline-block w-25 ms-3" [(ngModel)]="categoriaFiltro" (change)="filtrarYPaginar()">
       <option value="todas">Todas las categorías</option>
-      <option *ngFor="let cat of categoriasDisponibles" [value]="cat">
-        {{ cat | titlecase }}
-      </option>
+      <option *ngFor="let cat of categoriasDisponibles" [value]="cat">{{ cat | titlecase }}</option>
     </select>
   </div>
 
-  <div *ngIf="isLoading" class="loading">Cargando productos...</div>
+  <!-- ESTADOS -->
+  <div *ngIf="isLoading" class="text-center py-4">Cargando productos...</div>
   <div *ngIf="errorMensaje" class="alert alert-danger">{{ errorMensaje }}</div>
 
-  <div *ngIf="!isLoading && listaDeProductos.length > 0" class="table-responsive">
+  <!-- TABLA -->
+  <div *ngIf="!isLoading && productosPaginados.length > 0" class="table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>
           <th>Imagen</th>
           <th>Nombre</th>
           <th>Categoría</th>
-          <th>Precio Base (S/)</th>
+          <th>Precio</th>
           <th>Personalizable</th>
           <th>Estado</th>
           <th>Acciones</th>
         </tr>
       </thead>
-     <tbody>
-  <tr *ngFor="let producto of productosPaginados">
-    <td>
-      <img [src]="producto.imagenUrl || 'https://placehold.co/50x50/cccccc/333333?text=Sin+Img'" 
-           [alt]="producto.nombre" class="product-image-thumbnail"
-           onerror="this.onerror=null; this.src='https://placehold.co/50x50/cccccc/333333?text=Sin+Img'">
-    </td>
-    <td>{{ producto.nombre }}</td>
-    <td>{{ producto.categoria | titlecase }}</td>
-    <td>{{ producto.precioBase | number:'1.2-2' }}</td>
-    <td>{{ producto.personalizable ? 'Sí' : 'No' }}</td>
-    <td>
-      <span class="badge" [ngClass]="getEstadoClass(producto.estado)">
-        {{ producto.estado | titlecase }}
-      </span>
-    </td>
-    <td>
-      <button class="btn-action btn-edit" (click)="editarProducto(producto)" title="Editar">✏️</button>
-      <button class="btn-action btn-delete" (click)="eliminarProducto(producto)" title="Eliminar">🗑️</button>
-    </td>
-  </tr>
-</tbody>
+      <tbody>
+        <tr *ngFor="let p of productosPaginados">
+          <td>
+            <img [src]="p.imagenUrl || 'https://placehold.co/60x60?text=Sin+Img'" 
+                 class="product-image-thumbnail" alt="{{p.nombre}}">
+          </td>
+          <td>{{ p.nombre }}</td>
+          <td>{{ p.categoria | titlecase }}</td>
+          <td>S/ {{ p.precioBase | number:'1.2-2' }}</td>
+          <td>{{ p.personalizable ? 'Sí' : 'No' }}</td>
+          <td><span class="badge" [ngClass]="getEstadoClass(p.estado)">{{ p.estado | titlecase }}</span></td>
+          <td>
+            <button class="btn btn-sm btn-warning me-2" (click)="editarProducto(p)">Editar</button>
+            <button class="btn btn-sm btn-danger" (click)="eliminarProducto(p)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
     </table>
+
     <!-- PAGINACIÓN -->
-    <div class="paginacion text-center mt-4" *ngIf="totalPaginas() > 1">
-      <button class="btn btn-outline-primary me-3"
-              [disabled]="paginaActual === 1"
+    <div class="text-center mt-4" *ngIf="totalPaginas() > 1">
+      <button class="btn btn-outline-primary me-3" [disabled]="paginaActual === 1" 
               (click)="paginaActual = paginaActual - 1">Anterior</button>
-      <span class="mx-3">Página {{ paginaActual }} de {{ totalPaginas() }}</span>
-      <button class="btn btn-outline-primary ms-3"
-              [disabled]="paginaActual === totalPaginas()"
+      <span>Página {{ paginaActual }} de {{ totalPaginas() }}</span>
+      <button class="btn btn-outline-primary ms-3" [disabled]="paginaActual === totalPaginas()" 
               (click)="paginaActual = paginaActual + 1">Siguiente</button>
     </div>
   </div>
-  
 
-  <div *ngIf="!isLoading && listaDeProductos.length === 0 && !errorMensaje" class="no-data">
-    No hay productos registrados en el catálogo.
-  </div>
+  <!-- MODAL -->
+  <div class="modal-overlay" *ngIf="productoSeleccionado" (click)="cancelarEdicion()"></div>
+  <div class="modal-content" *ngIf="productoSeleccionado" (click)="$event.stopPropagation()">
+    <h3>{{ productoSeleccionado.productoId === 0 ? 'Nuevo Producto' : 'Editar Producto' }}</h3>
 
-  <div class="modal-overlay" *ngIf="productoSeleccionado">
-    <div class="modal-content">
-      <h3 class="modal-title">
-        {{ productoSeleccionado.productoId === 0 ? 'Crear Nuevo Producto' : 'Editar Producto Existente' }}
-      </h3>
-      
-      <form (ngSubmit)="guardarEdicion()" class="product-form">
-        
-        <div class="form-group">
-          <label for="nombre">Nombre:</label>
-          <input id="nombre" name="nombre" type="text" [(ngModel)]="productoSeleccionado.nombre" required>
-        </div>
+    <form (ngSubmit)="guardarEdicion()">
+      <div class="form-group mb-3">
+        <label>Nombre *</label>
+        <input type="text" class="form-control" [(ngModel)]="productoSeleccionado.nombre" name="nombre" required>
+      </div>
 
-        <div class="form-group">
-          <label for="categoria">Categoría:</label>
-          <select id="categoria" name="categoria" [(ngModel)]="productoSeleccionado.categoria" required>
-            <option *ngFor="let cat of categoriasDisponibles" [value]="cat">
-              {{ cat | titlecase }}
-            </option>
-          </select>
-        </div>
+      <div class="form-group mb-3">
+        <label>Categoría *</label>
+        <select class="form-control" [(ngModel)]="productoSeleccionado.categoria" name="categoria">
+          <option *ngFor="let cat of categoriasDisponibles" [value]="cat">{{ cat | titlecase }}</option>
+        </select>
+      </div>
 
-        <div class="form-group">
-          <label for="precioBase">Precio Base (S/):</label>
-          <input id="precioBase" name="precioBase" type="number" 
-                 step="0.01" min="0.01"
-                 pattern="[0-9]*[.]?[0-9]*" 
-                 [(ngModel)]="productoSeleccionado.precioBase" required>
-        </div>
-        
-        <div class="form-group checkbox-group">
-          <label for="personalizable">¿Es personalizable?</label>
-          <input id="personalizable" name="personalizable" type="checkbox" [(ngModel)]="productoSeleccionado.personalizable">
-        </div>
-        
-        <div class="form-group" *ngIf="productoSeleccionado.productoId !== 0">
-          <label for="estado">Estado:</label>
-          <select id="estado" name="estado" [(ngModel)]="productoSeleccionado.estado">
-            <option value="activo">Activo</option>
-            <option value="inactivo">Inactivo</option>
-          </select>
-        </div>
+      <div class="form-group">
+        <label>Precio Base (S/)*</label>
+        <input type="number" step="0.50" class="form-control" [(ngModel)]="productoSeleccionado.precioBase" name="precio" required>
+      </div>
 
-        <div class="form-group form-group-url">
-          <label for="imagenFile">Imagen:</label>
-          <div class="url-input-group">
-            <input id="imagenUrlDisplay" type="text" 
-                   [ngModel]="simularRuta || productoSeleccionado.imagenUrl || 'Seleccionar archivo...'" 
-                   name="imagenUrlDisplay" placeholder="Ruta de la imagen" readonly>
-            
-            <input #fileInput id="imagenFile" type="file" 
-                   style="display: none;" 
-                   (change)="onArchivoSeleccionado($event)" 
-                   accept="image/*">
-                   
-            <button type="button" class="btn-url-select" (click)="fileInput.click()">
-              Seleccionar Archivo 📁
-            </button>
-          </div>
-          <small *ngIf="archivoSeleccionado" class="text-secondary">
-             Archivo seleccionado: **{{ archivoSeleccionado.name }}**. (La URL en el modelo será de tipo assets).
-          </small>
-        </div>
+      <div class="form-group form-check mt-3">
+        <input type="checkbox" class="form-check-input" [(ngModel)]="productoSeleccionado.personalizable" name="personalizable">
+        <label class="form-check-label">Es personalizable</label>
+      </div>
 
-
-        <div class="form-actions">
-          <button type="button" class="btn-accion btn-cancel" (click)="cancelarEdicion()">
-            Cancelar
-          </button>
-          <button type="submit" class="btn-accion btn-save" [disabled]="isLoading">
-            {{ productoSeleccionado.productoId === 0 ? 'Crear Producto' : 'Guardar Cambios' }}
+      <div class="form-group mt-4">
+        <label>Imagen del producto</label>
+        <div class="url-input-group">
+          <input type="text" class="form-control" [value]="simularRuta || 'Sin imagen'" readonly>
+          <input #fileInput type="file" hidden accept="image/*" (change)="onArchivoSeleccionado($event)">
+          <button type="button" class="btn btn-outline-secondary" (click)="fileInput.click()">
+            Seleccionar Foto
           </button>
         </div>
-        
-        <div *ngIf="errorMensaje" class="alert-danger-inline">{{ errorMensaje }}</div>
-      </form>
-    </div>
+        <small class="text-success" *ngIf="productoSeleccionado.imagenUrl">
+          Imagen subida correctamente a la nube
+        </small>
+      </div>
+
+      <div class="form-actions mt-4">
+        <button type="button" class="btn btn-secondary me-3" (click)="cancelarEdicion()">Cancelar</button>
+        <button type="submit" class="btn btn-success" [disabled]="isLoading">
+          {{ productoSeleccionado.productoId === 0 ? 'Crear' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
   </div>
-  
 </div>

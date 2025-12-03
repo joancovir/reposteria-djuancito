@@ -14,21 +14,22 @@ import { ProductoService } from '../../../servicios/producto';
 export class GestionProductos implements OnInit {
 
   listaDeProductos: Producto[] = [];
-  productosFiltrados: Producto[] = [];  
-  // === ESTADOS ===
+  productosFiltrados: Producto[] = [];
   isLoading = true;
   errorMensaje: string | null = null;
 
+  // Filtros y paginación
   buscar: string = '';
   categoriaFiltro: string = 'todas';
   paginaActual: number = 1;
   itemsPorPagina: number = 10;
+  categoriasDisponibles: string[] = [];
 
+  // Formulario
   productoSeleccionado: Producto | null = null;
   archivoSeleccionado: File | null = null;
   simularRuta: string = '';
-
-  categoriasDisponibles: string[] = ['torta', 'postre', 'bocadito'];
+  cloudinaryPublicId: string = '';  // ← para guardar el public_id
 
   private productoService = inject(ProductoService);
 
@@ -42,29 +43,29 @@ export class GestionProductos implements OnInit {
     this.productoService.getProductos().subscribe({
       next: (data) => {
         this.listaDeProductos = data;
-        this.filtrarYPaginar(); // ← Aplica filtros al cargar
+        this.categoriasDisponibles = this.getCategoriasUnicas();
+        this.filtrarYPaginar();
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error al cargar productos:', err);
-        this.errorMensaje = 'No se pudieron cargar los productos. Revise la conexión.';
+        this.errorMensaje = 'Error al cargar productos. Revisa tu conexión.';
         this.isLoading = false;
       }
     });
   }
 
-  // === FILTROS Y PAGINACIÓN ===
+  getCategoriasUnicas(): string[] {
+    const cats = this.listaDeProductos.map(p => p.categoria);
+    return [...new Set(cats)];
+  }
+
   filtrarYPaginar(): void {
     let temp = [...this.listaDeProductos];
 
     if (this.buscar.trim()) {
       const term = this.buscar.toLowerCase();
-      temp = temp.filter(p =>
-        p.nombre.toLowerCase().includes(term) ||
-        (p.descripcion?.toLowerCase().includes(term) ?? false)
-      );
+      temp = temp.filter(p => p.nombre.toLowerCase().includes(term));
     }
-
     if (this.categoriaFiltro !== 'todas') {
       temp = temp.filter(p => p.categoria === this.categoriaFiltro);
     }
@@ -82,98 +83,106 @@ export class GestionProductos implements OnInit {
     return Math.ceil(this.productosFiltrados.length / this.itemsPorPagina);
   }
 
-  // === CRUD ===
   crearProducto(): void {
     this.productoSeleccionado = {
       productoId: 0,
       nombre: '',
-      categoria: 'torta',
+      descripcion: '',
       precioBase: 0,
+      categoria: this.categoriasDisponibles[0] || 'torta',
+      imagenUrl: '',
+      cloudinaryPublicId: '',
       personalizable: false,
-      estado: 'activo',
-      imagenUrl: ''
+      estado: 'activo'
     };
     this.archivoSeleccionado = null;
     this.simularRuta = '';
-    this.errorMensaje = null;
+    this.cloudinaryPublicId = '';
   }
 
   editarProducto(producto: Producto): void {
     this.productoSeleccionado = { ...producto };
-    this.simularRuta = producto.imagenUrl ? producto.imagenUrl.split('/').pop() || '' : '';
+    this.cloudinaryPublicId = producto.cloudinaryPublicId || '';
+    this.simularRuta = producto.imagenUrl ? 'Imagen ya subida a la nube' : '';
     this.archivoSeleccionado = null;
-    this.errorMensaje = null;
   }
 
   cancelarEdicion(): void {
     this.productoSeleccionado = null;
     this.archivoSeleccionado = null;
     this.simularRuta = '';
-    this.errorMensaje = null;
+    this.cloudinaryPublicId = '';
+  }
+
+  // SUBIDA AUTOMÁTICA A CLOUDINARY
+  onArchivoSeleccionado(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    this.archivoSeleccionado = input.files[0];
+    this.simularRuta = this.archivoSeleccionado.name;
+
+    this.isLoading = true;
+    this.productoService.subirImagen(this.archivoSeleccionado).subscribe({
+      next: (res: any) => {
+        if (this.productoSeleccionado) {
+          this.productoSeleccionado.imagenUrl = res.url;
+          this.cloudinaryPublicId = res.public_id;
+        }
+        this.isLoading = false;
+        alert('¡Foto subida a Cloudinary con éxito!');
+      },
+      error: (err) => {
+        console.error('Error Cloudinary:', err);
+        alert('Error al subir la imagen. Intenta otra vez.');
+        this.isLoading = false;
+      }
+    });
   }
 
   guardarEdicion(): void {
     if (!this.productoSeleccionado) return;
 
     if (!this.productoSeleccionado.nombre.trim() || this.productoSeleccionado.precioBase <= 0) {
-      this.errorMensaje = 'Nombre y precio base son obligatorios.';
+      alert('Nombre y precio son obligatorios');
       return;
     }
 
     this.isLoading = true;
-    const esNuevo = this.productoSeleccionado.productoId === 0;
 
-    const observable = esNuevo
-      ? this.productoService.crearProducto(this.productoSeleccionado)
-      : this.productoService.actualizarProducto(this.productoSeleccionado.productoId, this.productoSeleccionado);
+    const productoParaEnviar = {
+      ...this.productoSeleccionado,
+      cloudinaryPublicId: this.cloudinaryPublicId || this.productoSeleccionado.cloudinaryPublicId
+    };
+
+    const observable = this.productoSeleccionado.productoId === 0
+      ? this.productoService.crearProducto(productoParaEnviar)
+      : this.productoService.actualizarProducto(this.productoSeleccionado.productoId, productoParaEnviar);
 
     observable.subscribe({
       next: () => {
         this.cargarProductos();
         this.cancelarEdicion();
-        alert(esNuevo ? 'Producto creado con éxito!' : 'Producto actualizado!');
+        alert('¡Producto guardado con éxito!');
       },
       error: (err) => {
-        console.error('Error al guardar:', err);
-        this.errorMensaje = 'Error al guardar el producto.';
+        console.error(err);
+        alert('Error al guardar el producto');
         this.isLoading = false;
       }
     });
   }
 
   eliminarProducto(producto: Producto): void {
-    if (confirm(`¿Seguro que deseas eliminar "${producto.nombre}"?`)) {
-      this.isLoading = true;
+    if (confirm(`¿Eliminar "${producto.nombre}" para siempre?`)) {
       this.productoService.eliminarProducto(producto.productoId).subscribe({
         next: () => this.cargarProductos(),
-        error: (err) => {
-          this.errorMensaje = 'Error al eliminar el producto.';
-          this.isLoading = false;
-        }
+        error: () => alert('Error al eliminar')
       });
     }
   }
 
-  // === IMAGEN ===
-  onArchivoSeleccionado(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) {
-      this.archivoSeleccionado = null;
-      this.simularRuta = '';
-      return;
-    }
-
-    this.archivoSeleccionado = input.files[0];
-    this.simularRuta = this.archivoSeleccionado.name;
-
-    if (this.productoSeleccionado) {
-      const cat = this.productoSeleccionado.categoria;
-      const carpeta = this.categoriasDisponibles.includes(cat) ? cat : 'otros';
-      this.productoSeleccionado.imagenUrl = `assets/imagenes/${carpeta}/${this.archivoSeleccionado.name}`;
-    }
-  }
-
   getEstadoClass(estado: string = ''): string {
-    return estado === 'activo' ? 'estado-activo' : 'estado-inactivo';
+    return estado === 'activo' ? 'badge bg-success' : 'badge bg-secondary';
   }
 }

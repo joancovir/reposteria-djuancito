@@ -1,60 +1,60 @@
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators'; 
-import { Producto } from '../modelos/producto'; 
+import { Producto } from '../modelos/producto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductoService {
-  
-  private apiUrl = 'http://localhost:8080/api/productos';
-  private archivoUrl = 'http://localhost:8080/api/archivos';
+
+  // CAMBIA ESTO CUANDO ESTÉS EN PRODUCCIÓN (Railway)
+  private baseUrl = 'https://reposteria-djuancito-production.up.railway.app/api';
+
+  // PARA PRUEBAS LOCALES (descomenta la de abajo y comenta la de arriba)
+  // private baseUrl = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient) { }
 
-  
-  subirImagen(archivo: File): Observable<string> {
+  // SUBIR IMAGEN A CLOUDINARY (AHORA SÍ FUNCIONA)
+  subirImagen(file: File): Observable<any> {
     const formData = new FormData();
-    formData.append('file', archivo, archivo.name); 
+    formData.append('file', file);
 
-    return this.http.post<{ url: string }>(`${this.archivoUrl}/upload`, formData).pipe(
-        map(response => response.url) 
-    );
+    return this.http.post(`${this.baseUrl}/cloudinary/subir`, formData);
+    // Devuelve: { url: "https://...", public_id: "reposteria-djuancito/xxx" }
   }
 
-
+  // CRUD DE PRODUCTOS
   getProductos(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(this.apiUrl);
+    return this.http.get<Producto[]>(`${this.baseUrl}/productos`);
   }
+
   getProductosPorCategoria(categoria: string): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${this.apiUrl}/categoria/${categoria}`);
+    return this.http.get<Producto[]>(`${this.baseUrl}/productos/categoria/${categoria}`);
   }
 
   getProductosPersonalizables(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${this.apiUrl}/personalizables`);
+    return this.http.get<Producto[]>(`${this.baseUrl}/productos/personalizables`);
   }
 
   getProductosPredeterminados(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${this.apiUrl}/predeterminados`);
+    return this.http.get<Producto[]>(`${this.baseUrl}/productos/predeterminados`);
   }
-  
+
   getProductosPorNombre(termino: string): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${this.apiUrl}/buscar/${termino}`);
+    return this.http.get<Producto[]>(`${this.baseUrl}/productos/buscar/${termino}`);
   }
 
-
-  crearProducto(producto: Omit<Producto, 'productoId'>): Observable<Producto> {
-    return this.http.post<Producto>(this.apiUrl, producto);
+  crearProducto(producto: any): Observable<Producto> {
+    return this.http.post<Producto>(`${this.baseUrl}/productos`, producto);
   }
 
-  actualizarProducto(id: number, producto: Producto): Observable<Producto> {
-    return this.http.put<Producto>(`${this.apiUrl}/${id}`, producto);
+  actualizarProducto(id: number, producto: any): Observable<Producto> {
+    return this.http.put<Producto>(`${this.baseUrl}/productos/${id}`, producto);
   }
 
   eliminarProducto(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+    return this.http.delete<any>(`${this.baseUrl}/productos/${id}`);
   }
 }
