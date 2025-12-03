@@ -4,9 +4,8 @@ import { AutenticacionService } from '../servicios/autenticacion';
 
 export const autenticacionInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AutenticacionService);
-  const token = authService.obtenerToken(); // Necesitaremos crear este método
+  const token = authService.obtenerToken(); 
 
-  // Si el token existe, clonamos la petición y le añadimos el header de autorización
   if (token) {
     const cloned = req.clone({
       setHeaders: {
@@ -16,6 +15,5 @@ export const autenticacionInterceptor: HttpInterceptorFn = (req, next) => {
     return next(cloned);
   }
 
-  // Si no hay token, simplemente dejamos pasar la petición original
   return next(req);
 };

@@ -1,0 +1,121 @@
+<ng-container *ngIf="pedido">
+
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">
+      {{ modoEdicion ? 'Gestión de Pedido' : 'Detalles del Pedido' }} - ORD-{{ pedido.pedidoId }}
+    </h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="cerrarModal()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+
+    <!-- 1. INFORMACIÓN DEL CLIENTE Y PEDIDO (Siempre visible) -->
+    <div class="pedido-info-grid">
+      <div class="info-columna">
+        <h5>Información del Cliente</h5>
+        <p><strong>Nombre:</strong> {{ getNombreCliente() }}</p>
+        <p><strong>Email:</strong> {{ getEmailCliente() }}</p>
+        <p><strong>Teléfono:</strong> {{ getTelefonoCliente() }}</p>
+      </div>
+      <div class="info-columna">
+        <h5>Detalles del Pedido</h5>
+        <p><strong>Tipo:</strong> {{ (pedido.nota && pedido.nota.toLowerCase().includes('personalizada')) ? 'Torta Personalizada' : 'Productos Catálogo' }}</p>
+        <p><strong>Total:</strong> S/ {{ pedido.total | number:'1.2-2' }}</p>
+        <p><strong>Fecha Pedido:</strong> {{ pedido.fechaPedido | date:'yyyy-MM-dd HH:mm' }}</p>
+        <p><strong>Entrega Estimada:</strong> {{ '-' }}</p>
+         <p *ngIf="pedido?.montoGarantia && pedido.montoGarantia ">
+            <strong>Garantía Req:</strong> S/ {{ pedido.montoGarantia | number:'1.2-2' }}
+        </p>
+      </div>
+    </div>
+    <hr class="separator">
+    
+    <!-- 2. GESTIÓN DEL ESTADO DEL PEDIDO (SOLO EN MODO EDICIÓN) -->
+    <ng-container *ngIf="modoEdicion">
+        <h5 class="section-title">Actualizar Estado del Pedido</h5>
+        <div class="estado-gestion-container">
+            <span class="current-status">
+                Estado Actual: 
+                <span class="badge" [ngClass]="getEstadoClass(pedido.estado)">
+                  {{ pedido.estado | titlecase }}
+                </span>
+            </span>
+            <div class="estado-actions">
+                <button 
+                  *ngFor="let estado of posiblesEstados" 
+                  [ngClass]="{'btn-estado': true, 'btn-estado-active': estado === estadoSeleccionado}"
+                  (click)="cambiarEstadoPedido(estado)"
+                  [disabled]="isUpdatingEstadoPedido || estado === pedido.estado"
+                  [title]="estado === pedido.estado ? 'Este es el estado actual' : 'Cambiar a ' + estado | titlecase"
+                >
+                    {{ estado | titlecase }}
+                </button>
+            </div>
+            <div *ngIf="isUpdatingEstadoPedido" class="loading-status">
+                Actualizando estado... 
+                <span class="spinner-estado">⚙️</span>
+            </div>
+            <div *ngIf="errorUpdateEstado" class="alert-error">
+                {{ errorUpdateEstado }}
+            </div>
+        </div>
+        <hr class="separator">
+    </ng-container>
+
+    <!-- 3. DETALLES DE PRODUCTO (Siempre visible) -->
+    <h5 class="section-title">Productos del Pedido ({{ pedido.detalles?.length || 0 }})</h5>
+    <div *ngIf="pedido.detalles?.length; else noDetalles" class="product-list">
+      <ul>
+        <li *ngFor="let detalle of pedido.detalles" class="product-item">
+          <div class="product-info">
+            <span class="product-name">{{ detalle.producto?.nombre || 'Producto Eliminado' }}</span>
+            <span class="product-qty">({{ detalle.cantidad }} ud.)</span>
+            <div *ngIf="detalle.personalizacion" class="customization-details">
+                <small>📝 {{ detalle.personalizacion.descripcionExtra }}</small>
+            </div>
+          </div>
+          <div class="price-details">
+            <span *ngIf="detalle.descuentoAplicado && detalle.descuentoAplicado > 0" class="original-price">
+              S/ {{ detalle.precioUnitario | number:'1.2-2' }}
+            </span>
+            <span class="product-subtotal">
+              S/ {{ (detalle.precioUnitario * detalle.cantidad) - (detalle.descuentoAplicado || 0) + (detalle.personalizacion?.costoAdicional || 0) | number:'1.2-2' }}
+            </span>
+             <span *ngIf="detalle.personalizacion?.costoAdicional" class="customization-total-cost">
+              + Pers: S/ {{ detalle.personalizacion?.costoAdicional| number:'1.2-2' }}
+            </span>
+            <small *ngIf="detalle.descuentoAplicado && detalle.descuentoAplicado > 0" class="discount-applied">
+              (- S/ {{ detalle.descuentoAplicado | number:'1.2-2' }} dto.)
+            </small>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <ng-template #noDetalles>
+      <p>No se encontraron detalles para este pedido.</p>
+    </ng-template>
+    <hr class="separator">
+    
+    <!-- 4. ESTADO DE PAGO (Siempre visible) -->
+    <h5 class="section-title">Estado del Pago</h5>
+     <div *ngIf="pedido.pagos?.length || modoEdicion" class="payment-summary" [ngClass]="{'editable': modoEdicion}">
+        <span class="badge" [ngClass]="getOverallPagoStatusClass()">
+            {{ getOverallPagoStatusText() }}
+        </span>
+        <!-- Botón de gestión visible en ambos modos, PERO más prominente en Edición -->
+        <button class="btn-manage-payments" [ngClass]="{'btn-action-gestion': modoEdicion}" (click)="abrirModalGestionPago()" title="Gestionar Pagos y Validaciones">
+            {{ modoEdicion ? 'Gestionar Pagos' : 'Ver Pagos' }}
+             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/>
+                <path d="M2.5 5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+              </svg>
+        </button>
+    </div>
+    <div *ngIf="!pedido.pagos?.length && !modoEdicion" class="payment-summary">
+        <span class="badge pago-no-registrado">Sin Pagos Registrados</span>
+    </div>
+
+  </div>
+</ng-container>

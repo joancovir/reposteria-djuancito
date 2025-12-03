@@ -1,0 +1,125 @@
+/*
+ * RUTA: src/app/paginas/cliente/mi-perfil/mi-perfil.component.css
+ * ARCHIVO NUEVO
+ */
+.perfil-container {
+  padding: 2rem;
+}
+
+.perfil-container h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.perfil-container p {
+  font-size: 1rem;
+  color: #6c757d;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  box-sizing: border-box; /* Asegura que el padding no afecte el ancho */
+}
+
+.form-control:focus {
+  color: #495057;
+  background-color: #fff;
+  border-color: #fd7e14;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
+}
+
+.form-control[disabled] {
+  background-color: #e9ecef;
+  opacity: 1;
+}
+
+.form-group small {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.btn-guardar {
+  background-color: #fd7e14;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+  margin-top: 1rem;
+}
+
+.btn-guardar:hover {
+  background-color: #e66a00;
+}
+
+/* --- Estilos para Alertas --- */
+.loading {
+  padding: 1rem;
+  text-align: center;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.alert {
+  padding: 1rem;
+  margin-top: 1.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid transparent;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}/* Estilos para mensajes de error de validación */
+.text-danger {
+  color: #dc3545; /* Rojo */
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block; /* Asegura que ocupe su propia línea */
+}
+
+/* Separador entre secciones */
+.separator {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  border: 0;
+  border-top: 1px solid #dee2e6; /* Gris claro */
+}
+
+/* Añade margen a las alertas */
+.mt-3 {
+  margin-top: 1rem !important;
+}

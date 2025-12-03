@@ -1,9 +1,16 @@
-// Ruta sugerida: src/app/modelos/pedido.ts
+
+import { Usuario } from './usuario';
+import { DetallePedido } from './detalle-pedido';
+import { Pago } from './pago';
+
 export interface Pedido {
   pedidoId: number;
-  usuarioId: number; // Esto se mantendrá si solo mapeas el ID
-  fechaPedido: string;
-  estado: string;
+  usuario?: Usuario; 
+  fechaPedido: string; 
+  estado: string; 
   total: number;
-  // Añade todos los demás campos de tu Entidad Pedido.java
+  nota?: string; 
+  detalles?: DetallePedido[]; 
+  pagos?: Pago[]; 
+  montoGarantia?: number; 
 }

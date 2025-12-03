@@ -1,0 +1,52 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Confirmar tu Pedido</h4>
+        </div>
+        <div class="card-body">
+          <h5>Productos:</h5>
+          <div class="mb-3" *ngFor="let item of pedido.items">
+            <div class="d-flex justify-content-between">
+              <span>{{ item.nombre }} x{{ item.cantidad }}</span>
+              <strong>S/ {{ item.subtotal }}</strong>
+            </div>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal</span>
+            <strong>S/ {{ pedido.subtotal }}</strong>
+          </div>
+          <div class="d-flex justify-content-between text-primary fw-bold mb-2">
+            <span>Garantía ({{ pedido.porcentajeGarantia }}% - PAGO AHORA)</span>
+            <strong>S/ {{ pedido.garantia }}</strong>
+          </div>
+          <div class="d-flex justify-content-between text-muted small mb-3">
+            <span>Resto al recibir</span>
+            <strong>S/ {{ pedido.resto }}</strong>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between">
+            <h5>Total del Pedido</h5>
+            <h5 class="text-success">S/ {{ pedido.subtotal }}</h5>
+          </div>
+
+          <div class="alert alert-warning mt-4">
+            <strong>Debes pagar S/ {{ pedido.garantia }} ahora</strong> para reservar tu pedido.<br>
+            El resto (S/ {{ pedido.resto }}) se paga al recibir.
+          </div>
+
+          <div class="d-grid gap-2">
+            <button class="btn btn-success btn-lg" (click)="irAPago()">
+              Pagar Garantía de S/ {{ pedido.garantia }}
+            </button>
+            <button class="btn btn-outline-secondary" (click)="volver()">
+              Volver al Carrito
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

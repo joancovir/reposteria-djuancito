@@ -1,0 +1,79 @@
+<div class="gestion-container">
+  <h2>Gestión de Pagos</h2>
+
+  <!-- FILTROS -->
+  <div class="filtros mb-4">
+    <input type="text" class="form-control" placeholder="Buscar por ID, teléfono o propietario..." 
+           [(ngModel)]="buscar" (input)="filtrarYPaginar()" style="width: 350px; display: inline-block;">
+
+    <select class="form-control ms-3" [(ngModel)]="estadoFiltro" (change)="filtrarYPaginar()" style="width: 200px; display: inline-block;">
+      <option value="todos">Todos los estados</option>
+      <option value="pendiente_validacion">Pendiente</option>
+      <option value="validado">Validado</option>
+      <option value="rechazado">Rechazado</option>
+    </select>
+  </div>
+
+  <div *ngIf="cargando" class="alert alert-info">Cargando pagos...</div>
+
+  <table class="tabla-pagos" *ngIf="!cargando && pagosPaginados.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Monto</th>
+        <th>Fecha</th>
+        <th>Método</th>
+        <th>Cod. Operación</th>
+        <th>Tipo</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of pagosPaginados">
+        <td>{{ p.pagoId }}</td>
+        <td>{{ p.montoAbonado | currency:'PEN' }}</td>
+        <td>{{ p.fechaPago | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ p.metodo | uppercase }}</td>
+        <td>{{ p.codigoOperacion || '-' }}</td>
+        <td>{{ p.tipoPago }}</td>
+        <td>
+          <span class="badge" [ngClass]="estadoColor(p.estado)">
+            {{ p.estado }}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-primary" 
+                  (click)="cambiarEstado(p, 'validado')"
+                  [disabled]="p.estado === 'validado'">
+            Validar
+          </button>
+          <button class="btn btn-sm btn-danger" 
+                  (click)="cambiarEstado(p, 'rechazado')"
+                  [disabled]="p.estado === 'rechazado'">
+            Rechazar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- PAGINACIÓN -->
+  <div class="paginacion mt-4" *ngIf="totalPaginas() > 1">
+    <button class="btn btn-outline-primary" 
+            [disabled]="paginaActual === 1" 
+            (click)="paginaActual = paginaActual - 1">
+      Anterior
+    </button>
+    <span class="mx-3">Página {{ paginaActual }} de {{ totalPaginas() }}</span>
+    <button class="btn btn-outline-primary" 
+            [disabled]="paginaActual === totalPaginas()" 
+            (click)="paginaActual = paginaActual + 1">
+      Siguiente
+    </button>
+  </div>
+
+  <div *ngIf="!cargando && pagos.length === 0" class="alert alert-info">
+    No hay pagos registrados.
+  </div>
+</div>

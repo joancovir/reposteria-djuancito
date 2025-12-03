@@ -1,28 +1,108 @@
-<div class="dashboard">
-  <div class="stats-grid">
-    <div class="stat-card">
-      <h4>Pedidos Hoy</h4>
-      <span class="stat-number">12</span>
-    </div>
-    <div class="stat-card">
-      <h4>Ventas Totales</h4>
-      <span class="stat-number">S/ 12,450</span>
-    </div>
-    <div class="stat-card">
-      <h4>Reseñas Pendientes</h4>
-      <span class="stat-number">3</span>
-    </div>
-    <div class="stat-card">
-      <h4>Usuarios Registrados</h4>
-      <span class="stat-number">124</span>
-    </div>
+<div class="dashboard-container">
+
+  <div *ngIf="isLoading" class="loading text-center p-4">
+    <div class="spinner-border text-orange" role="status"></div>
+    <p class="mt-2">Cargando dashboard...</p>
   </div>
-  <div class="widgets-grid">
-    <div class="widget-card">
-      <h3>Ventas Recientes</h3>
-    </div>
-    <div class="widget-card">
-      <h3>Pedidos Recientes</h3>
-    </div>
+
+  <div *ngIf="errorMensaje" class="alert alert-danger">
+    {{ errorMensaje }}
   </div>
+
+  <ng-container *ngIf="stats && !isLoading">
+
+    <div class="welcome-banner">
+      <div class="welcome-text">
+        <h2>¡Bienvenido!</h2>
+        <p>
+          Tienes <strong>{{ stats.pendientes }} pedidos pendientes</strong> y 
+          <strong>{{ stats.resenasPendientes }} reseñas por revisar</strong>.
+        </p>
+        <span class="current-date">
+          Hoy: {{ fechaActual | date:'EEEE, d \'de\' MMMM \'de\' yyyy, HH:mm' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- ACCESOS RÁPIDOS -->
+    <div class="quick-actions mb-4">
+      <a routerLink="/admin/pedidos" class="btn btn-orange me-3">
+        <i class="bi bi-receipt"></i> Ver Pedidos Pendientes ({{ stats.pendientes }})
+      </a>
+      <a routerLink="/admin/resenas" class="btn btn-warning">
+        <i class="bi bi-star"></i> Revisar Reseñas ({{ stats.resenasPendientes }})
+      </a>
+    </div>
+
+    <!-- ÚLTIMOS PEDIDOS -->
+    <div class="card mb-4">
+      <div class="card-header bg-dark text-white">
+        <h5 class="mb-0"><i class="bi bi-clock-history"></i> Últimos Pedidos</h5>
+      </div>
+      <div class="card-body p-0">
+        <div *ngIf="stats.ultimosPedidos?.length; else sinPedidos">
+          <div *ngFor="let pedido of stats.ultimosPedidos" class="pedido-item">
+            <div class="pedido-info">
+              <strong>#{{ pedido.id }}</strong>
+              <span class="text-muted">• S/ {{ pedido.total | number:'1.2-2' }}</span>
+            </div>
+            <div class="pedido-tiempo">{{ pedido.tiempoTranscurrido }}</div>
+            <div class="pedido-estado" [ngClass]="getEstadoClass(pedido.estado)">
+              {{ pedido.estado }}
+            </div>
+          </div>
+        </div>
+        <ng-template #sinPedidos>
+          <div class="text-center py-4 text-muted">
+            No hay pedidos recientes.
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- ESTADÍSTICAS RÁPIDAS -->
+    <div class="stats-row quick-stats">
+      <div class="stat-card quick">
+        <span class="stat-label">Pedidos Hoy</span>
+        <span class="stat-badge orange">{{ stats.pedidosHoy }}</span>
+      </div>
+      <div class="stat-card quick">
+        <span class="stat-label">Pendientes</span>
+        <span class="stat-badge yellow">{{ stats.pendientes }}</span>
+      </div>
+      <div class="stat-card quick">
+        <span class="stat-label">Reseñas</span>
+        <span class="stat-badge brown">{{ stats.resenasTotal }}</span>
+      </div>
+    </div>
+
+    <!-- ESTADÍSTICAS DETALLADAS -->
+    <div class="stats-row detail-stats">
+      <div class="stat-card detail">
+        <div class="card-header">
+          <span class="card-title">Pedidos Totales</span>
+        </div>
+        <div class="card-body">
+          <span class="stat-number">{{ stats.pedidosTotales }}</span>
+        </div>
+      </div>
+      <div class="stat-card detail">
+        <div class="card-header">
+          <span class="card-title">Ventas Totales</span>
+        </div>
+        <div class="card-body">
+          <span class="stat-number">S/ {{ stats.ventasTotales | number:'1.2-2' }}</span>
+        </div>
+      </div>
+      <div class="stat-card detail">
+        <div class="card-header">
+          <span class="card-title">Usuarios</span>
+        </div>
+        <div class="card-body">
+          <span class="stat-number">{{ stats.usuariosRegistrados }}</span>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
 </div>

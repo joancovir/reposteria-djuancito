@@ -1,1 +1,80 @@
-<p>mis-consultas works!</p>
+<div class="consultas-container">
+    <div class="header-section">
+        <h2>Mis Consultas</h2>
+        <a (click)="toggleFormulario()" class="btn-nueva-consulta">
+            + Crear Nueva Consulta
+        </a>
+    </div>
+    <p>Historial de tus mensajes y el estado en el que se encuentran.</p>
+
+    <div *ngIf="isLoading" class="loading">
+        Cargando tus consultas...
+    </div>
+
+    <div *ngIf="errorMensaje" class="alert alert-danger">
+        {{ errorMensaje }}
+    </div>
+
+    <div *ngIf="enviadoExito" class="alert alert-success">
+        ¡Tu consulta ha sido enviada con éxito! La encontrarás marcada como **Pendiente**.
+    </div>
+
+    <div *ngIf="!isLoading && consultas.length === 0 && !errorMensaje" class="alert alert-info">
+        Aún no has enviado ninguna consulta.
+    </div>
+
+    <div *ngIf="!isLoading && consultas.length > 0" class="consultas-list">
+        <div *ngFor="let consulta of consultas" class="consulta-card card-style-image">
+            
+            <span class="card-status-tag" 
+                [class.tag-pendiente]="consulta.estado === 'pendiente'"
+                [class.tag-respondido]="consulta.estado === 'respondido'">
+                {{ consulta.estado | titlecase }}
+            </span>
+
+            <div class="card-content-main">
+                <h3>#CONSULTA-{{ consulta.contactoId || 'N/A' }}</h3> 
+                
+                <p class="card-date">{{ consulta.fecha | date:'dd MMMM yyyy, h:mm a' }}</p>
+                <p class="card-message-summary">Motivo: **{{ obtenerNombreMotivo(consulta.motivo) }}**</p>
+                <p class="card-message-summary-msg">{{ consulta.mensaje.substring(0, 50) + '...' }}</p>
+            </div>
+            
+            <a [routerLink]="['/cliente/detalle', consulta.contactoId]" class="btn-ver-detalle">
+    Ver detalle
+</a>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="mostrarFormulario" class="consulta-form-modal">
+    <div class="modal-content">
+        <h3>Nueva Consulta</h3>
+        
+        <div class="form-group">
+            <label for="motivo">Selecciona el Motivo:</label>
+            <select id="motivo" [(ngModel)]="motivoSeleccionado" required>
+                <option *ngFor="let motivo of motivos" [value]="motivo.valor">
+                    {{ motivo.nombre }}
+                </option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="mensaje">Tu Mensaje (mínimo 10 caracteres):</label>
+            <textarea id="mensaje" 
+                        [(ngModel)]="nuevoMensaje" 
+                        placeholder="Detalla tu consulta, cotización o problema aquí..." 
+                        rows="5"></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button (click)="toggleFormulario()" class="btn-cancel">Cancelar</button>
+            <button (click)="enviarNuevaConsulta()" 
+                    [disabled]="isSending || nuevoMensaje.trim().length < 10 || !motivoSeleccionado" 
+                    class="btn-send">
+                {{ isSending ? 'Enviando...' : 'Enviar Consulta' }}
+            </button>
+        </div>
+    </div>
+</div>

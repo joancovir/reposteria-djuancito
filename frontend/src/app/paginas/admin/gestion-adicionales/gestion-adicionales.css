@@ -1,0 +1,106 @@
+.gestion-container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  position: relative;
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.btn-crear {
+  background: #fd7e14;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-crear:hover {
+  background: #e66b0d;
+}
+/* MODAL SIN FONDO GRIS – SALE ENCIMA DEL SIDEBAR */
+.modal-directo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none; /* Permite hacer click fuera para cerrar */
+}
+
+.modal-content-directo {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  width: 90%;
+  max-width: 550px;
+  pointer-events: auto; /* Solo el modal recibe clicks */
+  animation: aparecer 0.3s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem 0 2rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-title {
+  color: #fd7e14;
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #999;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-close-modal:hover {
+  color: #fd7e14;
+  background: #fff0e6;
+  border-radius: 50%;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Botón naranja */
+.modal-content-directo .btn-success {
+  background: #fd7e14 !important;
+  border: none !important;
+  font-weight: bold;
+}
+
+.modal-content-directo .btn-success:hover {
+  background: #e66b0d !important;
+}

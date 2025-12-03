@@ -1,0 +1,243 @@
+.detalle-promocion-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Arial', sans-serif;
+}
+
+.detalle-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.detalle-header {
+    height: 350px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.detalle-header h1 {
+    color: white;
+    font-size: 2.8rem;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+.pill-descuento {
+    background: #e91e63; /* Color de acento para descuento */
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Cuerpo y Contenido --- */
+.detalle-body {
+    padding: 30px;
+}
+
+.info-principal {
+    margin-bottom: 30px;
+}
+
+.info-principal h2 {
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.fechas p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 1rem;
+}
+
+/* --- Productos Incluidos --- */
+.productos-incluidos {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px dashed #ccc;
+}
+
+.productos-incluidos h2 {
+    color: #333;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+}
+
+.producto-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.producto-item {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.producto-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.producto-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.producto-info h3 {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.precio-original {
+    text-decoration: none;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* --- Botones --- */
+.btn-ir-tienda {
+    display: inline-block;
+    background-color: #ff6f61;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 30px;
+    transition: background-color 0.3s;
+}
+
+.btn-ir-tienda:hover {
+    background-color: #e65c50;
+}
+
+/* --- Mensajes de Estado --- */
+.loading-message, .error-message {
+    text-align: center;
+    padding: 40px;
+    border: 1px solid #ff6f61;
+    border-radius: 8px;
+    background: #fff0f0;
+    color: #ff6f61;
+    margin-top: 30px;
+}
+
+.error-message h2 {
+    color: #c0392b;
+}
+
+.btn-back {
+    color: #ff6f61;
+    text-decoration: underline;
+    margin-top: 10px;
+    display: block;
+}
+.btn-volver {
+  background: none;
+  border: none;
+  color: #eb7221;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 5px 0;
+  display: block;
+  margin: 0 auto 30px 0; 
+  transition: color 0.2s;
+}
+/* --- Responsive para Móviles --- */
+@media (max-width: 768px) {
+    .detalle-header {
+        height: 250px;
+    }
+    .detalle-header h1 {
+        font-size: 2rem;
+    }
+    .pill-descuento {
+        font-size: 1.2rem;
+    }
+    .detalle-body {
+        padding: 20px;
+    }
+    .producto-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    .producto-info {
+        text-align: center;
+    }
+}/* Agregar al final de tu CSS */
+.precios {
+  margin-top: 8px;
+}
+
+.precio-original del {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.precio-descuento strong {
+  color: #e91e63;
+  font-size: 1.3rem;
+}
+
+.ahorro {
+  background: #e91e63;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.btn-agregar-carrito {
+  margin-top: 10px;
+  background: #ff6f61;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.btn-agregar-carrito:hover {
+  background: #e65c50;
+  transform: scale(1.05);
+}

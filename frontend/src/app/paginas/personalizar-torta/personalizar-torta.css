@@ -1,8 +1,27 @@
+
+
 .customizer-container {
   max-width: 900px;
   margin: 50px auto;
   font-family: Arial, sans-serif;
+  position: relative;
 }
+
+.btn-retroceder {
+  display: inline-block;
+  margin-bottom: 20px; /* Separación del cabezal */
+  font-size: 16px;
+  font-weight: 600;
+  color: #fd7e14; /* Naranja */
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.btn-retroceder:hover {
+  color: #c7640f; /* Naranja oscuro */
+}
+
 
 .customizer-header {
   text-align: center;
@@ -100,4 +119,32 @@
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.buttons-container button {
+  flex-grow: 1;
+}
+.product-info {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.option-card.selected {
+  border-color: #fd7e14 !important;
+  background-color: #fff8f0 !important;
+}
+
+.option-card input[type="radio"],
+.option-card input[type="checkbox"] {
+  margin-right: 15px;
+}
+
+.option-card label {
+  cursor: pointer;
+  width: 100%;
+  margin: 0;
+}
+
+.otro-option {
+  border-style: dashed;
 }

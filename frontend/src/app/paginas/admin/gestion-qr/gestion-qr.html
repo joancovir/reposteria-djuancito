@@ -1,0 +1,80 @@
+<div class="qr-container">
+ 1">
+  <h2>Gestión de QR Yape / Plin</h2>
+  
+  <button class="btn-nuevo" (click)="abrirModal()">+ Agregar QR</button>
+
+  <div class="qr-grid">
+    <div *ngFor="let qr of qrs" class="qr-card" [class.inactivo]="!qr.activo">
+      <div class="qr-header">
+        <span class="tipo {{qr.tipo.toLowerCase()}}">{{qr.tipo}}</span>
+        <span class="estado" [class.activo]="qr.activo">
+          {{qr.activo ? 'ACTIVO' : 'INACTIVO'}}
+        </span>
+      </div>
+
+      <img [src]="qr.imagenUrl" alt="QR {{qr.tipo}}" class="qr-imagen">
+
+      <div class="info">
+        <p><strong>Teléfono:</strong> {{qr.telefono}}</p>
+        <p><strong>Propietario:</strong> {{qr.nombrePropietario}}</p>
+      </div>
+
+      <div class="acciones">
+        <button class="btn-edit" (click)="abrirModal(qr)">Editar</button>
+        <button class="btn-toggle" (click)="toggleActivo(qr)">
+          {{qr.activo ? 'Desactivar' : 'Activar'}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PERFECTO – NUNCA MÁS GRIS -->
+<div class="modal-directo" *ngIf="modalVisible" (click)="cerrarModal()">
+  <div class="modal-content-directo" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h3 class="modal-title">{{ esEdicion ? 'Editar QR' : 'Nuevo QR' }}</h3>
+      <button class="btn-close-modal" (click)="cerrarModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Tipo de pago</label>
+        <select [(ngModel)]="form.tipo" class="form-control">
+          <option value="YAPE">YAPE</option>
+          <option value="PLIN">PLIN</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Imagen del QR</label>
+        <input type="file" accept="image/*" (change)="onFileSelected($event)" class="form-control">
+        <div *ngIf="imagenPreview" class="preview">
+          <img [src]="imagenPreview" alt="Vista previa">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Teléfono</label>
+        <input type="text" [(ngModel)]="form.telefono" class="form-control" placeholder="999 999 999">
+      </div>
+
+      <div class="form-group">
+        <label>Nombre del propietario</label>
+        <input type="text" [(ngModel)]="form.nombrePropietario" class="form-control">
+      </div>
+
+      <div class="form-check">
+        <input type="checkbox" [(ngModel)]="form.activo">
+        <label>Activo (visible para los clientes)</label>
+      </div>
+
+      <div class="botones">
+        <button class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn-guardar" (click)="guardar()">Guardar QR</button>
+      </div>
+    </div>
+  </div>
+</div>

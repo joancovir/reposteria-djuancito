@@ -1,0 +1,73 @@
+<div class="detalle-modal-wrapper">
+    <div class="detalle-card-modal">
+        
+        <div class="modal-header">
+            <h5 class="modal-title">Detalle de la Consulta #{{ consulta?.contactoId || 'N/A' }}</h5>
+            <button (click)="volverALaLista()" class="btn-volver-link">
+                &larr; Volver a Mis Consultas
+            </button>
+        </div>
+
+        <div class="modal-body">
+            
+            <div *ngIf="isLoading" class="loading">
+                Cargando detalle de la consulta...
+            </div>
+
+            <div *ngIf="errorMensaje" class="alert alert-danger mb-3">
+                {{ errorMensaje }}
+            </div>
+            
+            <ng-container *ngIf="consulta && !isLoading">
+                
+                <div class="montos-summary"> 
+                    <span [class.text-success]="consulta.estado === 'respondido'" 
+                          [class.text-danger]="consulta.estado === 'pendiente'">
+                        <strong>Estado:</strong> {{ consulta.estado | titlecase }}
+                    </span>
+                    <span>
+                        <strong>Fecha Envío:</strong> {{ consulta.fecha | date:'dd/MM/yyyy, h:mm a' }}
+                    </span>
+                </div>
+                
+                <hr class="separator">
+
+                <!-- SECCIÓN MOTIVO -->
+                <div class="detalle-seccion">
+                    <h5>Motivo</h5>
+                    <div class="contenido-tarjeta motivo-texto item-validado"> 
+                        {{ consulta.motivo | titlecase }}
+                    </div>
+                </div>
+
+                <!-- SECCIÓN TU MENSAJE -->
+                <div class="detalle-seccion">
+                    <h5>Tu Mensaje</h5>
+                    <div class="contenido-tarjeta mensaje-texto item-pendiente">
+                        {{ consulta.mensaje }}
+                    </div>
+                </div>
+
+                <!-- Sección Respuesta: -->
+                <div *ngIf="consulta.estado === 'respondido'" class="detalle-seccion detalle-respuesta">
+                    <h5>Respuesta del Equipo</h5>
+                    <p class="respuesta-fecha">
+                        Respondido el {{ consulta.fechaRespuesta | date:'dd/MM/yyyy, h:mm a' }}
+                    </p>
+                    <div class="contenido-tarjeta respuesta-texto item-validado">
+                        {{ consulta.respuesta }}
+                    </div> 
+                </div>
+
+                <!-- Alerta de Pendiente -->
+                <div *ngIf="consulta.estado === 'pendiente'" class="alert alert-info mt-3">
+                    Tu consulta está pendiente de revisión. Te contactaremos pronto.
+                </div>
+
+            </ng-container>
+        </div>
+        
+        <div class="modal-footer">
+        </div>
+    </div>
+</div>

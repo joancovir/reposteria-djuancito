@@ -1,0 +1,272 @@
+
+.modal-header {
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 0.8rem;
+  margin-bottom: 1.5rem;
+  display: flex; /* Para alinear título y botón */
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0; /* Quita margen por defecto */
+}
+
+.btn-close { /* Bootstrap class, reuse if available */
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  opacity: 0.7;
+  padding: 0.5rem; /* Área de click más grande */
+  line-height: 1; /* Mejor alineación vertical */
+}
+.btn-close:hover {
+  opacity: 1;
+}
+
+.modal-body {
+  padding: 0 0.5rem 1rem; /* Añade padding inferior */
+}
+
+/* --- Grid de Información Cliente/Pedido --- */
+.pedido-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.pedido-info-grid h5 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: #343a40;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.3rem;
+}
+
+.pedido-info-grid p {
+  margin-bottom: 0.3rem;
+  font-size: 0.95rem;
+}
+.pedido-info-grid strong {
+  font-weight: 600;
+}
+
+
+/* --- DETALLES DEL PRODUCTO --- */
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    color: #495057;
+}
+
+.product-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.product-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px dashed #e9ecef;
+}
+
+.product-info {
+  flex-grow: 1;
+}
+
+.product-name {
+  font-weight: 600;
+  color: #212529;
+}
+
+.product-qty {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-left: 0.5rem;
+}
+.customization-details {
+    margin-top: 0.2rem;
+    margin-left: 10px; /* Indenta un poco la nota de personalización */
+    color: #007bff; /* Azul para notas */
+}
+
+
+.price-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-weight: 500;
+}
+
+.product-subtotal {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #28a745; /* Verde */
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.customization-total-cost {
+  font-weight: 600;
+  color: #28a745; /* Verde */
+  font-size: 0.9rem;
+}
+
+.discount-applied {
+  color: #dc3545; /* Rojo */
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.product-list + p { /* Mensaje #noDetalles */
+  font-style: italic;
+  color: #6c757d;
+  margin-top: 0.5rem;
+}
+
+/* --- ESTILOS DE PAGO SIMPLIFICADOS --- */
+.payment-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Alinea badge a la izquierda, botón a la derecha */
+  background-color: #f8f9fa;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  border-left: 4px solid #6c757d; /* Borde gris por defecto */
+}
+.payment-summary.editable {
+    border-left-color: #007bff; /* Borde azul en modo edición */
+}
+
+/* Badge reutiliza los estilos definidos antes (pago-pendiente, pago-validado, etc.) */
+.payment-summary .badge {
+  font-size: 0.9rem; /* Un poco más grande para el resumen */
+}
+
+.btn-manage-payments {
+  background-color: transparent;
+  color: #007bff; /* Azul */
+  border: 1px solid #007bff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-manage-payments:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Estilo para hacerlo más visible en MODO EDICIÓN */
+.btn-manage-payments.btn-action-gestion {
+    background-color: #007bff;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.4);
+}
+.btn-manage-payments.btn-action-gestion:hover {
+    background-color: #0056b3;
+}
+
+
+/* --- GESTIÓN DE ESTADO ESPECÍFICA (Modo Edición) --- */
+.estado-gestion-container {
+    padding: 1rem 0;
+}
+
+.current-status {
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.estado-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.btn-estado {
+    background-color: #e9ecef;
+    color: #495057;
+    border: 1px solid #ced4da;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-estado:hover:not(:disabled) {
+    background-color: #ced4da;
+}
+
+.btn-estado:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-estado-active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+    font-weight: 700;
+}
+
+.btn-estado-active:hover {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.loading-status {
+    margin-top: 1rem;
+    color: #007bff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.spinner-estado {
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+.alert-error {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+}
+
+/* Media Query para responsividad del grid */
+@media (max-width: 768px) {
+  .pedido-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Colores para el badge de Pago */
+.pago-validado { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; } /* Verde - Completado */
+.pago-parcial { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; } /* Amarillo - Abono */
+.pago-pendiente { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; } /* Azul claro - Pendiente de Validar */
+.pago-no-registrado { background-color: #e9ecef; color: #6c757d; border: 1px solid #ced4da; } /* Gris - Sin Pagos */

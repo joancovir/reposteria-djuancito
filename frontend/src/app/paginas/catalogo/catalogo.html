@@ -3,25 +3,26 @@
 
   <div class="filter-bar">
     <div class="search-box">
-      <input type="text" placeholder="BUSCAR PRODUCTO">
-      <button>BUSCAR</button>
+      <input type="text" placeholder="BUSCAR PRODUCTO" [(ngModel)]="searchTerm">
+      <button (click)="buscarProductos()">BUSCAR</button>
     </div>
-    <select class="filter-select" (change)="filtrarProductos($event)">
+    
+    <select class="filter-select" (change)="filtrarProductos($event)" [value]="filtroActivo">
       <option value="">TODOS</option>
+      <option value="torta">Tortas</option>
       <option value="postre">Postres</option>
       <option value="bocadito">Bocaditos</option>
-      <option value="torta">Tortas</option>
+      <option value="personalizable">Personalizables</option>
+      <option value="predeterminada">Predeterminadas</option>
     </select>
-    <a routerLink="/personalizar-torta" class="btn-personalizada">Pide tu Torta Personalizada</a>  </div>
+    
+    <a routerLink="../personalizar-torta" class="btn-personalizada">Pide tu Torta Personalizada</a>
+  </div>
 
   <div class="product-grid">
-    <div class="product-card" *ngFor="let producto of listaDeProductos">
-
+    <div class="product-card" *ngFor="let producto of productosPaginados">
       <span *ngIf="producto.personalizable" class="badge-personalizable">Personalizable</span>
-
       <img [src]="producto.imagenUrl" [alt]="producto.nombre">
-      
-
       <div class="product-info">
         <h3>{{ producto.nombre }}</h3>
         <p class="category">{{ producto.categoria }}</p>
@@ -33,5 +34,19 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- 🔹 PAGINACIÓN -->
+  <div class="pagination" *ngIf="totalPaginas > 1">
+    <button (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">Anterior</button>
+
+    <button 
+      *ngFor="let num of [].constructor(totalPaginas); let i = index" 
+      (click)="cambiarPagina(i + 1)" 
+      [class.active]="paginaActual === i + 1">
+      {{ i + 1 }}
+    </button>
+
+    <button (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas">Siguiente</button>
   </div>
 </div>

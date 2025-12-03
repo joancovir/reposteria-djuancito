@@ -1,27 +1,47 @@
 <div class="client-layout-container">
   <div class="client-layout">
-    <aside class="sidebar">
-      <div class="user-profile">
-      <img src="assets/imagenes/logo.png" alt="Logo de D.Juancito">
-        <h3 >Mi Cuenta</h3>
-<span class="welcome-message">Hola, {{ authService.obtenerUsuarioActual()?.usuarioId }}</span>     
- </div>
-      <nav class="sidebar-nav">
-        <ul>
-          <li><a routerLink="/cliente/pedidos">Mis Pedidos</a></li>
-          <li><a routerLink="/cliente/perfil">Mi Perfil</a></li>
-          <li><a routerLink="/cliente/perfil">Mis Consultas</a></li>
 
-          <li><a routerLink="/cliente/catalogo">Catálogo</a></li>
-          <li><a [routerLink]="['/cliente/catalogo', { filtro: 'personalizable' }]">Tortas Personalizadas</a></li>
-          <li><a [routerLink]="['/cliente/catalogo', { filtro: 'predeterminada' }]">Tortas Predeterminadas</a></li>
+    <div class="top-panel">
+      <div class="user-info">
+        <img src="assets/imagenes/logo.png" alt="Logo" class="logo">
+        <div>
+          <h3>Mi Cuenta</h3>
+          <span class="welcome">Hola, {{ authService.obtenerUsuarioActual()?.nombre }}</span>
+        </div>
+      </div>
 
-          <li><a (click)="authService.cerrarSesion()">Cerrar Sesión</a></li>
-        </ul>
-      </nav>
-    </aside>
-    <main class="main-content">
-      <router-outlet></router-outlet>
-    </main>
+      <div class="top-actions">
+        <a routerLink="/cliente/perfil" routerLinkActive="active" class="btn-profile">
+          <i class="bi bi-person-circle"></i> Mi Perfil
+        </a>
+        <a routerLink="/cliente/mi-pedido" routerLinkActive="active" class="btn-cart">
+          <i class="bi bi-cart3"></i> 
+          Mi Carrito 
+          <span class="badge" *ngIf="cantidadCarrito > 0">{{ cantidadCarrito }}</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="main-with-sidebar">
+      <aside class="sidebar">
+        <nav class="sidebar-nav">
+          <ul>
+            <li><a routerLink="/cliente/catalogo" routerLinkActive="active"><i class="bi bi-grid-3x3-gap"></i> Catálogo</a></li>
+            <li><a routerLink="/cliente/productos-destacados" routerLinkActive="active"><i class="bi bi-star-fill"></i> Productos Destacados</a></li>
+            <li><a routerLink="/cliente/pedidos" routerLinkActive="active"><i class="bi bi-receipt"></i> Mis Pedidos</a></li>
+            <li><a routerLink="/cliente/consultas" routerLinkActive="active"><i class="bi bi-chat-dots"></i> Mis Consultas</a></li>
+            <li><a routerLink="/cliente/ofertas" routerLinkActive="active"><i class="bi bi-chat-dots"></i> promociones</a></li>
+
+            <li><a (click)="authService.cerrarSesion()" class="text-danger"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- CONTENIDO PRINCIPAL -->
+      <main class="main-content">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+
   </div>
 </div>

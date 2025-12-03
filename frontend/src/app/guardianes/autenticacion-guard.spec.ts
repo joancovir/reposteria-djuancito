@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CanActivateFn } from '@angular/router';
 
-// RUTA Y NOMBRE CORREGIDOS
 import { authGuard } from './autenticacion-guard';
 
 describe('autenticacionGuard', () => {

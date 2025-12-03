@@ -1,11 +1,9 @@
-/* Contenedor principal de la página */
 .login-page {
   display: flex;
   min-height: 100vh;
   font-family: Arial, sans-serif;
 }
 
-/* Columna Izquierda (Branding) */
 .branding-column {
   flex-basis: 50%;
   background-color: #fdf6f2; /* Color salmón pálido */
@@ -26,9 +24,9 @@
 }
 
 .branding-content img {
-  height: 100px;
-  width: 100px;
-  border-radius: 50%;
+  height: 300px;
+  width: 300px;
+  border-radius: 80%;
   object-fit: cover; 
 }
 

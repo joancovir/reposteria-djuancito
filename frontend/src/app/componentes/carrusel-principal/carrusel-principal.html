@@ -1,4 +1,4 @@
-<div class="announcement-bar" *ngIf="promociones.length > 0">
+<div class="announcement-bar" id="carrusel" *ngIf="promociones.length > 0">
   <carousel [isAnimated]="true" [showIndicators]="true" [interval]="5000">
     <slide *ngFor="let promo of promociones">
       
@@ -6,7 +6,7 @@
       <div class="carousel-caption">
         <h1>{{ promo.titulo }}</h1>
         <p>{{ promo.descripcion }}</p>
-        <a href="#" class="btn btn-primary">Ver Más</a>
+        <a [routerLink]="['/ofertas']" class="btn btn-primary">Ver Más</a> 
       </div>
 
     </slide>

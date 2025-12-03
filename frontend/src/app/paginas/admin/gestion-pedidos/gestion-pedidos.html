@@ -1,0 +1,72 @@
+<div class="gestion-container">
+  <h2>Gestión de Pedidos</h2>
+
+  <div *ngIf="!isLoading && listaDePedidos.length > 0" class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Tipo</th> 
+          <th>Estado</th>
+          <th>Total</th>
+          <th>Fecha</th>
+          <th>Pago</th> 
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pedido of listaDePedidos">
+          <td>#ORD {{ pedido.pedidoId }}</td>
+          <td>
+            {{ getNombreCliente(pedido) }} <br>
+            <small>{{ getEmailCliente(pedido) }}</small> 
+          </td>
+          <td>
+             {{ (pedido.nota && pedido.nota.toLowerCase().includes('personalizada')) ? 'Torta Personalizada' : 'Productos Catálogo' }}
+          </td>
+          <td>
+            <span class="badge" [ngClass]="getEstadoClass(pedido.estado)">
+              {{ pedido.estado | titlecase }}
+            </span>
+          </td>
+          <td>S/ {{ pedido.total | number:'1.2-2' }}</td>
+          <td>{{ pedido.fechaPedido | date:'yyyy-MM-dd' }}</td>
+          <td>
+             <span class="badge" [ngClass]="getPagoClass(pedido.estado === 'entregado' ? 'Pagado' : 'Pendiente')">
+                {{ pedido.estado === 'entregado' ? 'Pagado' : 'Pendiente' }}
+             </span>
+          </td>
+          <td>
+            <!-- Botón OJO (VER DETALLES: SOLO LECTURA) -->
+            <button class="btn-action btn-view" (click)="abrirModalDetalles(pedido)" title="Ver Detalles">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+              </svg>
+            </button>
+            <!-- Botón LÁPIZ (EDITAR/GESTIONAR ESTADO Y PAGO) -->
+            <button class="btn-action btn-edit" (click)="abrirModalGestion(pedido)" title="Gestionar Pedido">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.5 8.793V11.5h2.707zm-7.071 3.528l5.31-5.31L13.197 4.15l-5.31 5.31z"/>
+                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11A.5.5 0 0 0 2.5 2h6a.5.5 0 0 0 0-1h-6A1.5 1.5 0 0 0 1 2.5z"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div *ngIf="isLoading" class="loading-message">
+    Cargando pedidos...
+  </div>
+
+  <div *ngIf="!isLoading && listaDePedidos.length === 0" class="no-data-message">
+    No se encontraron pedidos.
+  </div>
+
+  <div *ngIf="errorMensaje" class="error-message">
+    Error: {{ errorMensaje }}
+  </div>
+</div>

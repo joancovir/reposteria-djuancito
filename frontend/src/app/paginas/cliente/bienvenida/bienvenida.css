@@ -16,4 +16,67 @@
   box-shadow: 0 8px 15px rgba(0,0,0,0.07);
 }
 .dashboard-card h3 { margin-top: 0; color: #fd7e14; }
-.dashboard-card p { color: #6c757d; margin-bottom: 0; }
+.dashboard-card p { color: #6c757d; margin-bottom: 0; }/* --- Estilos para Actividad Reciente --- */
+.recent-activity-section {
+  margin-top: 3rem; /* Espacio arriba */
+  background-color: #ffffff;
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+}
+
+.recent-activity-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #343a40;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Espacio entre items */
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa; /* Fondo gris claro para cada item */
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  border-left: 4px solid transparent; /* Borde inicial transparente */
+}
+
+.activity-icon {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 1rem;
+  flex-shrink: 0; /* Evita que el icono se encoja */
+}
+
+.activity-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-description {
+  font-size: 0.95rem;
+  color: #495057;
+  margin: 0; /* Quita margen por defecto del párrafo */
+  font-weight: 500;
+}
+
+.activity-time {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-top: 0.2rem;
+}
+
+/* --- Estilos para Carga y Vacío --- */
+.loading-activity, .no-activity {
+  text-align: center;
+  padding: 1rem;
+  color: #6c757d;
+  font-style: italic;
+}

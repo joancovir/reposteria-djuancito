@@ -1,6 +1,6 @@
 export interface Adicional {
   adicionalId: number;
   nombre: string;
-  categoria: string;
+  categoria: string; 
   costoAdicional: number;
 }

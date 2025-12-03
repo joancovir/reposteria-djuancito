@@ -14,4 +14,12 @@ export class PromocionService {
   getPromocionesActivas(): Observable<Promocion[]> {
     return this.http.get<Promocion[]>(`${this.apiUrl}/activas`);
   }
+
+  getPromocionById(id: number): Observable<Promocion> {
+    return this.http.get<Promocion>(`${this.apiUrl}/${id}`);
+  }
+
+  obtenerTodasLasPromociones(): Observable<Promocion[]> {
+    return this.http.get<Promocion[]>(`${this.apiUrl}/todas`);
+  }
 }

@@ -1,0 +1,55 @@
+.contenedor-entrega {
+  padding: 3rem 1rem;
+  background: linear-gradient(135deg, #fff1eb 0%, #f8f9ff 100%);
+  min-height: 100vh;
+}
+
+.entrega-card {
+  border: 3px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.entrega-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+}
+
+.entrega-card.selected {
+  border-color: #0d6efd !important;
+  background: #f8f9ff;
+  box-shadow: 0 10px 30px rgba(13,110,253,0.15);
+}
+
+.entrega-card input:checked + .entrega-card,
+.entrega-card:has(input:checked) {
+  border-color: #0d6efd !important;
+}
+
+.sombra {
+  border-radius: 2rem;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+}
+
+.sombra-boton {
+  box-shadow: 0 10px 30px rgba(25,135,84,0.4);
+}
+
+.sombra-boton:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(25,135,84,0.5);
+}
+
+.animar {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.btn-success {
+  background: linear-gradient(45deg, #198754, #20c997);
+  border: none;
+  font-size: 1.3rem;
+}

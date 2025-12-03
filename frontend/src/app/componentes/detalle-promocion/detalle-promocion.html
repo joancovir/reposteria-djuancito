@@ -1,0 +1,129 @@
+<div class="detalle-promocion-container">
+
+  <button (click)="volver()" class="btn-volver">
+    <span class="arrow">←</span> Volver
+  </button>
+
+  <div *ngIf="cargando" class="text-center py-5">
+    <p class="fs-4">Cargando promoción...</p>
+  </div>
+
+  <div *ngIf="error && !cargando" class="alert alert-danger text-center">
+    <h2>¡Ups! Algo salió mal</h2>
+    <p>{{ error }}</p>
+    <a routerLink="/promociones" class="btn btn-primary">Volver a Promociones</a>
+  </div>
+
+  <div *ngIf="promocion && !cargando" class="detalle-card">
+
+    <header class="detalle-header" [style.background-image]="'url(' + (promocion.imagenUrl || 'assets/imagenes/default-promo.jpg') + ')'">
+      <div class="overlay text-center">
+        <h1 class="display-5 fw-bold">{{ promocion.titulo }}</h1>
+        
+        <div class="pill-descuento fs-3" *ngIf="promocion.descuento > 0">{{ porcentajeDescuento() }}% OFF</div>
+
+        <div class="pill-regalo fs-3" *ngIf="promocion.descuento >= 1">
+          ¡100% GRATIS!
+        </div>
+      </div>
+    </header>
+
+    <div class="container my-5">
+
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+
+          <!-- DESCRIPCIÓN Y FECHAS -->
+          <div class="card shadow-sm mb-4">
+            <div class="card-body">
+              <h2 class="card-title">Detalles de la Oferta</h2>
+              <p class="lead">{{ promocion.descripcion }}</p>
+
+              <div class="row mt-4">
+                <div class="col-md-6">
+                  <p class="mb-2"><strong>Válida desde:</strong></p>
+                  <p class="fs-5 text-primary">{{ formatearFecha(promocion.fechaInicio) }}</p>
+                </div>
+                <div class="col-md-6">
+                  <p class="mb-2"><strong>Válida hasta:</strong></p>
+                  <p class="fs-5 text-primary">{{ formatearFecha(promocion.fechaFin) }}</p>
+                </div>
+              </div>
+
+              <!-- CONDICIÓN DE MONTO MÍNIMO -->
+              <div class="alert alert-info mt-4" *ngIf="promocion.montoMinimo && promocion.montoMinimo > 0">
+                <strong>Condición:</strong> Aplica solo en pedidos mayores a 
+                <strong class="text-success">S/ {{ promocion.montoMinimo | number:'1.2-2' }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- PRODUCTOS DE LA PROMOCIÓN -->
+          <div class="card shadow-sm" *ngIf="promocion.promocionProductos?.length">
+            <div class="card-body">
+              <h2 class="card-title mb-4">Productos con Descuento</h2>
+
+              <div class="row g-4">
+                <div class="col-md-6" *ngFor="let pp of promocion.promocionProductos">
+                  <div class="producto-item-card border rounded p-3 h-100 d-flex flex-column">
+                    
+                    <img [src]="pp.producto.imagenUrl" 
+                         [alt]="pp.producto.nombre" 
+                         class="img-fluid rounded mb-3" 
+                         style="height: 200px; object-fit: cover;"
+                         (click)="irAProducto(pp.producto.productoId)">
+
+                    <h5 class="text-center mb-3" (click)="irAProducto(pp.producto.productoId)">
+                      {{ pp.producto.nombre }}
+                    </h5>
+
+                    <div class="text-center mt-auto">
+                      <!-- PRECIO ORIGINAL -->
+                      <p class="text-muted">
+                        <del>S/ {{ pp.producto.precioBase | number:'1.2-2' }}</del>
+                      </p>
+
+                      <!-- SI ES REGALO -->
+                      <div *ngIf="promocion.descuento >= 1" class="mb-3">
+                        <h3 class="text-success fw-bold">¡GRATIS!</h3>
+                        <span class="badge bg-success fs-6">100% OFF</span>
+                      </div>
+
+                      <!-- SI ES DESCUENTO NORMAL -->
+                      <div *ngIf="promocion.descuento > 0 && promocion.descuento < 1" class="mb-3">
+                        <h4 class="text-danger fw-bold">
+                          S/ {{ precioConDescuento(pp.producto.precioBase) | number:'1.2-2' }}
+                        </h4>
+                        <span class="badge bg-danger">
+                          -{{ (promocion.descuento * 100).toFixed(0) }}% OFF
+                        </span>
+                      </div>
+
+                      <!-- BOTÓN DESHABILITADO -->
+        <button class="btn btn-success w-100 mt-3"  (click)="agregarAlCarrito(pp.producto)"
+        [disabled]="(promocion.montoMinimo ?? 0) > 0 && subtotalCarritoActual() < (promocion.montoMinimo ?? 0)">
+        <strong>Añadir al Carrito</strong>
+      </button>
+      <small class="text-muted d-block mt-2" 
+      *ngIf="(promocion.montoMinimo ?? 0) > 0 && subtotalCarritoActual() < (promocion.montoMinimo ?? 0)">
+      Agrega más productos (mínimo S/ {{ (promocion.montoMinimo ?? 0) | number:'1.2-2' }})
+    </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center py-5" *ngIf="!promocion.promocionProductos?.length">
+            <p class="lead">Esta promoción aplica automáticamente en el carrito</p>
+            <a routerLink="/catalogo" class="btn btn-lg btn-primary">
+              Ir al Catálogo
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

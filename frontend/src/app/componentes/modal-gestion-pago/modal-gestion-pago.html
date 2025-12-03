@@ -1,0 +1,72 @@
+<div class="modal-header">
+  <button type="button" class="btn btn-link btn-back" (click)="volver()">
+    &larr; Volver a Detalles
+  </button>
+  <h4 class="modal-title pull-left">Gestión de Pagos - Pedido ORD-{{ pedidoId }}</h4>
+  <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="cerrarModal()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="modal-body">
+
+  <div class="montos-summary">
+    <span>Total Pedido: <strong>S/ {{ montoTotal | number:'1.2-2' }}</strong></span>
+    <span *ngIf="montoGarantia > 0">Garantía Req: <strong>S/ {{ montoGarantia | number:'1.2-2' }}</strong></span>
+    <span>Pagado (Validado): <strong class="text-success">S/ {{ totalPagadoValidado | number:'1.2-2' }}</strong></span>
+    <span *ngIf="saldoPendiente > 0" class="saldo-pendiente">Saldo Pendiente: <strong>S/ {{ saldoPendiente | number:'1.2-2' }}</strong></span>
+    <span *ngIf="saldoPendiente === 0" class="text-success full-paid"><strong>¡Pedido Pagado!</strong></span>
+  </div>
+
+  <hr class="separator">
+
+  <div *ngIf="errorMensaje" class="alert alert-danger" role="alert">
+    {{ errorMensaje }}
+  </div>
+
+  <h5>Historial de Pagos</h5>
+  <div *ngIf="pagos.length > 0; else noPagos" class="payment-list">
+    <div *ngFor="let pago of pagos" class="payment-item" [ngClass]="getPagoItemClass(pago.estado)">
+      
+      <!-- Detalle del Pago (Columna 1) -->
+      <div class="payment-details-info">
+        <span class="monto-abonado">S/ {{ pago.montoAbonado | number:'1.2-2' }}</span>
+        <div class="detail-group">
+            <span><strong>Método:</strong> {{ pago.metodo | titlecase }}</span>
+            <span><strong>Fecha:</strong> {{ pago.fechaPago | date:'yyyy-MM-dd HH:mm' }}</span>
+            <span *ngIf="pago.codigoOperacion"><strong>Op:</strong> {{ pago.codigoOperacion }}</span>
+        </div>
+      </div>
+      
+      <!-- Estado y Acciones (Columna 2) -->
+      <div class="payment-status-admin">
+        <span class="badge payment-badge" [ngClass]="getPagoStatusClass(pago.estado)">
+          {{ formatEstadoPago(pago.estado) | titlecase }}
+        </span>
+        
+        <ng-container *ngIf="pago.estado === 'pendiente_validacion'">
+          <div class="action-buttons">
+            <button class="btn-pago-accion btn-validar" (click)="cambiarEstadoPago(pago, 'validado')" [disabled]="isUpdatingPago === pago.pagoId">
+                <span *ngIf="isUpdatingPago !== pago.pagoId">Validar</span>
+                <span *ngIf="isUpdatingPago === pago.pagoId">⚙️</span>
+            </button>
+            <button class="btn-pago-accion btn-rechazar" (click)="cambiarEstadoPago(pago, 'rechazado')" [disabled]="isUpdatingPago === pago.pagoId">
+                <span *ngIf="isUpdatingPago !== pago.pagoId">Rechazar</span>
+                <span *ngIf="isUpdatingPago === pago.pagoId">⚙️</span>
+            </button>
+          </div>
+        </ng-container>
+
+        <!-- Enlace de Comprobante (Se mueve aquí para que esté cerca del estado/acciones) -->
+         <a *ngIf="pago.comprobanteUrl" [href]="pago.comprobanteUrl" target="_blank" class="comprobante-link">
+          Ver Comprobante
+        </a>
+      </div>
+      
+    </div>
+  </div>
+  <ng-template #noPagos>
+    <p>Este pedido aún no tiene pagos registrados.</p>
+  </ng-template>
+
+</div>

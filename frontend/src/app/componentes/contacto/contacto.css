@@ -71,4 +71,20 @@
   border: none;
   cursor: pointer;
   font-size: 16px;
+}/* Estilo para el mensaje de éxito */
+.alert-success {
+  padding: 1rem;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  border-radius: 5px;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: 600;
 }
+
+/* Estilo para campos deshabilitados (cuando está logueado) */
+.contact-form input:disabled {
+  background-color: #e9ecef;
+  opacity: 0.7;
+} 

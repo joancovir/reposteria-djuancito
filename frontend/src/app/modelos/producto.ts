@@ -1,12 +1,15 @@
-// Ruta: src/app/modelos/producto.ts
+
+export type CategoriaProducto = 'torta' | 'postre' | 'bocadito';
+export type EstadoProducto = 'activo' | 'inactivo';
+
 export interface Producto {
-  productoId: number; 
+  productoId: number;
   nombre: string;
-  categoria: string;
-  descripcion: string;
+  categoria: CategoriaProducto | string; 
+  descripcion?: string; 
   precioBase: number;
   imagenUrl: string;
   personalizable: boolean;
   personalizacion?: any; 
-
+  estado?: EstadoProducto | string; 
 }

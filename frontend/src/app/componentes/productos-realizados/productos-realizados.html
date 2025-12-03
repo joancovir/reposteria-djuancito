@@ -1,0 +1,71 @@
+<section class="galeria-productos">
+  <div class="header-container">
+    <button (click)="volver()" class="btn-volver">
+      <span class="arrow">←</span> Volver a la página anterior
+    </button>
+    
+    <h2>Galería de Productos Realizados</h2>
+    <p class="subtitle">Inspírate con las creaciones que hicimos para nuestros clientes.</p>
+  </div>
+
+  <div class="filtros-container">
+    <div class="filtro-item" 
+         *ngFor="let categoria of categoriasDisponibles">
+      <button 
+        (click)="aplicarFiltro(categoria)" 
+        [class.active]="filtroSeleccionado === categoria"
+        class="btn-filtro">
+        {{ getNombreFiltro(categoria) }}
+      </button>
+    </div>
+  </div>
+
+  <div class="productos-grid">
+    <div class="producto-card" 
+         *ngFor="let producto of productosMostrados"
+         data-bs-toggle="modal" 
+         data-bs-target="#zoomModal"
+         (click)="mostrarZoom(producto)">
+      
+      <img [src]="producto.imagenUrl" [alt]="producto.nombre">
+      <div class="card-info">
+        <h3>{{ producto.nombre }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="productosFiltrados.length === 0" class="no-results">
+    No se encontraron productos en la categoría "{{ getNombreFiltro(filtroSeleccionado) }}".
+  </div>
+
+  <nav *ngIf="totalPaginas > 1" class="pagination-container" aria-label="Paginación de productos">
+    <ul class="pagination">
+      <li class="page-item" [class.disabled]="paginaActual === 1">
+        <a class="page-link" href="#" (click)="irAPagina(paginaActual - 1); $event.preventDefault()">Anterior</a>
+      </li>
+
+      <li class="page-item active">
+        <span class="page-link">{{ paginaActual }} de {{ totalPaginas }}</span>
+      </li>
+
+      <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+        <a class="page-link" href="#" (click)="irAPagina(paginaActual + 1); $event.preventDefault()">Siguiente</a>
+      </li>
+    </ul>
+  </nav>
+
+</section>
+
+<div class="modal fade" id="zoomModal" tabindex="-1" aria-labelledby="zoomModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="zoomModalLabel">{{ nombreZoom }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img [src]="imagenZoom" [alt]="nombreZoom" class="img-fluid">
+      </div>
+    </div>
+  </div>
+</div>

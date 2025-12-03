@@ -1,0 +1,91 @@
+<div class="gestion-container">
+
+  <div class="header-section">
+    <h2>Gestionar Adicionales</h2>
+    <button class="btn-accion btn-crear" (click)="abrirCrear()">
+      + Añadir Adicional
+    </button>
+  </div>
+
+  <!-- Loading / Error -->
+  <div *ngIf="isLoading" class="alert alert-info">Cargando adicionales...</div>
+  <div *ngIf="errorMensaje" class="alert alert-danger">{{ errorMensaje }}</div>
+
+  <!-- Tabla -->
+  <div class="table-responsive" *ngIf="!isLoading && listaDeAdicionales.length > 0">
+    <table class="table table-hover table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Costo Adicional</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of listaDeAdicionales">
+          <td>{{ a.adicionalId }}</td>
+          <td>{{ a.nombre }}</td>
+          <td><span class="badge bg-primary">{{ a.categoria | titlecase }}</span></td>
+          <td>S/ {{ a.costoAdicional | number:'1.2-2' }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-2" (click)="abrirEditar(a)" title="Editar">Editar</button>
+            <button class="btn btn-sm btn-danger" (click)="eliminarAdicional(a)" title="Eliminar">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!isLoading && listaDeAdicionales.length === 0" class="alert alert-info text-center">
+    No hay adicionales registrados aún.
+  </div>
+<!-- MODAL SIN FONDO GRIS – SALE ENCIMA DE TODO -->
+<div class="modal-directo" *ngIf="modalVisible">
+  <div class="modal-content-directo" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        {{ esEdicion ? 'Editar Adicional' : 'Nuevo Adicional' }}
+      </h3>
+      <button type="button" class="btn-close-modal" (click)="cerrarModal()">X</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="p-4">
+      <div class="mb-3">
+        <label class="form-label fw-bold">Nombre</label>
+        <input type="text" class="form-control" formControlName="nombre" placeholder="Ej: Relleno de Fudge">
+        <small *ngIf="form.get('nombre')?.invalid && form.get('nombre')?.touched" class="text-danger">
+          Obligatorio (mín. 2 caracteres)
+        </small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Categoría</label>
+        <select class="form-select" formControlName="categoria">
+          <option value="">Seleccionar categoría</option>
+          <option value="bizcocho">Bizcocho</option>
+          <option value="relleno">Relleno</option>
+          <option value="topping">Topping</option>
+          <option value="decorado">Decorado</option>
+          <option value="extra">Extra</option>
+          <option value="mensaje">Mensaje</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label fw-bold">Costo Adicional (S/)</label>
+        <input type="number" step="0.01" class="form-control" formControlName="costoAdicional" placeholder="0.00">
+      </div>
+
+      <div class="d-flex justify-content-end gap-3">
+        <button type="button" class="btn btn-secondary px-4" (click)="cerrarModal()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-success px-5" [disabled]="form.invalid">
+          {{ esEdicion ? 'Actualizar' : 'Crear' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

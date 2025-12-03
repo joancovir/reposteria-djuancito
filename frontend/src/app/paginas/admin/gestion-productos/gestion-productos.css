@@ -1,0 +1,281 @@
+.gestion-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Inter', sans-serif;
+}
+
+.header-section { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 1.5rem; 
+    border-bottom: 3px solid #000000;
+    padding-bottom: 15px;
+}
+.header-section h2 {
+    color: #f3b020e7;
+    font-weight: 700;
+}
+
+/* Botón Añadir */
+.btn-crear {
+  background: linear-gradient(45deg, #f0dac8, #ff8c42);
+    color: rgb(0, 0, 0);
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
+    transition: background-color 0.2s ease, transform 0.1s;
+}
+.btn-crear:hover { 
+    background-color: #218838; 
+    transform: translateY(-1px);
+}
+
+
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.table thead th {
+    background-color: #e9f5ff; 
+    font-weight: 700;
+    color: #333;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.table tbody tr:hover {
+    background-color: #f0f8ff;
+}
+
+/* Imagen en miniatura */
+.product-image-thumbnail {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px; 
+    border: 2px solid #ddd;
+}
+
+.badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    display: inline-block;
+}
+.estado-activo { 
+    background-color: #d4edda; 
+    color: #155724; 
+}
+.estado-inactivo { 
+    background-color: #f8d7da; 
+    color: #721c24; 
+}
+
+.btn-action {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 5px;
+    font-size: 1.1rem;
+    transition: color 0.2s;
+    padding: 5px;
+    border-radius: 4px;
+}
+.btn-edit { color: #007bff; }
+.btn-delete { color: #dc3545; }
+.btn-action:hover {
+    transform: scale(1.1);
+}
+
+.no-data {
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    margin-top: 1.5rem;
+    background-color: #fafafa;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    width: 95%;
+    max-width: 550px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-title {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #000000;
+    border-bottom: 2px solid #000000;
+    padding-bottom: 10px;
+    font-weight: 600;
+}
+
+.product-form .form-group {
+    margin-bottom: 1.2rem;
+}
+
+.product-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.product-form input:not([type="checkbox"]),
+.product-form select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.product-form input:focus,
+.product-form select:focus {
+    border-color: #ff9100;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+.url-input-group {
+    display: flex;
+    gap: 10px;
+}
+.url-input-group input {
+    flex-grow: 1;
+    background-color: #f8f8f8;
+    cursor: default;
+}
+.btn-url-select {
+  background: linear-gradient(45deg, #927f70, #e49462);
+    color: rgb(0, 0, 0);
+    padding: 0.7rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 800;
+    transition: background-color 0.2s;
+}
+.btn-url-select:hover {
+    background-color: #5a6268;
+}
+
+
+/* Checkbox */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0; 
+}
+.checkbox-group label {
+    margin-right: 15px;
+    margin-bottom: 0;
+    font-weight: 700;
+}
+
+/* Acciones */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.btn-save {
+    background-color: #f3a070; 
+    box-shadow: 0 4px 6px rgba(235, 158, 70, 0.918);  
+    font-weight: 700;
+
+}
+.btn-save:hover:not([disabled]) {
+    background-color: #d18624;
+}
+
+.btn-cancel {
+    background-color: #f0f0f0;
+    color: #000000;
+    font-weight:600;
+}
+.btn-cancel:hover {
+    background-color: #e0e0e0;
+}
+
+.alert-danger {
+    margin-top: 1rem;
+}
+
+.alert-danger-inline {
+    padding: 0.75rem;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;                   
+    justify-content: center;          
+    align-items: center;           
+    z-index: 1000;
+}
+
+.modal-content {
+  background: linear-gradient(45deg, #ffe4ce, #ffccad);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    width: 95%;
+    max-width: 550px;
+    max-height: 90vh;               
+    overflow-y: auto;                
+    animation: modalAbre 0.3s ease-out;
+    margin: auto;                    
+}
+
+@keyframes modalAbre {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+}

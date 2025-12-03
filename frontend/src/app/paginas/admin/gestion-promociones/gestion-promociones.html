@@ -1,0 +1,49 @@
+<div class="gestion-container">
+  <div class="header-section">
+    <h2>Gestionar Promociones</h2>
+    <button class="btn-accion btn-crear" (click)="crearPromocion()">+ Añadir Promoción</button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">Cargando promociones...</div>
+  <div *ngIf="errorMensaje" class="alert alert-danger">{{ errorMensaje }}</div>
+
+  <div *ngIf="!isLoading && listaDePromociones.length > 0" class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Título</th>
+          <th>Descripción</th>
+          <th>Descuento (%)</th>
+          <th>Fecha Inicio</th>
+          <th>Fecha Fin</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let promo of listaDePromociones">
+          <td>{{ promo.promocionId }}</td>
+          <td>{{ promo.titulo }}</td>
+          <td>{{ promo.descripcion | slice:0:50 }}{{ (promo.descripcion?.length || 0) > 50 ? '...' : '' }}</td>
+          <td>{{ promo.descuento }}%</td>
+          <td>{{ promo.fechaInicio | date:'yyyy-MM-dd' }}</td>
+          <td>{{ promo.fechaFin | date:'yyyy-MM-dd' }}</td>
+          <td>
+            <span class="badge" [ngClass]="getEstadoClass(promo.estado)">
+              {{ promo.estado | titlecase }}
+            </span>
+          </td>
+          <td>
+             <button class="btn-action btn-edit" (click)="editarPromocion(promo)" title="Editar">✏️</button>
+             <button class="btn-action btn-delete" (click)="eliminarPromocion(promo)" title="Eliminar">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!isLoading && listaDePromociones.length === 0 && !errorMensaje" class="alert alert-info">
+    No hay promociones registradas.
+  </div>
+</div>

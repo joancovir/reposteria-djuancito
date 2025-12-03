@@ -1,34 +1,44 @@
 <div class="admin-layout">
-  <aside class="sidebar">
-    <div class="sidebar-header">
+  <div class="top-bar">
+    <div class="brand">
+      <img src="assets/imagenes/logo.png" alt="Logo" class="logo">
       <h3>D.Juancito</h3>
     </div>
 
-    <div class="user-profile">
-      <img src="assets/imagenes/logo.png" alt="Logo de D.Juancito">
-      <span class="user-name">Admin Djuancito</span>
-      <a routerLink="#" class="manage-account-link">Gestionar Cuenta</a>
+    <div class="user-actions">
+      <span class="user-name">{{ authService.obtenerUsuarioActual()?.nombre }}</span>
+      <a routerLink="/admin/perfil" class="btn-manage">
+        <i class="bi bi-person-gear"></i> Gestionar Cuenta
+      </a>
+      <button (click)="cerrarSesion()" class="btn-logout">
+        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+      </button>
     </div>
+  </div>
 
-    <nav class="sidebar-nav">
-      <ul>
-        <li><a routerLink="/admin/dashboard">Dashboard</a></li>
-        <li><a routerLink="#">Gestión de Pedidos</a></li>
-        <li><a routerLink="#">Gestión de Consultas</a></li>
-        <li><a routerLink="#">Gestión de Usuarios</a></li>
-        <li><a routerLink="#">Reportes</a></li>
-      </ul>
-    </nav>
+  <div class="main-with-sidebar">
+    <!-- SIDEBAR IZQUIERDA -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a routerLink="/admin/dashboard" routerLinkActive="active-link"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+          <li><a routerLink="/admin/pedidos" routerLinkActive="active-link"><i class="bi bi-receipt"></i> Gestión de Pedidos</a></li>
+          <li><a routerLink="/admin/pagos" routerLinkActive="active-link"><i class="bi bi-credit-card"></i> Gestión de Pagos</a></li>
+          <li><a routerLink="/admin/productos" routerLinkActive="active-link"><i class="bi bi-box-seam"></i> Gestionar Catálogo</a></li>
+          <li><a routerLink="/admin/adicionales" routerLinkActive="active-link"><i class="bi bi-plus-circle"></i> Gestión de Adicionales</a></li>
+          <li><a routerLink="/admin/resenas" routerLinkActive="active-link"><i class="bi bi-star"></i> Gestión de Reseñas</a></li>
+          <li><a routerLink="/admin/promociones" routerLinkActive="active-link"><i class="bi bi-tag"></i> Gestión de Promociones</a></li>
+          <li><a routerLink="/admin/consultas" routerLinkActive="active-link"><i class="bi bi-chat-dots"></i> Gestión de Consultas</a></li>
+          <li><a routerLink="/admin/usuarios" routerLinkActive="active-link"><i class="bi bi-people"></i> Gestión de Usuarios</a></li>
+          <li><a routerLink="/admin/GestionGarantias" routerLinkActive="active-link"><i class="bi bi-shield-check"></i> Opciones de Garantía</a></li>
+          <li><a routerLink="/admin/GestionQr" routerLinkActive="active-link"><i class="bi bi-qr-code"></i> Configuración QR</a></li>
+          <li><a routerLink="/admin/reportes" routerLinkActive="active-link"><i class="bi bi-graph-up"></i> Reportes</a></li>
+        </ul>
+      </nav>
+    </aside>
 
-    <div class="sidebar-footer">
-      <button (click)="cerrarSesion()" class="logout-button">Cerrar Sesión</button>
-    </div>
-  </aside>
-
-  <main class="main-content">
-    <div class="top-bar"> BIENVENIDO DE NUEVO </div>
-    <div class="page-content">
+    <main class="main-content">
       <router-outlet></router-outlet>
-    </div>
-  </main>
+    </main>
+  </div>
 </div>

@@ -1,0 +1,6 @@
+<div class="card">
+  <h5>Resumen</h5>
+  <p><strong>Total:</strong> S/ {{ total  }}</p>
+<p><strong>Garantía ({{ porcentajeGarantia }}%):</strong> S/ {{ garantia | number:'1.2-2' }}</p>
+  <button pButton label="Confirmar Pedido" (click)="confirmar()">Confirmar</button>
+</div>

@@ -61,4 +61,137 @@
 .review-content .product {
   color: #777;
   font-weight: normal;
+}.reviews-section {
+  padding: 60px 40px;
+  background-color: #fafafa;
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  position: relative;
+}
+
+.reviews-section h2 {
+  font-size: 36px;
+  color: #333;
+  margin-bottom: 50px;
+}
+
+.review-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.review-card {
+  max-width: 900px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  text-align: left;
+  transition: all 0.5s ease;
+  opacity: 1;
+}
+
+.review-card.fade {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.review-image img {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.review-content blockquote {
+  font-size: 18px;
+  color: #555;
+  line-height: 1.7;
+  border-left: 4px solid #eb7221;
+  padding-left: 20px;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.review-rating {
+  color: #ffc107;
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.review-content cite {
+  display: block;
+  font-weight: bold;
+  color: #333;
+}
+
+.review-content .author {
+  color: #eb7221;
+  display: block;
+}
+
+.review-content .product {
+  color: #777;
+  font-weight: normal;
+  font-size: 14px;
+}
+
+/* --- Navegación --- */
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(235, 114, 33, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 28px;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  z-index: 10;
+}
+
+.nav-arrow:hover {
+  background-color: #d55f15;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.nav-arrow.left {
+  left: 10px;
+}
+
+.nav-arrow.right {
+  right: 10px;
+}
+
+/* Adaptación móvil */
+@media (max-width: 768px) {
+  .review-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+    padding: 30px;
+  }
+
+  .review-image img {
+    width: 200px;
+    height: 200px;
+  }
+
+  .nav-arrow {
+    font-size: 24px;
+    width: 45px;
+    height: 45px;
+  }
 }

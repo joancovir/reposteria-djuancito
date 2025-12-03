@@ -1,0 +1,92 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+        <div class="card-body text-center p-5">
+
+          <h2 class="mb-4 text-primary fw-bold">Pagar Garantía</h2>
+
+          <div class="bg-light p-4 rounded-4 mb-5 shadow-sm">
+            <h3 class="text-success fw-bold">S/ {{ garantia | number:'1.2-2' }}</h3>
+            <p class="text-muted mb-1">Garantía a pagar ahora</p>
+            <p class="text-muted small">Resto al recibir: S/ {{ resto | number:'1.2-2' }}</p>
+          </div>
+
+          <!-- QRs de Yape y Plin -->
+          <div class="row justify-content-center g-4 mb-5">
+            <div class="col-6" *ngFor="let qr of qrList; let i = index">
+              <div class="text-center">
+                <h5 class="mb-3">
+                  <span class="badge bg-gradient fs-5 px-4 py-2">
+                    {{ qr.tipo }}
+                  </span>
+                </h5>
+                <img [src]="qr.imagenUrl"
+                     class="img-fluid rounded-4 shadow-lg qr-img"
+                     (click)="abrirQr(qr.imagenUrl)"
+                     alt="QR {{ qr.tipo }}">
+                <p class="mt-3 fw-bold text-primary fs-4">+51 {{ qr.telefono }}</p>
+                <small class="text-muted d-block" *ngIf="qr.nombrePropietario">
+                  {{ qr.nombrePropietario }}
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botón Ya Pagué -->
+          <button class="btn btn-success btn-lg w-100 py-4 fw-bold fs-4 rounded-4 shadow"
+                  (click)="mostrarExito()">
+            ¡YA PAGUÉ LA GARANTÍA!
+          </button>
+
+          <div class="mt-4">
+            <a routerLink="/cliente/mis-pedidos" class="text-muted small text-decoration-none">
+              ← Ver mis pedidos
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: QR AMPLIADO -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-dark border-0 rounded-4 overflow-hidden">
+      <div class="modal-header border-0 justify-content-end p-3">
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center p-5">
+        <img [src]="qrAmpliado" class="img-fluid rounded-4 border border-5 border-white shadow-lg" 
+             style="max-height: 75vh;">
+        <p class="text-white mt-4 fw-bold fs-3">Escanea con {{ qrList.length > 1 ? 'Yape o Plin' : qrList[0]?.tipo }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: PAGO EXITOSO -->
+<div class="modal fade" id="modalPagoExitoso" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-body text-center p-5">
+        <div class="mb-4">
+          <i class="bi bi-check-circle-fill text-success" style="font-size: 6rem;"></i>
+        </div>
+        <h2 class="fw-bold text-success">¡PAGO RECIBIDO!</h2>
+        <p class="fs-3 mt-4 text-dark">
+          Gracias por confiar en <strong class="text-primary">D'Juancito Tortas</strong>
+        </p>
+        <p class="text-muted fs-5">
+          En minutos te escribimos por WhatsApp para coordinar la entrega de tu torta perfecta
+        </p>
+        <button class="btn btn-success btn-lg px-5 py-3 mt-3 rounded-4" 
+                routerLink="/cliente/historial-pedidos" 
+                data-bs-dismiss="modal">
+          Ver mis pedidos
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

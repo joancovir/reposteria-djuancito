@@ -1,0 +1,84 @@
+<div class="contenedor-entrega">
+
+  <h2 class="text-center fw-bold text-primary mb-4">Confirmar Entrega</h2>
+  <p class="text-center text-muted mb-5">Hola <strong>{{ usuario?.nombre }}</strong>, completa los datos de tu pedido</p>
+
+  <div class="card sombra mx-auto" style="max-width: 900px;">
+    <div class="card-body p-5">
+
+      <form [formGroup]="entregaForm" (ngSubmit)="onSubmit()">
+
+        <!-- MÉTODO DE ENTREGA -->
+        <div class="mb-5">
+          <h4 class="fw-bold mb-4">¿Cómo deseas recibir tu torta?</h4>
+          <div class="row g-4">
+
+            <div class="col-md-6">
+              <label class="tarjeta-metodo entrega-card p-4 text-center rounded-4 cursor-pointer
+                     {{ entregaForm.value.metodo === 'delivery' ? 'selected' : '' }}">
+                <input type="radio" class="btn-check" value="delivery" formControlName="metodo">
+                <i class="bi bi-truck fs-1 text-primary mb-3"></i>
+                <h5 class="fw-bold">Delivery</h5>
+                <p class="small text-muted">Te la llevamos a tu puerta</p>
+              </label>
+            </div>
+
+            <div class="col-md-6">
+              <label class="tarjeta-metodo entrega-card p-4 text-center rounded-4 cursor-pointer
+                     {{ entregaForm.value.metodo === 'recojo' ? 'selected' : '' }}">
+                <input type="radio" class="btn-check" value="recojo" formControlName="metodo">
+                <i class="bi bi-shop fs-1 text-success mb-3"></i>
+                <h5 class="fw-bold">Recojo en tienda</h5>
+                <p class="small fw-bold">{{ tienda.direccion }}</p>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- DIRECCIÓN (solo si es delivery) -->
+        <div *ngIf="entregaForm.value.metodo === 'delivery'" class="mb-4 animar">
+          <label class="form-label fw-bold">Dirección de entrega</label>
+          <input type="text" class="form-control form-control-lg" formControlName="direccionEntrega"
+                 placeholder="Ej: Jr. Los Rosales 456, Surco">
+          <small class="text-muted">Tu dirección guardada: <strong>{{ usuario?.direccion || 'No registrada' }}</strong></small>
+        </div>
+
+        <!-- RECOJO EN TIENDA -->
+        <div *ngIf="entregaForm.value.metodo === 'recojo'" class="text-center py-5 bg-light rounded-4 animar">
+          <i class="bi bi-geo-alt-fill text-success fs-1 mb-3"></i>
+          <h4 class="text-success fw-bold">{{ tienda.nombreTienda }}</h4>
+          <p class="fw-bold">{{ tienda.direccion }}</p>
+          <p class="text-muted">{{ tienda.referencia }}</p>
+
+          <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow mt-4">
+            <iframe [src]="tienda.googleMapsEmbed | urlSegura" allowfullscreen="" loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <!-- REFERENCIA -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">Referencia (opcional)</label>
+          <input type="text" class="form-control" formControlName="referencia"
+                 placeholder="Ej: Casa color crema, portón negro">
+        </div>
+
+        <!-- FECHA Y HORA -->
+        <div class="mb-5">
+          <label class="form-label fw-bold">Fecha y hora de entrega / recojo</label>
+          <input type="datetime-local" class="form-control form-control-lg" formControlName="fechaEntrega" required>
+        </div>
+
+        <!-- BOTÓN FINAL -->
+        <button type="submit" class="btn btn-success btn-lg w-100 py-4 rounded-pill fw-bold sombra-boton">
+          Confirmar y Pagar Garantía → S/ {{ tortaPersonalizada?.precioCalculado || 0 }}
+        </button>
+
+        <div class="text-center mt-3">
+          <a routerLink="/cliente/personalizar-torta" class="text-muted small">
+            ← Volver a personalización
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

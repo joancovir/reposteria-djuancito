@@ -5,7 +5,7 @@
   </main>
   <app-pie-pagina></app-pie-pagina>
 </ng-container>
-
+<app-toast *ngIf="mostrarToast" [mensaje]="mensajeToast"></app-toast>
 <ng-container *ngIf="!usaLayoutPrincipal">
   <router-outlet></router-outlet>
 </ng-container>

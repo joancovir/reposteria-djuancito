@@ -1,0 +1,164 @@
+.galeria-productos {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.header-container {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header-container h2 {
+  font-size: 38px;
+  color: #333;
+  margin-top: 10px;
+}
+
+.header-container .subtitle {
+  font-size: 18px;
+  color: #777;
+}
+
+/* Botón Volver */
+.btn-volver {
+  background: none;
+  border: none;
+  color: #eb7221; /* Color principal */
+  font-size: 16px;
+  cursor: pointer;
+  padding: 5px 0;
+  display: block;
+  margin: 0 auto 20px 0; /* Alineación a la izquierda */
+  transition: color 0.2s;
+}
+
+.btn-volver:hover {
+  color: #c95d12;
+}
+
+.btn-volver .arrow {
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+/* Contenedor de Filtros */
+.filtros-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.btn-filtro {
+  padding: 10px 20px;
+  border: 2px solid #eb7221;
+  border-radius: 25px;
+  background-color: #ffffff;
+  color: #eb7221;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-filtro.active {
+  background-color: #eb7221;
+  color: white;
+}
+
+.btn-filtro:hover:not(.active) {
+  background-color: #fff0e9;
+}
+
+/* Grid de Productos */
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.producto-card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.producto-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.producto-card img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.card-info {
+  padding: 15px;
+  text-align: center;
+  background-color: #fff;
+}
+
+.card-info h3 {
+  font-size: 20px;
+  margin: 0;
+  color: #333;
+}
+
+.no-results {
+  text-align: center;
+  padding: 50px;
+  font-size: 20px;
+  color: #eb7221;
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  margin-top: 40px;
+}/* --- Estilos de Paginación --- */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.pagination {
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  border-radius: 0.25rem;
+}
+
+.page-item {
+  margin: 0 5px;
+}
+
+.page-link {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  color: #eb7221;
+}
+
+.page-item.active .page-link {
+  z-index: 3;
+  color: #fff;
+  background-color: #eb7221;
+  border-color: #eb7221;
+}
+
+.page-item.disabled .page-link {
+  color: #6c757d;
+  pointer-events: none;
+  background-color: #fff;
+  border-color: #dee2e6;
+}
+
+.page-link:hover {
+  background-color: #fff0e9;
+}

@@ -1,32 +1,41 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common'; // <-- Importa CommonModule
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AutenticacionService } from '../../servicios/autenticacion'; // <-- Importa el servicio
-
+import { CarritoService } from '../../servicios/carrito';
+import { AutenticacionService } from '../../servicios/autenticacion'; 
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './header.html',
-  styleUrl: './header.css'
+  styleUrls: ['./header.css']
 })
-export class Header {
+export class Header implements OnInit {
   isMenuOpen = false;
+  cantidadItems = 0;
 
-  constructor(public authService: AutenticacionService) {}
+  constructor(
+    public authService: AutenticacionService,
+    private carritoService: CarritoService
+  ) {}
 
-  cerrarSesion(): void {
-    this.authService.cerrarSesion();
-    this.isMenuOpen = false; // Cierra el menú al cerrar sesión
+  ngOnInit(): void {
+    this.carritoService.items$.subscribe(items => {
+      this.cantidadItems = items.reduce((total, item) => total + item.cantidad, 0);
+    });
   }
 
-  toggleMenu(): void {
+  toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
-  // --- NUEVO MÉTODO ---
-  closeMenu(): void {
+  closeMenu() {
     this.isMenuOpen = false;
+  }
+
+  cerrarSesion() {
+    this.authService.cerrarSesion();
+    this.closeMenu();
   }
 }

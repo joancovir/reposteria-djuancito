@@ -1,43 +1,120 @@
+// src/app/servicios/carrito.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Producto } from '../modelos/producto';
 
-@Injectable({
-  providedIn: 'root'
-})
+export interface ItemCarrito {
+  productoId: number;
+  nombre: string;
+  imagenUrl: string;
+  precioBase: number;
+  precioUnitario: number;
+  cantidad: number;
+  subtotal: number;
+  promocionId?: number | null;
+  nombrePromocion?: string | null;
+  descuentoAplicado?: number;
+  esOfertaEspecial?: boolean;
+  personalizable?: boolean;
+  personalizacion?: any;
+}
+
+@Injectable({ providedIn: 'root' })
 export class CarritoService {
-  private itemsEnCarrito = new BehaviorSubject<Producto[]>([]);
-  items$ = this.itemsEnCarrito.asObservable();
+  private items = new BehaviorSubject<ItemCarrito[]>([]);
+  items$ = this.items.asObservable();
 
   constructor() {
-    // Al iniciar el servicio, intenta cargar el carrito desde localStorage
-    const carritoGuardado = localStorage.getItem('carrito');
-    if (carritoGuardado) {
-      this.itemsEnCarrito.next(JSON.parse(carritoGuardado));
+    this.cargar();
+  }
+
+  agregarAlCarrito(producto: Producto | ItemCarrito) {
+    if ('precioUnitario' in producto === false) {
+      const p = producto as Producto;
+      const item: ItemCarrito = {
+        productoId: p.productoId,
+        nombre: p.nombre,
+        imagenUrl: p.imagenUrl,
+        precioBase: p.precioBase,
+        precioUnitario: p.precioBase,
+        cantidad: 1,
+        subtotal: p.precioBase,
+        personalizable: p.personalizable,
+        personalizacion: p.personalizacion
+      };
+      this.agregarItem(item);
+    } else {
+      this.agregarItem(producto as ItemCarrito);
     }
   }
 
-  agregarAlCarrito(producto: Producto) {
-    const itemsActuales = this.itemsEnCarrito.getValue();
-    const nuevosItems = [...itemsActuales, producto];
-    this.itemsEnCarrito.next(nuevosItems);
-    // Guarda el nuevo estado del carrito en localStorage
-    this.guardarCarritoEnStorage(nuevosItems);
-    alert(`${producto.nombre} ha sido añadido al carrito!`);
+  private agregarItem(item: ItemCarrito) {
+    const actuales = this.items.getValue();
+    const existe = actuales.find(i => i.productoId === item.productoId);
+
+    if (existe) {
+      existe.cantidad += item.cantidad;
+      existe.subtotal = existe.precioUnitario * existe.cantidad;
+    } else {
+      item.subtotal = item.precioUnitario * item.cantidad;
+      actuales.push(item);
+    }
+
+    this.items.next(actuales);
+    this.guardar();
   }
 
-  obtenerItems(): Producto[] {
-    return this.itemsEnCarrito.getValue();
+  cambiarCantidad(productoId: number, cantidad: number) {
+    if (cantidad < 1) return;
+    const items = this.items.getValue();
+    const item = items.find(i => i.productoId === productoId);
+    if (item) {
+      item.cantidad = cantidad;
+      item.subtotal = item.precioUnitario * cantidad;
+      this.items.next(items);
+      this.guardar();
+    }
   }
 
-  // Método nuevo para limpiar el carrito (lo usaremos después de una compra)
-  limpiarCarrito(): void {
-    this.itemsEnCarrito.next([]);
-    localStorage.removeItem('carrito');
+  eliminar(productoId: number) {
+    const filtrados = this.items.getValue().filter(i => i.productoId !== productoId);
+    this.items.next(filtrados);
+    this.guardar();
   }
 
-  // Método privado para guardar en localStorage
-  private guardarCarritoEnStorage(items: Producto[]): void {
-    localStorage.setItem('carrito', JSON.stringify(items));
+  obtenerItems(): ItemCarrito[] {
+    return this.items.getValue();
+  }
+
+  calcularTotal(): number {
+    return this.items.getValue().reduce((t, i) => t + i.subtotal, 0);
+  }
+
+  calcularAhorroTotal(): number {
+    return this.items.getValue().reduce((t, i) => t + (i.precioBase - i.precioUnitario) * i.cantidad, 0);
+  }
+
+  vaciar() {
+    this.items.next([]);
+    localStorage.removeItem('carrito_djuancito');
+  }
+
+  limpiar() {
+    this.vaciar();
+  }
+
+  private guardar() {
+    localStorage.setItem('carrito_djuancito', JSON.stringify(this.items.getValue()));
+  }
+
+  private cargar() {
+    const data = localStorage.getItem('carrito_djuancito');
+    if (data) {
+      try {
+        this.items.next(JSON.parse(data));
+      } catch (e) {
+        console.error('Error cargando carrito', e);
+      }
+    }
   }
 }

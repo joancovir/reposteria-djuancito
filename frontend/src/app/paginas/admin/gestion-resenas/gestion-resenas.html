@@ -1,0 +1,60 @@
+<div class="gestion-container">
+  <h2>Gestionar Reseñas</h2>
+
+  <div *ngIf="isLoading" class="loading">Cargando reseñas...</div>
+  <div *ngIf="errorMensaje" class="alert alert-danger">{{ errorMensaje }}</div>
+
+  <div *ngIf="!isLoading && listaDeResenas.length > 0" class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Pedido</th>
+          <th>Valoración</th>
+          <th>Comentario</th>
+          <th>Foto</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let resena of listaDeResenas">
+          <td>{{ resena.resenaId }}</td>
+          <td>{{ getNombreCliente(resena) }}</td>
+          <td>{{ getPedidoId(resena) }}</td>
+          <td>{{ resena.valoracion }} ★</td>
+          <td class="comentario-col">{{ resena.comentario }}</td>
+          <td>
+            <a *ngIf="resena.fotoUrl" [href]="resena.fotoUrl" target="_blank">Ver</a>
+            <span *ngIf="!resena.fotoUrl">-</span>
+          </td>
+          <td>{{ resena.fecha | date:'yyyy-MM-dd' }}</td>
+          <td>
+            <span class="badge" [ngClass]="getEstadoClass(resena.estado)">
+              {{ resena.estado | titlecase }}
+            </span>
+          </td>
+          <td class="acciones-col">
+            <ng-container *ngIf="resena.estado === 'pendiente'">
+               <button class="btn-action btn-aprobar"
+                       (click)="cambiarEstado(resena, 'aprobado')"
+                       [disabled]="updatingStatus[resena.resenaId]"
+                       title="Aprobar">✔️</button>
+               <button class="btn-action btn-rechazar"
+                       (click)="cambiarEstado(resena, 'rechazado')"
+                       [disabled]="updatingStatus[resena.resenaId]"
+                       title="Rechazar">❌</button>
+            </ng-container>
+            <span *ngIf="updatingStatus[resena.resenaId]" class="spinner">⚙️</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!isLoading && listaDeResenas.length === 0 && !errorMensaje" class="alert alert-info">
+    No hay reseñas para mostrar.
+  </div>
+</div>
