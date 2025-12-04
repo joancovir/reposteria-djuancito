@@ -5,7 +5,7 @@
     "ngx-toastr": "^19.1.0"
   
   },                                                    
-  "engines": {                                          
-    "node": ">=20.19.0"
+  "engines": {
+    "node": ">=24.0.0" 
   }
 }
