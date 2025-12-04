@@ -1,184 +1,204 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';  
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CarritoService } from '../../servicios/carrito';
 import { GarantiaService } from '../../servicios/garantia';
 import { AutenticacionService } from '../../servicios/autenticacion';
 import { Subscription } from 'rxjs';
 
+interface Adicional {
+  adicionalId: number;
+  nombre: string;
+  categoria: string;
+  costoAdicional: number;
+}
+
 @Component({
-  selector: 'app-mi-pedido',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './mi-pedido.html',
-  styleUrls: ['./mi-pedido.css']
+  selector: 'app-mi-pedido',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  templateUrl: './mi-pedido.html',
+  styleUrls: ['./mi-pedido.css']
 })
 export class MiPedido implements OnInit, OnDestroy {
-  itemsDelCarrito: any[] = [];  
-  subtotal = 0;
-  garantia = 0;
-  resto = 0;
-  porcentajeGarantia = 50;
-  opcionesGarantia: number[] = [];
-  private carritoSub!: Subscription;
+  itemsDelCarrito: any[] = [];
+  subtotal = 0;
+  garantia = 0;
+  resto = 0;
+  porcentajeGarantia = 50;
+  opcionesGarantia: number[] = [];
+  private carritoSub!: Subscription;
 
-  constructor(
-    private carritoService: CarritoService,
-    private garantiaService: GarantiaService,
-    private autenticacionService: AutenticacionService,
-    private http: HttpClient,  
-    private router: Router
-  ) {}
+  // Lista completa de adicionales (para mostrar nombres y precios)
+  adicionalesDisponibles: Adicional[] = [];
 
-  ngOnInit(): void {
-    this.cargarOpcionesGarantia();
-    this.cargarGarantiaSeleccionada();
-    this.suscribirseAlCarrito();
-  }
+  constructor(
+    private carritoService: CarritoService,
+    private garantiaService: GarantiaService,
+    private autenticacionService: AutenticacionService,
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
-  ngOnDestroy() {
-    this.carritoSub?.unsubscribe();
-  }
+  ngOnInit(): void {
+    this.cargarOpcionesGarantia();
+    this.cargarGarantiaSeleccionada();
+    this.suscribirseAlCarrito();
+    this.cargarAdicionales();
+  }
 
-  private suscribirseAlCarrito() {
-    this.carritoSub = this.carritoService.items$.subscribe(items => {
-      this.itemsDelCarrito = items;
-      this.calcularResumen();
-    });
-  }
+  ngOnDestroy() {
+    this.carritoSub?.unsubscribe();
+  }
 
-  cargarOpcionesGarantia() {
-    this.garantiaService.opciones$.subscribe(opcs => this.opcionesGarantia = opcs);
-  }
+  // CARGAR ADICIONALES PARA MOSTRAR NOMBRE Y PRECIO EN CARRITO
+  cargarAdicionales() {
+    this.http.get<Adicional[]>('http://localhost:8080/api/adicionales').subscribe({
+      next: (data) => this.adicionalesDisponibles = data,
+      error: (err) => console.error('Error cargando adicionales:', err)
+    });
+  }
 
-  cargarGarantiaSeleccionada() {
-    this.garantiaService.obtener().subscribe(p => {
-      this.porcentajeGarantia = p;
-      this.calcularResumen();
-    });
-  }
+  obtenerNombreAdicional(adicionalId: number): string {
+    const ad = this.adicionalesDisponibles.find(a => a.adicionalId === adicionalId);
+    return ad ? `${ad.nombre} (${ad.categoria})` : 'Adicional';
+  }
 
-  calcularResumen() {
-    this.subtotal = this.itemsDelCarrito.reduce((acc, item) =>
-      acc + (item.precioUnitario * item.cantidad), 0);
-    this.subtotal = Math.round(this.subtotal * 100) / 100;
+  obtenerCostoAdicional(adicionalId: number): number {
+    const ad = this.adicionalesDisponibles.find(a => a.adicionalId === adicionalId);
+    return ad ? ad.costoAdicional : 0;
+  }
 
-    this.garantia = Math.round(this.subtotal * this.porcentajeGarantia / 100 * 100) / 100;
-    this.resto = Math.round((this.subtotal - this.garantia) * 100) / 100;
-  }
+  private suscribirseAlCarrito() {
+    this.carritoSub = this.carritoService.items$.subscribe(items => {
+      this.itemsDelCarrito = items;
+      this.calcularResumen();
+    });
+  }
 
-  eliminarItem(productoId: number) {
-    this.carritoService.eliminar(productoId);
-  }
+  cargarOpcionesGarantia() {
+    this.garantiaService.opciones$.subscribe(opcs => this.opcionesGarantia = opcs);
+  }
 
-  cambiarCantidad(item: any, delta: number) {
-    const nueva = item.cantidad + delta;
-    if (nueva > 0) this.carritoService.cambiarCantidad(item.productoId, nueva);
-  }
+  cargarGarantiaSeleccionada() {
+    this.garantiaService.obtener().subscribe(p => {
+      this.porcentajeGarantia = p;
+      this.calcularResumen();
+    });
+  }
 
- cambiarGarantia(event: any) {
-    const seleccionado = Number(event.target.value);
-    this.garantiaService.seleccionar(seleccionado);
-    this.porcentajeGarantia = seleccionado;
-    this.calcularResumen();
-  }
+  calcularResumen() {
+    this.subtotal = this.itemsDelCarrito.reduce((acc, item) =>
+      acc + (item.precioUnitario * item.cantidad), 0);
+    this.subtotal = Math.round(this.subtotal * 100) / 100;
 
-  get descuentoTotal(): number {
-    const sinDescuento = this.itemsDelCarrito.reduce((acc, item) =>
-      acc + (item.precioBase * item.cantidad), 0);
-    const conDescuento = this.subtotal;
-    return Math.round((sinDescuento - conDescuento) * 100) / 100;
-  }
+    this.garantia = Math.round(this.subtotal * this.porcentajeGarantia / 100 * 100) / 100;
+    this.resto = Math.round((this.subtotal - this.garantia) * 100) / 100;
+  }
 
-  get subtotalSinDescuento(): number {
-    return this.itemsDelCarrito.reduce((acc, item) =>
-      acc + (item.precioBase * item.cantidad), 0);
-  }
+  eliminarItem(productoId: number) {
+    this.carritoService.eliminar(productoId);
+  }
 
-confirmarPedido() {
-  const token = localStorage.getItem('jwt_token');
-  if (!token) {
-    // Reemplazando alert() por un mensaje en consola y navegación según la política de desarrollo
-    console.warn('Debes iniciar sesión para confirmar el pedido.');
-    this.router.navigate(['/iniciar-sesion']);
-    return;
-  }
+  cambiarCantidad(item: any, delta: number) {
+    const nueva = item.cantidad + delta;
+    if (nueva > 0) this.carritoService.cambiarCantidad(item.productoId, nueva);
+  }
 
-  const usuarioActual = this.autenticacionService.obtenerUsuarioActual();
-  if (!usuarioActual || !usuarioActual.usuarioId) {
-    console.error('No se pudo obtener el ID del usuario.');
-    this.router.navigate(['/iniciar-sesion']);
-    return;
-  }
+  cambiarGarantia(event: any) {
+    const seleccionado = Number(event.target.value);
+    this.garantiaService.seleccionar(seleccionado);
+    this.porcentajeGarantia = seleccionado;
+    this.calcularResumen();
+  }
 
- const detalles = this.itemsDelCarrito.map((item: any) => {
-  const precio = Number(item.precioUnitario) || 0;
-  const cantidad = Number(item.cantidad) || 1;
+  get descuentoTotal(): number {
+    const sinDescuento = this.itemsDelCarrito.reduce((acc, item) =>
+      acc + (item.precioBase * item.cantidad), 0);
+    return Math.round((sinDescuento - this.subtotal) * 100) / 100;
+  }
 
-  // Extraer solo los IDs si la personalización existe
-  const adicionalesIds = item.personalizacion && item.personalizacion.adicionalesSeleccionados
-    ? item.personalizacion.adicionalesSeleccionados.map((ad: any) => ad.adicionalId)
-    : [];
+  get subtotalSinDescuento(): number {
+    return this.itemsDelCarrito.reduce((acc, item) =>
+      acc + (item.precioBase * item.cantidad), 0);
+  }
 
-  return {
-    productoId: Number(item.productoId),
-    cantidad,
-    precioUnitario: precio,
-    subtotal: Number((precio * cantidad).toFixed(2)),
-    promocionId: item.promocionId ?? null,
-    personalizacion: item.personalizacion
-      ? {
-          descripcionExtra: item.personalizacion.descripcionExtra || null,
-          costoAdicional: item.personalizacion.costoAdicional != null 
-            ? Number(item.personalizacion.costoAdicional)
-            : null,
-          // CORRECCIÓN: Ahora se envía un array de IDs, no de objetos.
-          adicionalesSeleccionados: adicionalesIds
-        }
-      : null
-  };
-});
+ confirmarPedido() {
+  const token = localStorage.getItem('jwt_token');
 
+  if (!token) {
+    localStorage.setItem('redirect_after_login', '/cliente/mi-pedido');
+    alert('¡Debes iniciar sesión para confirmar tu pedido!');
+    this.router.navigate(['/iniciar-sesion']);
+    return;
+  }
 
-  const request = {
-  usuarioId: usuarioActual.usuarioId,
-  detalles: detalles,
-  subtotal: this.subtotal,           
-  garantiaPagada: this.garantia,     
-  resto: this.resto,                 
-  total: this.subtotal               
-};
-  console.log('ENVIANDO PEDIDO:', request);
+  const usuarioActual = this.autenticacionService.obtenerUsuarioActual();
+  if (!usuarioActual?.usuarioId) {
+    localStorage.setItem('redirect_after_login', '/cliente/mi-pedido');
+    this.router.navigate(['/iniciar-sesion']);
+    return;
+  }
 
-  const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  });
+  const detalles = this.itemsDelCarrito.map((item: any) => {
+    const adicionalesCompletos = (item.personalizacion?.adicionalesSeleccionados || []).map((id: number) => {
+      const adicional = this.adicionalesDisponibles.find(a => a.adicionalId === id);
+      return {
+        adicionalId: id,
+        nombre: adicional?.nombre || 'Adicional',
+        categoria: adicional?.categoria || '',
+        costoAdicional: adicional?.costoAdicional || 0
+      };
+    });
 
-  this.http.post<any>('http://localhost:8080/api/pedidos', request, { headers })
-    .subscribe({
-      next: (res) => {
-        localStorage.setItem('pedido_confirmado_id', res.pedidoId.toString());
-        localStorage.setItem('pago_garantia', JSON.stringify({
-          garantia: this.garantia,
-          resto: this.resto,
-          subtotal: this.subtotal
-        }));
+    return {
+      productoId: Number(item.productoId),
+      cantidad: Number(item.cantidad),
+      precioUnitario: Number(item.precioUnitario),
+      subtotal: Number((item.precioUnitario * item.cantidad).toFixed(2)),
+      promocionId: item.promocionId ? Number(item.promocionId) : null,
+      personalizacion: item.personalizacion ? {
+        descripcionExtra: item.personalizacion.descripcionExtra || null,
+        costoAdicional: Number(item.personalizacion.costoAdicional || 0),
+        adicionalesSeleccionados: adicionalesCompletos  // OBJETOS COMPLETOS, NO IDs
+      } : null
+    };
+  });
 
-        this.carritoService.vaciar();
-        this.itemsDelCarrito = [];
+  const request = {
+    usuarioId: Number(usuarioActual.usuarioId),
+    detalles: detalles,
+    subtotal: Number(this.subtotal.toFixed(2)),
+    garantiaPagada: Number(this.garantia.toFixed(2)),
+    resto: Number(this.resto.toFixed(2)),
+    total: Number(this.subtotal.toFixed(2))
+  };
 
-        // Reemplazando alert() por un mensaje en consola y navegación según la política de desarrollo
-        console.log('¡Pedido confirmado con éxito!');
-        this.router.navigate(['/cliente/pago-garantia']);
-      },
-      error: (err) => {
-        console.error('Error al confirmar pedido:', err);
-        // Reemplazando alert() por un mensaje en consola y navegación según la política de desarrollo
-        const errorMessage = err.error?.message || 'No se pudo guardar el pedido. Revisar la consola para más detalles.';
-        console.error('Error de servidor:', errorMessage);
-      }
-    });
-}
-}
+  console.log('ENVIANDO PEDIDO:', JSON.stringify(request, null, 2));
+
+  const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  });
+
+  this.http.post<any>('http://localhost:8080/api/pedidos', request, { headers })
+    .subscribe({
+      next: (res) => {
+        console.log('PEDIDO CREADO CON ÉXITO:', res);
+        localStorage.setItem('pedido_confirmado_id', res.pedidoId.toString());
+        localStorage.setItem('pago_garantia', JSON.stringify({
+          garantia: this.garantia,
+          resto: this.resto,
+          subtotal: this.subtotal
+        }));
+
+        this.carritoService.vaciar();
+        this.router.navigate(['/cliente/pago-garantia']);
+      },
+      error: (err) => {
+        console.error('ERROR FINAL:', err);
+        alert('Error: ' + (err.error?.message || 'No se pudo crear el pedido'));
+      }
+    });
+}}

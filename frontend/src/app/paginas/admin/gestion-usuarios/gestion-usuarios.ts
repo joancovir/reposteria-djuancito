@@ -1,70 +1,119 @@
-
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common'; 
-import { Usuario } from '../../../modelos/usuario'; 
-import { UsuarioService } from '../../../servicios/usuario';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-gestion-usuarios',
   standalone: true,
-  imports: [
-    CommonModule 
-  ],
+  imports: [CommonModule, FormsModule],
   templateUrl: './gestion-usuarios.html',
-  styleUrl: './gestion-usuarios.css'
+  styleUrls: ['./gestion-usuarios.css']
 })
 export class GestionUsuarios implements OnInit {
 
-  listaDeUsuarios: Usuario[] = [];
-  usuarioSeleccionado: Usuario | null = null; 
-  isLoading = true;
-  errorMensaje: string | null = null;
+  usuarios: any[] = [];
+  usuariosFiltrados: any[] = [];
+  filtro: string = '';
+  mensaje = '';
+  tipoAlerta = '';
 
-  private usuarioService = inject(UsuarioService);
+  // Para el modal de editar
+  usuarioEditando: any = null;
+  nuevoEstado: string = '';
+
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
     this.cargarUsuarios();
   }
 
-  cargarUsuarios(): void {
-    this.isLoading = true;
-    this.errorMensaje = null;
-    this.usuarioService.obtenerTodosLosUsuarios().subscribe({
+  mostrarAlerta(msj: string, tipo: string = 'success') {
+    this.mensaje = msj;
+    this.tipoAlerta = tipo;
+    setTimeout(() => this.mensaje = '', 4000);
+  }
+
+  cargarUsuarios() {
+    this.http.get<any[]>('http://localhost:8080/api/usuarios/todos').subscribe({
       next: (data) => {
-        this.listaDeUsuarios = data.map(user => {
-          const { password, ...userWithoutPassword } = user; 
-          return userWithoutPassword as Usuario; 
-        });
-        this.isLoading = false;
+        this.usuarios = data;
+        this.usuariosFiltrados = [...data];
+        this.mostrarAlerta('Usuarios cargados correctamente', 'success');
       },
-      error: (err) => {
-        console.error('Error al cargar todos los usuarios:', err);
-        if (err.status === 403) {
-            this.errorMensaje = 'No tienes permiso para ver esta sección. Asegúrate de haber iniciado sesión como Administrador.';
-        } else {
-            this.errorMensaje = 'No se pudieron cargar los usuarios. Intenta más tarde.';
-        }
-        this.isLoading = false;
-      }
+      error: () => this.mostrarAlerta('Error al cargar usuarios', 'danger')
     });
   }
 
-  // --- Funciones para futuros Modales/Acciones ---
-  verUsuario(usuario: Usuario): void {
-    this.usuarioSeleccionado = usuario;
-    console.log('Ver detalles de usuario:', usuario.usuarioId);
+  filtrarUsuarios() {
+    const term = this.filtro.toLowerCase().trim();
+    this.usuariosFiltrados = term
+      ? this.usuarios.filter(u =>
+          u.nombre.toLowerCase().includes(term) ||
+          u.email.toLowerCase().includes(term)
+        )
+      : [...this.usuarios];
   }
 
-  editarUsuario(usuario: Usuario): void {
-    this.usuarioSeleccionado = usuario;
-    console.log('Editar usuario:', usuario.usuarioId);
+  // ABRIR MODAL PARA EDITAR
+  abrirEditar(usuario: any) {
+    this.usuarioEditando = { ...usuario };
+    this.nuevoEstado = usuario.estado;
   }
 
-  getEstadoClass(estado: string | undefined): string {
-    switch (estado?.toLowerCase()) {
-      case 'activo': return 'estado-activo';
-      case 'inactivo': return 'estado-inactivo';
-      default: return '';
+  // GUARDAR CAMBIOS (ESTADO + NOMBRE + TELÉFONO)
+  guardarCambios() {
+    if (!this.usuarioEditando) return;
+
+    const body = {
+      nombre: this.usuarioEditando.nombre,
+      telefono: this.usuarioEditando.telefono || null,
+      estado: this.nuevoEstado
+    };
+
+    this.http.put(`http://localhost:8080/api/usuarios/${this.usuarioEditando.usuarioId}`, body)
+      .subscribe({
+        next: () => {
+          const usuario = this.usuarios.find(u => u.usuarioId === this.usuarioEditando.usuarioId);
+          if (usuario) {
+            usuario.nombre = this.usuarioEditando.nombre;
+            usuario.telefono = this.usuarioEditando.telefono;
+            usuario.estado = this.nuevoEstado;
+          }
+          this.mostrarAlerta('Usuario actualizado correctamente', 'success');
+          this.usuarioEditando = null;
+          this.cargarUsuarios(); // recarga por si cambió algo más
+        },
+        error: (err) => {
+          console.error(err);
+          this.mostrarAlerta('Error al actualizar usuario', 'danger');
+        }
+      });
+  }
+
+  // ELIMINAR USUARIO (solo si no es admin)
+  eliminarUsuario(usuario: any) {
+    if (usuario.usuarioId === 1) {
+      this.mostrarAlerta('No puedes eliminar al administrador', 'danger');
+      return;
     }
-  } 
+
+    if (confirm(`¿Seguro que deseas eliminar a ${usuario.nombre}?`)) {
+      this.http.delete(`http://localhost:8080/api/usuarios/${usuario.usuarioId}`).subscribe({
+        next: () => {
+          this.usuarios = this.usuarios.filter(u => u.usuarioId !== usuario.usuarioId);
+          this.usuariosFiltrados = [...this.usuarios];
+          this.mostrarAlerta('Usuario eliminado', 'success');
+        },
+        error: () => this.mostrarAlerta('Error al eliminar', 'danger')
+      });
+    }
+  }
+
+  verPedidos(usuario: any) {
+    this.router.navigate(['/admin/pedidos'], {
+      queryParams: { clienteId: usuario.usuarioId, nombre: usuario.nombre }
+    });
+  }
 }

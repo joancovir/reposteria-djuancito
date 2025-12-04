@@ -68,6 +68,10 @@ public class SecurityConfig {
     .requestMatchers(HttpMethod.POST, "/api/resenas").authenticated()
 
     // SOLO ADMIN
+    .requestMatchers(HttpMethod.POST, "/api/promociones").hasAuthority("ROLE_Administrador")
+    .requestMatchers(HttpMethod.PUT, "/api/promociones/**").hasAuthority("ROLE_Administrador")
+    .requestMatchers(HttpMethod.DELETE, "/api/promociones/**").hasAuthority("ROLE_Administrador")
+    .requestMatchers("/api/promociones/todas").hasAuthority("ROLE_Administrador")
     .requestMatchers("/api/pedidos/todos").hasAuthority("ROLE_Administrador")
     .requestMatchers("/api/pedidos/**/estado").hasAuthority("ROLE_Administrador")
     .requestMatchers("/api/usuarios/todos", "/api/usuarios/modificar/**", "/api/usuarios/eliminar/**").hasAuthority("ROLE_Administrador")

@@ -1,51 +1,94 @@
-/* Estilos generales para la estructura del modal */
-.modal-body h5 {
-  /* Margen estándar para el título de la sección */
-  margin-bottom: 15px; 
+/* MODAL GENERAL */
+.modal-header {
+  border-radius: 16px 16px 0 0;
+  padding: 1.2rem 1.5rem;
 }
 
-/* --- ESTILOS DE LA LISTA DE ADICIONALES --- */
-
-.list-group-item {
-  /* CLAVE: Usar Flexbox para distribuir el contenido */
-  display: flex; 
-  align-items: center; /* Alinea verticalmente los elementos */
-  /* CLAVE: Empuja el costo al extremo derecho y mantiene el checkbox/nombre a la izquierda */
-  justify-content: space-between; 
-  padding: 12px 15px;
-  border: 1px solid #eee; 
-  margin-bottom: -1px; /* Para que parezca una lista unificada */
-  cursor: pointer;
+.modal-body {
+  padding: 1.5rem;
 }
 
-/* Espacio entre el checkbox y el texto del adicional */
-.list-group-item input.form-check-input {
-  margin-right: 10px;
-  flex-shrink: 0; /* Evita que el checkbox se encoja */
-}
-
-.costo-adicional {
-  /* Se alinea automáticamente a la derecha por justify-content: space-between */
-  font-weight: bold;
-  color: #007bff; /* Color azul */
-  flex-shrink: 0; /* Evita que el precio se comprima si el texto del nombre es muy largo */
-}
-
-/* --- ESTILOS DE INSTRUCCIONES ESPECIALES --- */
-
-.form-group {
-  margin-top: 20px; /* Separación de la lista de adicionales */
-}
-
-.form-group label {
-  display: block;
+/* LISTA DE ADICIONALES */
+.list-group-item.adicional-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px;
   margin-bottom: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 14px !important;
+  background: #fdfdfd;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  user-select: none;
 }
 
+.list-group-item.adicional-item:hover {
+  background: #f0f8ff;
+  border-color: #007bff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,123,255,0.12);
+}
+
+.list-group-item.adicional-item input:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.list-group-item.adicional-item input {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+/* NOMBRE Y CATEGORÍA */
+.list-group-item.adicional-item .fw-bold {
+  font-size: 1.05rem;
+  color: #222;
+}
+
+/* PRECIO */
+.costo-adicional {
+  font-weight: 800 !important;
+  color: #28a745 !important;
+  font-size: 1.1rem;
+  background: rgba(40, 167, 69, 0.1);
+  padding: 6px 12px;
+  border-radius: 20px;
+  min-width: 90px;
+  text-align: center;
+}
+
+/* TEXTAREA */
 .form-control {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  resize: vertical; /* Permite redimensionar solo verticalmente */
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.form-control:focus {
+  border-color: #ee965b;
+  box-shadow: 0 0 0 4px rgba(238, 150, 91, 0.2);
+  outline: none;
+}
+
+/* BOTONES FOOTER */
+.modal-footer {
+  padding: 1.5rem;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 30px;
+  font-weight: bold;
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
 }

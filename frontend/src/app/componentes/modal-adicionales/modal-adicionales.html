@@ -1,45 +1,56 @@
-<div class="modal-header">
-  <h4 class="modal-title pull-left">Elige tus Adicionales</h4>
-  <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
-    <span aria-hidden="true">&times;</span>
-  </button>
+<div class="modal-header bg-primary text-white">
+  <h4 class="modal-title fw-bold mb-0">Elige tus Adicionales</h4>
+  <button type="button" class="btn-close btn-close-white" (click)="bsModalRef.hide()" aria-label="Close"></button>
 </div>
 
-<div class="modal-body">
-  <h5>Selecciona los adicionales que deseas:</h5>
-  <form>
-    <div class="list-group">
-      <label class="list-group-item" *ngFor="let adicional of adicionales">
-        <input 
-          class="form-check-input me-1" 
-          type="checkbox" 
-          (change)="manejarSeleccion(adicional, $event)" 
-          [value]="adicional.adicionalId">         {{ adicional.nombre }} ({{ adicional.categoria }})
-        <span class="costo-adicional">+ S/ {{ adicional.costoAdicional }}</span>
-      </label>
-    </div>
+<div class="modal-body py-4">
 
-    <hr>
+  <h5 class="text-primary fw-bold mb-3">Selecciona los adicionales que deseas:</h5>
 
-    <div class="form-group">
-      <label for="instrucciones"><h5>Instrucciones Especiales</h5></label>
-      <textarea 
-        class="form-control" 
-        id="instrucciones" 
-        rows="3" 
-        placeholder="Ej: 'Escribir Feliz Cumpleaños, Carlos' o 'Sin nueces, por favor'"
-        [(ngModel)]="instruccionesEspeciales"
-        name="instrucciones">
-      </textarea>
-    </div>
-  </form>
+  <div class="list-group list-group-flush">
+    <label class="list-group-item adicional-item" *ngFor="let adicional of adicionales">
+      <div class="d-flex align-items-center flex-grow-1">
+        <input 
+          class="form-check-input me-3" 
+          type="checkbox" 
+          [id]="'adicional-' + adicional.adicionalId"
+          (change)="manejarSeleccion(adicional, $event)">
+        
+        <div>
+          <div class="fw-bold">{{ adicional.nombre }}</div>
+          <small class="text-muted">{{ adicional.categoria }}</small>
+        </div>
+      </div>
+
+      <span class="costo-adicional">+ S/ {{ adicional.costoAdicional | number:'1.2-2' }}</span>
+    </label>
+  </div>
+
+  <hr class="my-4">
+
+  <!-- INSTRUCCIONES ESPECIALES -->
+  <div class="form-group">
+    <label for="instrucciones" class="form-label fw-bold text-primary">
+      Instrucciones Especiales (Opcional)
+    </label>
+    <textarea 
+      class="form-control rounded-3 shadow-sm" 
+      id="instrucciones" 
+      rows="4" 
+      placeholder="Ej: 'Feliz Cumpleaños, 'Sin nueces'..."
+      [(ngModel)]="instruccionesEspeciales">
+    </textarea>
+  </div>
+
+ 
+
 </div>
 
-<div class="modal-footer">
-    <button 
-    type="button" 
-    class="btn btn-success" 
-    (click)="agregarAlCarrito()">
-    Agregar Personalización
+<div class="modal-footer border-0 pt-3">
+  <button type="button" class="btn btn-outline-secondary px-5" (click)="bsModalRef.hide()">
+    Cancelar
+  </button>
+  <button type="button" class="btn btn-success btn-lg px-5 fw-bold shadow" (click)="agregarAlCarrito()">
+    Añadir al Carrito
   </button>
 </div>

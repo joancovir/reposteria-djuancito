@@ -1,52 +1,80 @@
-<div class="catalog-container">
-  <h1 class="catalog-title">Catálogo</h1>
+<div class="catalogo-wrapper">
 
-  <div class="filter-bar">
-    <div class="search-box">
-      <input type="text" placeholder="BUSCAR PRODUCTO" [(ngModel)]="searchTerm">
-      <button (click)="buscarProductos()">BUSCAR</button>
+  <!-- BARRA DE FILTROS -->
+  <div class="filter-bar mb-4">
+    <div class="search-group">
+      <input type="text" placeholder="BUSCAR PRODUCTO" [(ngModel)]="searchTerm" class="form-control">
+      <button (click)="buscarProductos()" class="btn-search">BUSCAR</button>
     </div>
-    
-    <select class="filter-select" (change)="filtrarProductos($event)" [value]="filtroActivo">
+
+    <select class="form-select filter-select" (change)="filtrarProductos($event)" [value]="filtroActivo">
       <option value="">TODOS</option>
       <option value="torta">Tortas</option>
       <option value="postre">Postres</option>
       <option value="bocadito">Bocaditos</option>
       <option value="personalizable">Personalizables</option>
-      <option value="predeterminada">Predeterminadas</option>
     </select>
-    
-    <a routerLink="../personalizar-torta" class="btn-personalizada">Pide tu Torta Personalizada</a>
+
+    <a routerLink="../personalizar-torta" class="btn-torta-personalizada">
+      Pide tu Torta Personalizada
+    </a>
   </div>
 
- <div class="product-grid">
-    <div class="product-card" *ngFor="let producto of productosPaginados">
-      <span *ngIf="producto.personalizable" class="badge-personalizable">Personalizable</span>
-      <img [src]="producto.imagenUrl" [alt]="producto.nombre">
-      <div class="product-info">
-        <h3>{{ producto.nombre }}</h3>
-        <p class="category">{{ producto.categoria }}</p>
-        <p class="description">{{ producto.descripcion }}</p>
-        <div class="price-action">
-          <span class="price">S/ {{ producto.precioBase }}</span>
-          <button *ngIf="producto.personalizable" (click)="abrirModalAdicionales(producto)" class="btn-adicionales">Ver Adicionales</button>
-          <button (click)="agregarAlCarrito(producto)" class="btn-pide">Añadir al Carrito</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- GRID DE PRODUCTOS -->
+  <div class="row g-3 g-md-4">
+    <div class="col-6 col-md-4 col-lg-3" *ngFor="let producto of productosPaginados">
+      <div class="product-card h-100 position-relative">
 
-  <!-- 🔹 PAGINACIÓN -->
-  <div class="pagination" *ngIf="totalPaginas > 1">
-    <button (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">Anterior</button>
+        <span *ngIf="producto.personalizable" class="badge-personalizable">
+          Personalizable
+        </span>
 
-    <button 
-      *ngFor="let num of [].constructor(totalPaginas); let i = index" 
-      (click)="cambiarPagina(i + 1)" 
-      [class.active]="paginaActual === i + 1">
+        <div class="image-container">
+          <img [src]="producto.imagenUrl || 'assets/imagenes/default-torta.jpg'" 
+               [alt]="producto.nombre" 
+               class="img-fluid">
+        </div>
+
+        <div class="p-3">
+          <h3 class="h5 fw-bold mb-1">{{ producto.nombre }}</h3>
+          <p class="text-muted small mb-2">{{ producto.categoria }}</p>
+          <p class="descripcion text-muted small mb-3">{{ producto.descripcion }}</p>
+
+          <div class="d-flex justify-content-between align-items-end">
+            <span class="price fw-bold text-success fs-5">S/ {{ producto.precioBase }}</span>
+            
+            <div class="btn-group-vertical btn-group-sm" role="group">
+              <button *ngIf="producto.personalizable" 
+                      (click)="abrirModalAdicionales(producto)" 
+                      class="btn btn-outline-warning btn-sm mb-1">
+                Ver Adicionales
+              </button>
+              <button (click)="agregarAlCarrito(producto)" 
+                      class="btn btn-success btn-sm">
+                Añadir
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGINACIÓN -->
+  <div class="pagination mt-5" *ngIf="totalPaginas > 1">
+    <button class="btn btn-outline-secondary" 
+            (click)="cambiarPagina(paginaActual - 1)" 
+            [disabled]="paginaActual === 1">Anterior</button>
+
+    <button *ngFor="let num of [].constructor(totalPaginas); let i = index"
+            (click)="cambiarPagina(i + 1)"
+            [class.active]="paginaActual === i + 1"
+            class="btn mx-1">
       {{ i + 1 }}
     </button>
 
-    <button (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+    <button class="btn btn-outline-secondary" 
+            (click)="cambiarPagina(paginaActual + 1)" 
+            [disabled]="paginaActual === totalPaginas">Siguiente</button>
   </div>
 </div>

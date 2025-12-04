@@ -56,61 +56,72 @@
     <!-- PAGINACIÓN -->
     <div class="text-center mt-4" *ngIf="totalPaginas() > 1">
       <button class="btn btn-outline-primary me-3" [disabled]="paginaActual === 1" 
-              (click)="paginaActual = paginaActual - 1">Anterior</button>
+              (click)="cambiarPagina(paginaActual - 1)">Anterior</button>
       <span>Página {{ paginaActual }} de {{ totalPaginas() }}</span>
       <button class="btn btn-outline-primary ms-3" [disabled]="paginaActual === totalPaginas()" 
-              (click)="paginaActual = paginaActual + 1">Siguiente</button>
+              (click)="cambiarPagina(paginaActual + 1)">Siguiente</button>
     </div>
   </div>
 
-  <!-- MODAL -->
+  <!-- SI NO HAY PRODUCTOS -->
+  <div *ngIf="!isLoading && productosFiltrados.length === 0" class="no-data">
+    <p>No se encontraron productos.</p>
+  </div>
+
+  <!-- ==================== MODAL ==================== -->
   <div class="modal-overlay" *ngIf="productoSeleccionado" (click)="cancelarEdicion()"></div>
-  <div class="modal-content" *ngIf="productoSeleccionado" (click)="$event.stopPropagation()">
-    <h3>{{ productoSeleccionado.productoId === 0 ? 'Nuevo Producto' : 'Editar Producto' }}</h3>
 
-    <form (ngSubmit)="guardarEdicion()">
-      <div class="form-group mb-3">
-        <label>Nombre *</label>
-        <input type="text" class="form-control" [(ngModel)]="productoSeleccionado.nombre" name="nombre" required>
-      </div>
+  <div class="modal-container" *ngIf="productoSeleccionado">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3 class="modal-title">
+        {{ productoSeleccionado.productoId === 0 ? 'Nuevo Producto' : 'Editar Producto' }}
+      </h3>
 
-      <div class="form-group mb-3">
-        <label>Categoría *</label>
-        <select class="form-control" [(ngModel)]="productoSeleccionado.categoria" name="categoria">
-          <option *ngFor="let cat of categoriasDisponibles" [value]="cat">{{ cat | titlecase }}</option>
-        </select>
-      </div>
+      <form (ngSubmit)="guardarEdicion()">
+        <div class="form-group mb-3">
+          <label>Nombre *</label>
+          <input type="text" class="form-control" [(ngModel)]="productoSeleccionado.nombre" name="nombre" required>
+        </div>
 
-      <div class="form-group">
-        <label>Precio Base (S/)*</label>
-        <input type="number" step="0.50" class="form-control" [(ngModel)]="productoSeleccionado.precioBase" name="precio" required>
-      </div>
+        <div class="form-group mb-3">
+          <label>Categoría *</label>
+          <select class="form-control" [(ngModel)]="productoSeleccionado.categoria" name="categoria" required>
+            <option *ngFor="let cat of categoriasDisponibles" [value]="cat">{{ cat | titlecase }}</option>
+          </select>
+        </div>
 
-      <div class="form-group form-check mt-3">
-        <input type="checkbox" class="form-check-input" [(ngModel)]="productoSeleccionado.personalizable" name="personalizable">
-        <label class="form-check-label">Es personalizable</label>
-      </div>
+        <div class="form-group mb-3">
+          <label>Precio Base (S/)*</label>
+          <input type="number" step="0.50" min="0.01" class="form-control" 
+                 [(ngModel)]="productoSeleccionado.precioBase" name="precio" required>
+        </div>
 
-      <div class="form-group mt-4">
-        <label>Imagen del producto</label>
-        <div class="url-input-group">
-          <input type="text" class="form-control" [value]="simularRuta || 'Sin imagen'" readonly>
-          <input #fileInput type="file" hidden accept="image/*" (change)="onArchivoSeleccionado($event)">
-          <button type="button" class="btn btn-outline-secondary" (click)="fileInput.click()">
-            Seleccionar Foto
+        <div class="form-group form-check mt-3">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="productoSeleccionado.personalizable" name="personalizable">
+          <label class="form-check-label">Es personalizable</label>
+        </div>
+
+        <div class="form-group mt-4">
+          <label>Imagen del producto</label>
+          <div class="url-input-group">
+            <input type="text" class="form-control" [value]="simularRuta || (productoSeleccionado.imagenUrl ? 'Imagen ya subida' : 'Sin imagen')" readonly>
+            <input #fileInput type="file" hidden accept="image/*" (change)="onArchivoSeleccionado($event)">
+            <button type="button" class="btn btn-url-select" (click)="fileInput.click()">
+              Seleccionar Foto
+            </button>
+          </div>
+          <small class="text-success" *ngIf="productoSeleccionado.imagenUrl">
+            Imagen subida correctamente a la nube
+          </small>
+        </div>
+
+        <div class="form-actions mt-4">
+          <button type="button" class="btn btn-cancel me-3" (click)="cancelarEdicion()">Cancelar</button>
+          <button type="submit" class="btn btn-save" [disabled]="isLoading">
+            {{ productoSeleccionado.productoId === 0 ? 'Crear' : 'Guardar Cambios' }}
           </button>
         </div>
-        <small class="text-success" *ngIf="productoSeleccionado.imagenUrl">
-          Imagen subida correctamente a la nube
-        </small>
-      </div>
-
-      <div class="form-actions mt-4">
-        <button type="button" class="btn btn-secondary me-3" (click)="cancelarEdicion()">Cancelar</button>
-        <button type="submit" class="btn btn-success" [disabled]="isLoading">
-          {{ productoSeleccionado.productoId === 0 ? 'Crear' : 'Guardar' }}
-        </button>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </div>

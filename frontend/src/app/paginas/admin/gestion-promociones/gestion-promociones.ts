@@ -42,11 +42,26 @@ export class GestionPromociones implements OnInit {
         this.isLoading = false;
       }
     });
+  }eliminarPromocion(promo: Promocion): void {
+  if (confirm(`¿Estás seguro de que deseas eliminar la promoción "${promo.titulo}" (ID: ${promo.promocionId})?`)) {
+    this.promocionService.eliminarPromocion(promo.promocionId!).subscribe({
+      next: () => {
+        // Refrescar la lista en el cliente para mostrar el cambio
+        this.listaDePromociones = this.listaDePromociones.filter(p => p.promocionId !== promo.promocionId);
+        // Opcionalmente, mostrar una notificación (usando ngx-toastr que instalaste)
+        // this.toastr.success('Promoción eliminada con éxito');
+      },
+      error: (err) => {
+        console.error('Error al eliminar:', err);
+        this.errorMensaje = 'Error al eliminar la promoción.';
+        // this.toastr.error('Error al eliminar la promoción');
+      }
+    });
   }
+}
 
   // --- Placeholders ---
   crearPromocion(): void { alert('Funcionalidad Crear Promoción pendiente.'); }
   editarPromocion(promo: Promocion): void { alert(`Funcionalidad Editar Promoción ${promo.titulo} pendiente.`); }
-  eliminarPromocion(promo: Promocion): void { if(confirm('¿Eliminar?')) { alert(`Funcionalidad Eliminar Promoción ${promo.titulo} pendiente.`); } }
   getEstadoClass(estado: string | undefined): string { return estado === 'activo' ? 'estado-activo' : 'estado-inactivo'; }
 }

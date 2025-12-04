@@ -76,33 +76,47 @@ public class PedidoControlador {
         }
     }
     
-    @PostMapping
-    public ResponseEntity<Pedido> crearPedido(@RequestBody PedidoRequestDTO dto) {
-        if (dto == null || dto.getUsuarioId() == null || dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        
-        Pedido pedido = pedidoServicio.crearPedido(dto);
-        return ResponseEntity.ok(pedido);
+   @PostMapping
+public ResponseEntity<Pedido> crearPedido(@RequestBody PedidoRequestDTO dto) {
+    if (dto == null || dto.getUsuarioId() == null || dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
+        return ResponseEntity.badRequest().build();
     }
+    
+    Pedido pedido = pedidoServicio.crearPedido(dto);
+    
+    // ESTO ES LO QUE FALTABA → FORZAR QUE SE CARGUEN LOS DETALLES
+    Hibernate.initialize(pedido.getDetalles());
+    if (pedido.getDetalles() != null) {
+        pedido.getDetalles().forEach(detalle -> {
+            Hibernate.initialize(detalle.getProducto());
+            if (detalle.getPersonalizacion() != null) {
+                Hibernate.initialize(detalle.getPersonalizacion().getAdicionalesSeleccionados());
+            }
+        });
+    }
+    
+    return ResponseEntity.ok(pedido);
+}
 
 @PostMapping("/confirmar")
 public ResponseEntity<?> confirmarPedido(@RequestBody PedidoRequestDTO request) {
     try {
-        // Validación básica
-        if (request.getUsuarioId() == null || request.getDetalles() == null || request.getDetalles().isEmpty()) {
-            return ResponseEntity.badRequest().body("Faltan datos obligatorios");
-        }
-
-        // Usa el mismo servicio que ya tienes en @PostMapping
         Pedido pedidoCreado = pedidoServicio.crearPedidoConConfirmacion(request);
         
+        // FORZAR CARGA DE DETALLES
+        Hibernate.initialize(pedidoCreado.getDetalles());
+        if (pedidoCreado.getDetalles() != null) {
+            pedidoCreado.getDetalles().forEach(d -> {
+                Hibernate.initialize(d.getProducto());
+                if (d.getPersonalizacion() != null) {
+                    Hibernate.initialize(d.getPersonalizacion().getAdicionalesSeleccionados());
+                }
+            });
+        }
+        
         return ResponseEntity.ok(pedidoCreado);
-
     } catch (Exception e) {
         e.printStackTrace();
-        return ResponseEntity.status(500).body("Error al confirmar: " + e.getMessage());
+        return ResponseEntity.status(500).body("Error: " + e.getMessage());
     }
-}
-
-}
+}}

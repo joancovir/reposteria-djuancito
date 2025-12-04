@@ -1,7 +1,6 @@
-
 package com.djuancito.reposteria.controlador;
 
-import com.djuancito.reposteria.entidad.Usuario;
+import com.djuancito.reposteria.entidad.*;
 import com.djuancito.reposteria.entidad.dto.AuthResponseDTO;
 import com.djuancito.reposteria.entidad.dto.PasswordChangeDTO;
 import com.djuancito.reposteria.repositorio.UsuarioRepositorio;
@@ -18,14 +17,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.server.ResponseStatusException;
-import java.util.Map;
+
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "*") 
+@CrossOrigin(origins = "*")
 public class UsuarioControlador {
-    
+
     @Autowired private UsuarioServicio usuarioServicio;
     @Autowired private AuthenticationManager authenticationManager;
     @Autowired private JwtServicio jwtServicio;
@@ -34,8 +34,8 @@ public class UsuarioControlador {
     @PostMapping("/registro")
     public ResponseEntity<?> registrarUsuario(@RequestBody Usuario usuario) {
         try {
-            Usuario nuevoUsuario = usuarioServicio.registrarUsuario(usuario);
-            return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
+            Usuario nuevo = usuarioServicio.registrarUsuario(usuario);
+            return new ResponseEntity<>(nuevo, HttpStatus.CREATED);
         } catch (IllegalStateException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -45,57 +45,60 @@ public class UsuarioControlador {
     public ResponseEntity<?> loginUsuario(@RequestBody Map<String, String> credenciales) {
         String email = credenciales.get("email");
         String password = credenciales.get("password");
+
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(email, password)
+                new UsernamePasswordAuthenticationToken(email, password)
         );
-        final UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Usuario usuario = usuarioRepositorio.findByEmail(userDetails.getUsername())
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Usuario usuario = usuarioRepositorio.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        final String token = jwtServicio.generateToken(usuario, userDetails);
+
+        String token = jwtServicio.generateToken(usuario, userDetails);
         return ResponseEntity.ok(new AuthResponseDTO(token));
     }
 
-
     @GetMapping("/mi-perfil")
     public ResponseEntity<Usuario> obtenerMiPerfil() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String emailUsuario = authentication.getName();
-        Usuario usuario = usuarioRepositorio.findByEmail(emailUsuario)
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        Usuario usuario = usuarioRepositorio.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
         return ResponseEntity.ok(usuario);
     }
 
     @PutMapping("/mi-perfil")
-    public ResponseEntity<Usuario> actualizarMiPerfil(@RequestBody Usuario datosUsuario) {
-        //  Obtiene el email del usuario desde el token (para seguridad)
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String emailUsuarioAutenticado = authentication.getName();
-        Usuario usuarioActualizado = usuarioServicio.actualizarPerfil(emailUsuarioAutenticado, datosUsuario);
-        
-        return ResponseEntity.ok(usuarioActualizado);
+    public ResponseEntity<Usuario> actualizarMiPerfil(@RequestBody Usuario datos) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        Usuario actualizado = usuarioServicio.actualizarPerfil(email, datos);
+        return ResponseEntity.ok(actualizado);
     }
 
-    
+    @PostMapping("/cambiar-password")
+    public ResponseEntity<?> cambiarPassword(@RequestBody PasswordChangeDTO dto) {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String email = auth.getName();
+            usuarioServicio.cambiarPassword(email, dto);
+            return ResponseEntity.ok("Contraseña cambiada exitosamente");
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        }
+    }
+
     @GetMapping("/todos")
     @PreAuthorize("hasAuthority('ROLE_Administrador')")
     public ResponseEntity<List<Usuario>> obtenerTodosLosUsuarios() {
-        List<Usuario> usuarios = usuarioServicio.obtenerTodosLosUsuarios();
-        return ResponseEntity.ok(usuarios);
+        return ResponseEntity.ok(usuarioServicio.obtenerTodosLosUsuarios());
     }
-    @PostMapping("/cambiar-password")
-    public ResponseEntity<?> cambiarMiPassword(@RequestBody PasswordChangeDTO passwordDTO) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String emailUsuarioAutenticado = authentication.getName();
 
-            usuarioServicio.cambiarPassword(emailUsuarioAutenticado, passwordDTO);
-            return ResponseEntity.ok().body("Contraseña cambiada con éxito.");
-     
-
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado al cambiar la contraseña.");
-        }
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_Administrador')")
+    public ResponseEntity<Usuario> actualizarUsuarioPorAdmin(
+            @PathVariable Integer id,
+            @RequestBody Map<String, Object> campos) {
+        Usuario actualizado = usuarioServicio.actualizarUsuarioPorAdmin(id, campos);
+        return ResponseEntity.ok(actualizado);
     }
 }

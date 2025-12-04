@@ -278,4 +278,91 @@
 @keyframes modalAbre {
     from { opacity: 0; transform: scale(0.9); }
     to   { opacity: 1; transform: scale(1); }
+}/* ============================================================= */
+/*  SOLO ESTAS REGLAS SON NECESARIAS PARA QUE EL MODAL FUNCIONE  */
+/*  (Todo tu estilo anterior queda 100% intacto)                 */
+/* ============================================================= */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;        /* ← importante: permite clic fuera del modal */
+  z-index: 1060;
+}
+
+.modal-content {
+  pointer-events: all;         /* ← permite interacción dentro del modal */
+  background: linear-gradient(135deg, #ffe4ce, #ffccad);
+  padding: 2.5rem;
+  border-radius: 18px;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+  width: 95%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalAbre 0.4s ease-out;
+}
+
+/* Animación bonita */
+@keyframes modalAbre {
+  from { opacity: 0; transform: translateY(-50px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Bloquea scroll del fondo cuando el modal está abierto */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Pequeños retoques que ya tenías y que ahora funcionan perfecto */
+.modal-title {
+  margin: 0 0 1.8rem;
+  padding-bottom: 12px;
+  border-bottom: 3px solid #000;
+  font-weight: 700;
+  color: #000;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ddd;
+}
+
+.url-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-url-select {
+  background: linear-gradient(45deg, #927f70, #e49462);
+  color: #000;
+  font-weight: 800;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 8px;
 }

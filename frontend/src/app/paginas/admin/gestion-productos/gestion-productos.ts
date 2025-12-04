@@ -1,5 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule, TitleCasePipe, DecimalPipe } from '@angular/common';
+import { Component, OnInit, inject, Renderer2, Inject } from '@angular/core';
+import { CommonModule, TitleCasePipe, DecimalPipe, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Producto } from '../../../modelos/producto';
 import { ProductoService } from '../../../servicios/producto';
@@ -25,13 +25,15 @@ export class GestionProductos implements OnInit {
   itemsPorPagina: number = 10;
   categoriasDisponibles: string[] = [];
 
-  // Formulario
+  // Modal
   productoSeleccionado: Producto | null = null;
   archivoSeleccionado: File | null = null;
   simularRuta: string = '';
-  cloudinaryPublicId: string = '';  // ← para guardar el public_id
+  cloudinaryPublicId: string = '';
 
   private productoService = inject(ProductoService);
+  private renderer = inject(Renderer2);
+  private document = inject(DOCUMENT);
 
   ngOnInit(): void {
     this.cargarProductos();
@@ -56,7 +58,7 @@ export class GestionProductos implements OnInit {
 
   getCategoriasUnicas(): string[] {
     const cats = this.listaDeProductos.map(p => p.categoria);
-    return [...new Set(cats)];
+    return [...new Set(cats)].sort();
   }
 
   filtrarYPaginar(): void {
@@ -83,6 +85,12 @@ export class GestionProductos implements OnInit {
     return Math.ceil(this.productosFiltrados.length / this.itemsPorPagina);
   }
 
+  cambiarPagina(nuevaPagina: number): void {
+    if (nuevaPagina >= 1 && nuevaPagina <= this.totalPaginas()) {
+      this.paginaActual = nuevaPagina;
+    }
+  }
+
   crearProducto(): void {
     this.productoSeleccionado = {
       productoId: 0,
@@ -98,13 +106,19 @@ export class GestionProductos implements OnInit {
     this.archivoSeleccionado = null;
     this.simularRuta = '';
     this.cloudinaryPublicId = '';
+    this.abrirModal();
   }
 
   editarProducto(producto: Producto): void {
     this.productoSeleccionado = { ...producto };
     this.cloudinaryPublicId = producto.cloudinaryPublicId || '';
-    this.simularRuta = producto.imagenUrl ? 'Imagen ya subida a la nube' : '';
+    this.simularRuta = producto.imagenUrl ? 'Imagen ya subida' : '';
     this.archivoSeleccionado = null;
+    this.abrirModal();
+  }
+
+  private abrirModal(): void {
+    this.renderer.addClass(this.document.body, 'modal-open');
   }
 
   cancelarEdicion(): void {
@@ -112,9 +126,9 @@ export class GestionProductos implements OnInit {
     this.archivoSeleccionado = null;
     this.simularRuta = '';
     this.cloudinaryPublicId = '';
+    this.renderer.removeClass(this.document.body, 'modal-open');
   }
 
-  // SUBIDA AUTOMÁTICA A CLOUDINARY
   onArchivoSeleccionado(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
@@ -163,6 +177,7 @@ export class GestionProductos implements OnInit {
       next: () => {
         this.cargarProductos();
         this.cancelarEdicion();
+        this.isLoading = false;
         alert('¡Producto guardado con éxito!');
       },
       error: (err) => {
@@ -174,7 +189,7 @@ export class GestionProductos implements OnInit {
   }
 
   eliminarProducto(producto: Producto): void {
-    if (confirm(`¿Eliminar "${producto.nombre}" para siempre?`)) {
+    if (confirm(`¿Eliminar "${producto.nombre}" permanentemente?`)) {
       this.productoService.eliminarProducto(producto.productoId).subscribe({
         next: () => this.cargarProductos(),
         error: () => alert('Error al eliminar')

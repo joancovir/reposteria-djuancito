@@ -1,12 +1,19 @@
 <div class="gestion-container">
-  <h2>Gestionar Reseñas</h2>
+  <h2 class="mb-4">Gestionar Reseñas</h2>
 
-  <div *ngIf="isLoading" class="loading">Cargando reseñas...</div>
+  <div *ngIf="isLoading" class="text-center py-5">
+    <p class="text-muted">Cargando reseñas...</p>
+  </div>
+
   <div *ngIf="errorMensaje" class="alert alert-danger">{{ errorMensaje }}</div>
 
-  <div *ngIf="!isLoading && listaDeResenas.length > 0" class="table-responsive">
-    <table class="table table-hover">
-      <thead>
+  <div *ngIf="!isLoading && resenas.length === 0" class="alert alert-info text-center">
+    No hay reseñas pendientes o registradas.
+  </div>
+
+  <div *ngIf="!isLoading && resenas.length > 0" class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
         <tr>
           <th>ID</th>
           <th>Cliente</th>
@@ -20,41 +27,65 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let resena of listaDeResenas">
-          <td>{{ resena.resenaId }}</td>
-          <td>{{ getNombreCliente(resena) }}</td>
-          <td>{{ getPedidoId(resena) }}</td>
-          <td>{{ resena.valoracion }} ★</td>
-          <td class="comentario-col">{{ resena.comentario }}</td>
+        <tr *ngFor="let r of resenas">
+          <td><strong>#{{ r.resenaId }}</strong></td>
+          <td>{{ r.nombreUsuario || 'Anónimo' }}</td>
+          <td>{{ r.fechaPedido ? 'ORD-' + r.pedidoId : '-' }}</td>
           <td>
-            <a *ngIf="resena.fotoUrl" [href]="resena.fotoUrl" target="_blank">Ver</a>
-            <span *ngIf="!resena.fotoUrl">-</span>
-          </td>
-          <td>{{ resena.fecha | date:'yyyy-MM-dd' }}</td>
-          <td>
-            <span class="badge" [ngClass]="getEstadoClass(resena.estado)">
-              {{ resena.estado | titlecase }}
+            <span class="valoracion">
+              {{ '★★★★★'.substring(0, r.valoracion) }}
+              {{ '☆☆☆☆☆'.substring(0, 5 - r.valoracion) }}
             </span>
           </td>
-          <td class="acciones-col">
-            <ng-container *ngIf="resena.estado === 'pendiente'">
-               <button class="btn-action btn-aprobar"
-                       (click)="cambiarEstado(resena, 'aprobado')"
-                       [disabled]="updatingStatus[resena.resenaId]"
-                       title="Aprobar">✔️</button>
-               <button class="btn-action btn-rechazar"
-                       (click)="cambiarEstado(resena, 'rechazado')"
-                       [disabled]="updatingStatus[resena.resenaId]"
-                       title="Rechazar">❌</button>
-            </ng-container>
-            <span *ngIf="updatingStatus[resena.resenaId]" class="spinner">⚙️</span>
+          <td class="comentario-col text-truncate" style="max-width: 200px;">
+            {{ r.comentario }}
+          </td>
+          <td>
+            <button *ngIf="r.fotoUrl" class="btn btn-sm btn-link text-primary p-0" 
+                    (click)="abrirModalFoto(r.fotoUrl, r.comentario)">
+              Ver foto
+            </button>
+            <span *ngIf="!r.fotoUrl" class="text-muted">—</span>
+          </td>
+          <td>{{ r.fecha | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <span class="badge" [ngClass]="getEstadoClass(r.estado)">
+              {{ r.estado | titlecase }}
+            </span>
+          </td>
+          <td>
+<div class="acciones" *ngIf="r.estado !== 'rechazado' && r.estado !== 'aprobado' || true">
+                <button class="btn-action aprobar" 
+                      (click)="cambiarEstado(r.resenaId, 'aprobado')"
+                      [disabled]="loadingId === r.resenaId"
+                      title="Aprobar reseña">
+                Aprobar
+              </button>
+              <button class="btn-action rechazar" 
+                      (click)="cambiarEstado(r.resenaId, 'rechazado')"
+                      [disabled]="loadingId === r.resenaId"
+                      title="Rechazar reseña">
+                Rechazar
+              </button>
+              <span *ngIf="loadingId === r.resenaId" class="spinner-small">Cargando...</span>
+            </div>
+            <span *ngIf="r.estado !== 'pendiente'" class="text-muted">—</span>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <div *ngIf="!isLoading && listaDeResenas.length === 0 && !errorMensaje" class="alert alert-info">
-    No hay reseñas para mostrar.
+  <!-- MODAL PARA VER FOTO + COMENTARIO -->
+  <div class="modal-backdrop" *ngIf="modalFotoUrl" (click)="cerrarModalFoto()"></div>
+  <div class="modal-foto" *ngIf="modalFotoUrl">
+    <div class="modal-content-foto" (click)="$event.stopPropagation()">
+      <button class="btn-cerrar" (click)="cerrarModalFoto()">×</button>
+      <img [src]="modalFotoUrl" alt="Foto de reseña" class="img-foto">
+      <div class="comentario-modal" *ngIf="modalComentario">
+        <p><strong>Comentario:</strong></p>
+        <p>{{ modalComentario }}</p>
+      </div>
+    </div>
   </div>
 </div>

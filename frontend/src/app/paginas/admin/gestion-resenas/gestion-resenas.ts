@@ -1,22 +1,36 @@
-
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Resena } from '../../../modelos/resena'; // Importa modelo
-import { ResenaService, EstadoResena } from '../../../servicios/resena'; // Importa servicio y tipo
+import { CommonModule, DatePipe } from '@angular/common';
+import { ResenaService, EstadoResena } from '../../../servicios/resena';
+
+interface ResenaAdmin {
+  resenaId: number;
+  nombreUsuario: string;
+  pedidoId?: number;
+  fechaPedido?: string;
+  valoracion: number;
+  comentario: string;
+  fotoUrl?: string;
+  fecha: string;
+  estado: 'pendiente' | 'aprobado' | 'rechazado';
+}
 
 @Component({
   selector: 'app-gestion-resenas',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DatePipe],
   templateUrl: './gestion-resenas.html',
   styleUrls: ['./gestion-resenas.css']
 })
 export class GestionResenas implements OnInit {
 
-  listaDeResenas: Resena[] = [];
+  resenas: ResenaAdmin[] = [];
   isLoading = true;
   errorMensaje: string | null = null;
-  updatingStatus: { [key: number]: boolean } = {}; // Para feedback de carga por reseña
+  loadingId: number | null = null;
+
+  // Modal foto
+  modalFotoUrl: string | null = null;
+  modalComentario: string | null = null;
 
   private resenaService = inject(ResenaService);
 
@@ -26,58 +40,65 @@ export class GestionResenas implements OnInit {
 
   cargarResenas(): void {
     this.isLoading = true;
-    this.errorMensaje = null;
     this.resenaService.obtenerTodasLasResenasAdmin().subscribe({
-      next: (data) => {
-        this.listaDeResenas = data;
+      next: (data: any[]) => {
+        this.resenas = data.map(r => ({
+          resenaId: r.resenaId,
+          nombreUsuario: r.nombreUsuario || 'Anónimo',
+          pedidoId: r.pedidoId || null,
+          fechaPedido: r.fechaPedido,
+          valoracion: r.valoracion,
+          comentario: r.comentario,
+          fotoUrl: r.fotoUrl,
+          fecha: r.fecha,
+          estado: r.estado || 'pendiente'
+        }));
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error al cargar reseñas:', err);
-         if (err.status === 403) { this.errorMensaje = 'No tienes permiso.'; }
-         else { this.errorMensaje = 'No se pudieron cargar las reseñas.'; }
+        this.errorMensaje = err.status === 403 
+          ? 'No tienes permisos de administrador.' 
+          : 'Error al cargar las reseñas.';
         this.isLoading = false;
       }
     });
   }
 
-  cambiarEstado(resena: Resena, nuevoEstado: EstadoResena): void {
-     if (this.updatingStatus[resena.resenaId]) return; // Evita doble click
+  cambiarEstado(resenaId: number, estado: EstadoResena): void {
+    if (this.loadingId) return;
+    this.loadingId = resenaId;
 
-     this.updatingStatus[resena.resenaId] = true; // Marca como actualizando
-     this.errorMensaje = null; // Limpia error general
-
-     this.resenaService.actualizarEstadoResena(resena.resenaId, nuevoEstado).subscribe({
-         next: (resenaActualizada) => {
-             // Actualiza la reseña en la lista local
-             const index = this.listaDeResenas.findIndex(r => r.resenaId === resena.resenaId);
-             if (index > -1) {
-                 this.listaDeResenas[index] = resenaActualizada;
-             }
-              delete this.updatingStatus[resena.resenaId]; // Quita marca
-         },
-         error: (err) => {
-             console.error(`Error al cambiar estado a ${nuevoEstado}:`, err);
-             alert(`Error al actualizar: ${err.error || 'Desconocido'}`);
-              delete this.updatingStatus[resena.resenaId]; // Quita marca
-         }
-     });
+    this.resenaService.actualizarEstadoResena(resenaId, estado).subscribe({
+      next: () => {
+        const resena = this.resenas.find(r => r.resenaId === resenaId);
+        if (resena) resena.estado = estado;
+        this.loadingId = null;
+      },
+      error: () => {
+        alert('Error al actualizar el estado');
+        this.loadingId = null;
+      }
+    });
   }
 
-  // --- Helpers ---
-  getEstadoClass(estado: string | undefined): string {
-    switch (estado?.toLowerCase()) {
-      case 'pendiente': return 'estado-pendiente';
-      case 'aprobado': return 'estado-aprobado';
-      case 'rechazado': return 'estado-rechazado';
-      default: return '';
-    }
+  abrirModalFoto(url: string, comentario: string): void {
+    this.modalFotoUrl = url;
+    this.modalComentario = comentario;
+    document.body.classList.add('modal-open');
   }
 
-   getNombreCliente(resena: Resena): string {
-     return resena.usuario?.nombre || 'Anónimo';
-   }
-    getPedidoId(resena: Resena): string {
-      return resena.pedido?.pedidoId ? `ORD-${resena.pedido.pedidoId}` : '-';
+  cerrarModalFoto(): void {
+    this.modalFotoUrl = null;
+    this.modalComentario = null;
+    document.body.classList.remove('modal-open');
+  }
+
+  getEstadoClass(estado: string): string {
+    switch (estado) {
+      case 'aprobado': return 'bg-success';
+      case 'rechazado': return 'bg-danger';
+      case 'pendiente': return 'bg-warning text-dark';
+      default: return 'bg-secondary';
     }
+  }
 }

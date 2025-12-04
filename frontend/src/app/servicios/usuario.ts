@@ -36,6 +36,9 @@ export class UsuarioService {
   obtenerTodosLosUsuarios(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(`${this.apiUrl}/todos`);
   }
+  actualizarUsuarioPorAdmin(usuarioId: number, datos: any): Observable<Usuario> {
+  return this.http.put<Usuario>(`${this.apiUrl}/${usuarioId}`, datos);
+}
 }
 
 

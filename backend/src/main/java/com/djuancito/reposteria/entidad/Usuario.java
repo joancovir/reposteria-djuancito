@@ -50,10 +50,3 @@ public class Usuario {
 }
 
 
-enum TipoCliente {
-    nuevo, recurrente
-}
-
-enum EstadoUsuario {
-    activo, inactivo
-}
