@@ -1,7 +1,13 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS"
+    "builder": "NIXPACKS",
+    // 1. **BUILD:** Ejecuta el start.sh para construir Angular y Spring Boot
+    "buildCommand": "bash ./start.sh"
   },
-  "start": "java -jar backend/target/*.jar"
+  "deploy": {
+    // 2. **START:** Vuelve a ejecutar el start.sh (o solo el comando de ejecución)
+    // Para simplificar, le decimos que ejecute el JAR, pero después de que se haya construido.
+    "startCommand": "exec java -jar backend/target/*.jar --server.port=$PORT"
+  }
 }
