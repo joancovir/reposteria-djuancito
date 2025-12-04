@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "dependencies": {
     "ngx-toastr": "^19.1.0"
-    // ... cualquier otra dependencia global que tengas
-  },
-  "engines": {
-    "node": ">=20.19.0" // Esto indica que se necesita Node 20 o superior
+    // ... cualquier otra dependencia global que tengas  <-- ¡ESTA LÍNEA FALLA!
+  },                                                     <-- JSON espera una clave o '}'
+  "engines": {                                           <-- El error es antes de esta clave
+    "node": ">=20.19.0"
   }
 }
