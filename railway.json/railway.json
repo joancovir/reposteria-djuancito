@@ -2,10 +2,9 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "bash ./start.sh" // <-- ¡AQUÍ ESTÁ LA SOLUCIÓN!
+    "buildCommand": "bash ./start.sh" // <-- Ordena construir con el script completo
   },
   "deploy": {
-    // Después de que start.sh termine el build, Railway ejecuta la aplicación
-    "startCommand": "exec java -jar backend/target/*.jar --server.port=$PORT"
+    "startCommand": "exec java -jar backend/target/*.jar --server.port=$PORT" // <-- Ordena iniciar el JAR compilado
   }
 }
