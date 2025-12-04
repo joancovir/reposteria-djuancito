@@ -1,0 +1,10 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "bash ./start.sh" // <--- ¡Esto es clave para Spring Boot + Angular!
+  },
+  "deploy": {
+    "startCommand": "exec java -jar backend/target/*.jar --server.port=$PORT"
+  }
+}
