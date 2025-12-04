@@ -1,5 +1,11 @@
 {
+  "name": "reposteria-djuancito-root",
+  "version": "1.0.0",
   "dependencies": {
     "ngx-toastr": "^19.1.0"
+    // ... cualquier otra dependencia global que tengas
+  },
+  "engines": {
+    "node": ">=20.19.0" // Esto indica que se necesita Node 20 o superior
   }
 }
