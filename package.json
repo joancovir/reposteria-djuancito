@@ -1,9 +1,6 @@
 {
-  "name": "reposteria-djuancito",
-  "version": "1.0.0",
   "scripts": {
-    "build": "ng build --configuration production",
-    "start": "cd frontend && npm install && npm run build && cd ../backend && ./mvnw spring-boot:run -Dspring-boot.run.arguments=--server.port=$PORT"
+    "build": "ng build --configuration production"
   },
   "engines": {
     "node": "20.x"
