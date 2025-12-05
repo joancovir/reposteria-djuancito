@@ -43,7 +43,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
 
                 // OPCIONES
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                 // PÚBLICOS
                 .requestMatchers("/", "/login", "/register", "/public/**", "/favicon.ico").permitAll()
