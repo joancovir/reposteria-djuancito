@@ -1,14 +1,6 @@
 {
-  "name": "reposteria-djuancito-root",
-  "version": "1.0.0",
-  "dependencies": {
-    "ngx-toastr": "^19.1.0"
-  
-  },                                                    
-  "engines": {
-    "node": ">=24.0.0" 
+  "scripts": {
+    "build": "ng build --configuration production",
+    "start": "npx serve -s dist/angular-temp -l $PORT"
   }
-}"scripts": {
-  "build": "ng build --configuration production",
-  "start": "npx serve -s dist/angular-temp"
 }
