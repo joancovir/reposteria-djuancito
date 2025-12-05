@@ -11,6 +11,7 @@ spring:
     username: ${MYSQLUSER}
     password: ${MYSQLPASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,7 +20,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
-  # Sirve el frontend Angular
   mvc:
     static-path-pattern: /**
   web:
@@ -28,3 +28,8 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
+
+# ¡¡ESTO ES LO QUE FALTABA!!
+server:
+  port: ${PORT:8080}
+  address: 0.0.0.0
