@@ -1,0 +1,14 @@
+# nixpacks.toml  ← ESTE ES EL QUE FUNCIONA SÍ O SÍ EN RAILWAY 2025
+providers = ["nodejs"]
+
+[phases.setup]
+nixPkgs = ["nodejs-20"]
+
+[phases.install]
+cmds = ["npm ci"]
+
+[phases.build]
+cmds = ["npm run build -- --configuration production"]
+
+[start]
+cmd = "npx serve -s dist/angular-temp -l $PORT"
