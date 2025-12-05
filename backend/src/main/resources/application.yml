@@ -29,7 +29,7 @@ spring:
     static-path-pattern: /**
   web:
     resources:
-      static-locations: classpath:/static/, file:dist/angular-temp/
+      static-locations: classpath:/static/, file:frontend/
 
 # JWT
 jwt:
