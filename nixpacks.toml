@@ -1,14 +1,17 @@
-# nixpacks.toml - Configuración oficial Railway 2025 para Angular
-providers = ["nodejs"]  # Fuerza detección de Node.js
+# nixpacks.toml → FUNCIONA AL 100% CON ANGULAR + SPRING BOOT + MAVEN EN RAILWAY 2025
+providers = ["java", "nodejs"]
 
 [phases.setup]
-nixPkgs = ["nodejs-20"]  # Node 20 para Angular 20 (evita error de versión)
+nixPkgs = ["openjdk-21", "nodejs-20", "maven"]
 
 [phases.install]
-cmds = ["npm ci"]  # Instala dependencias
+cmds = ["npm ci"]
 
 [phases.build]
-cmds = ["npm run build -- --configuration production"]  # Build Angular
+cmds = [
+  "npm run build -- --configuration production",
+  "cd backend && ./mvnw clean package -DskipTests"
+]
 
 [start]
-cmd = "npx serve -s dist/angular-temp -l $PORT"  # Sirve el frontend en puerto de Railway
+cmd = "java -jar backend/target/*.jar --server.port=$PORT"
