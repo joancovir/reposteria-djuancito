@@ -1,17 +1,14 @@
-# nixpacks.toml (en la raíz del proyecto)
-providers = ["java", "nodejs"]
+# nixpacks.toml  ← NOMBRE EXACTO, EN LA RAÍZ
+providers = ["nodejs"]
 
 [phases.setup]
-nixPkgs = ["openjdk-21", "nodejs-20", "maven"]
+nixPkgs = ["nodejs-20"]
 
 [phases.install]
 cmds = ["npm ci"]
 
 [phases.build]
-cmds = [
-  "npm run build -- --configuration production",
-  "cd backend && ./mvnw clean package -DskipTests"
-]
+cmds = ["npm run build -- --configuration production"]
 
 [start]
-cmd = "java -jar backend/target/*.jar --server.port=$PORT"
+cmd = "npx serve -s dist/angular-temp -l $PORT"
