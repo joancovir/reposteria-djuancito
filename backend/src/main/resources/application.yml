@@ -1,20 +1,11 @@
-# application.yml (en backend/src/main/resources)
 
-# CLOUDINARY (ya lo tienes bien)
 cloudinary:
   cloud-name: ddk8osgyk
   api-key: 848718324627338
   api-secret: IlW5Xc70JZOIqM9gOdNo13JkpWM
   secure: true
 
-# BASE DE DATOS – Railway te da estas variables automáticamente
 spring:
-  datasource:
-    url: ${DATABASE_URL}                    # Railway inyecta esto
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -22,21 +13,13 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: true
 
-  # Sirve el frontend Angular desde el JAR
+  # Sirve el frontend
   mvc:
     static-path-pattern: /**
   web:
     resources:
       static-locations: classpath:/static/, file:frontend/
 
-# JWT
 jwt:
-  secret: ${JWT_SECRET}   # ← Pondremos esto en Railway como variable de entorno
-
-# LOGS (opcional, pero útil en prod puedes quitarlo)
-logging:
-  level:
-    org.springframework.web: INFO
-    com.djuancito.reposteria: INFO
+  secret: ${JWT_SECRET}
