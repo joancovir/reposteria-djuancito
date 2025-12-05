@@ -1,4 +1,3 @@
-# backend/src/main/resources/application.yml
 cloudinary:
   cloud-name: ddk8osgyk
   api-key: 848718324627338
@@ -11,7 +10,6 @@ spring:
     username: ${MYSQLUSER}
     password: ${MYSQLPASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,7 +17,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-
   mvc:
     static-path-pattern: /**
   web:
@@ -29,7 +26,9 @@ spring:
 jwt:
   secret: ${JWT_SECRET}
 
-# ¡¡ESTO ES LO QUE FALTABA!!
+# ← ESTAS 4 LÍNEAS SON LAS QUE HACEN QUE RAILWAY FUNCIONE
 server:
   port: ${PORT:8080}
   address: 0.0.0.0
+  servlet:
+    context-path: /
