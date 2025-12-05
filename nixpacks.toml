@@ -1,17 +1,14 @@
-# nixpacks.toml - CONFIGURACIÓN DEFINITIVA PARA ANGULAR + SPRING BOOT EN RAILWAY 2025
-providers = ["nodejs", "java"]  # Detecta tanto frontend (Node) como backend (Java)
+# nixpacks.toml - Configuración oficial Railway 2025 para Angular
+providers = ["nodejs"]  # Fuerza detección de Node.js
 
 [phases.setup]
-nixPkgs = ["nodejs-20", "openjdk-21"]  # Node 20 para Angular 20, Java 21 para Spring Boot
+nixPkgs = ["nodejs-20"]  # Node 20 para Angular 20 (evita error de versión)
 
 [phases.install]
-cmds = ["npm ci"]  # Instala dependencias de Node (frontend)
+cmds = ["npm ci"]  # Instala dependencias
 
 [phases.build]
-cmds = [
-  "npm run build -- --configuration production",  # Build de Angular
-  "./gradlew bootJar"  # Build de Spring Boot (si usas Gradle; si Maven, usa "mvn clean package")
-]
+cmds = ["npm run build -- --configuration production"]  # Build Angular
 
-[phases.start]
-cmd = "java -jar backend/target/*.jar --server.port=$PORT"  # Backend en puerto de Railway
+[start]
+cmd = "npx serve -s dist/angular-temp -l $PORT"  # Sirve el frontend en puerto de Railway
