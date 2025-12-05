@@ -1,4 +1,4 @@
-
+# backend/src/main/resources/application.yml
 cloudinary:
   cloud-name: ddk8osgyk
   api-key: 848718324627338
@@ -6,6 +6,12 @@ cloudinary:
   secure: true
 
 spring:
+  datasource:
+    url: jdbc:mysql://${MYSQLHOST}:${MYSQLPORT}/${MYSQLDATABASE}
+    username: ${MYSQLUSER}
+    password: ${MYSQLPASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,7 +20,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
-  # Sirve el frontend
+  # Sirve el frontend Angular
   mvc:
     static-path-pattern: /**
   web:
