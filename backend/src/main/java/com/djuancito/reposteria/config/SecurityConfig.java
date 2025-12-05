@@ -66,7 +66,10 @@ public class SecurityConfig {
     .requestMatchers("/api/usuarios/mi-perfil").authenticated()
     .requestMatchers("/api/contacto/mi-historial").authenticated()
     .requestMatchers(HttpMethod.POST, "/api/resenas").authenticated()
-
+.authorizeHttpRequests(auth -> auth
+    .requestMatchers("/", "/login", "/register", "/public/**", "/favicon.ico").permitAll()
+    .anyRequest().authenticated()
+)
     // SOLO ADMIN
     .requestMatchers(HttpMethod.POST, "/api/promociones").hasAuthority("ROLE_Administrador")
     .requestMatchers(HttpMethod.PUT, "/api/promociones/**").hasAuthority("ROLE_Administrador")
