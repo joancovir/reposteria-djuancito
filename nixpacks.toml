@@ -1,4 +1,4 @@
-# nixpacks.toml → FUNCIONA AL 100% CON ANGULAR + SPRING BOOT + MAVEN EN RAILWAY 2025
+# nixpacks.toml (en la raíz del proyecto)
 providers = ["java", "nodejs"]
 
 [phases.setup]
