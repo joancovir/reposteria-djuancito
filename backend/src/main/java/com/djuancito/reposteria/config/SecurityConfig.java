@@ -40,58 +40,57 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-       .authorizeHttpRequests(auth -> auth
-    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .authorizeHttpRequests(auth -> auth
 
-    // PÚBLICOS
-    .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
-    .requestMatchers("/api/qr/activos").permitAll()
-    .requestMatchers(HttpMethod.POST, "/api/contacto").permitAll()
-    .requestMatchers(HttpMethod.GET,
-        "/api/productos/**",
-        "/api/categorias/**",
-        "/api/resenas/**","/api/resenas/*","/api/resenas/todas",
-        "/api/promociones/**",
-        "/api/config/**",
-        "/api/confi/**",
-        "/api/productos-realizados",
-        "/api/adicionales",
-        "/api/temporada/**"
-    ).permitAll()
+                // OPCIONES
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-    // CLIENTES AUTENTICADOS (cualquier usuario logueado)
-    .requestMatchers("/api/pedidos/**").authenticated()
-    .requestMatchers("/api/pedidos", "/api/pedidos/confirmar").authenticated()
-    .requestMatchers("/api/pedidos/usuario/**").authenticated()
-    .requestMatchers("/api/usuarios/mi-perfil").authenticated()
-    .requestMatchers("/api/contacto/mi-historial").authenticated()
-    .requestMatchers(HttpMethod.POST, "/api/resenas").authenticated()
-.authorizeHttpRequests(auth -> auth
-    .requestMatchers("/", "/login", "/register", "/public/**", "/favicon.ico").permitAll()
-    .anyRequest().authenticated()
-)
-    // SOLO ADMIN
-    .requestMatchers(HttpMethod.POST, "/api/promociones").hasAuthority("ROLE_Administrador")
-    .requestMatchers(HttpMethod.PUT, "/api/promociones/**").hasAuthority("ROLE_Administrador")
-    .requestMatchers(HttpMethod.DELETE, "/api/promociones/**").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/promociones/todas").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/pedidos/todos").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/pedidos/**/estado").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/usuarios/todos", "/api/usuarios/modificar/**", "/api/usuarios/eliminar/**").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/contacto/todos").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/pagos/**").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/dashboard/admin").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/promociones/todas").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/resenas/todas").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/resenas/**").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/config/qr/**").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/qr/admin").hasAuthority("ROLE_Administrador")
-    .requestMatchers("/api/config/garantias/**").hasAuthority("ROLE_Administrador")
+                // PÚBLICOS
+                .requestMatchers("/", "/login", "/register", "/public/**", "/favicon.ico").permitAll()
+                .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
+                .requestMatchers("/api/qr/activos").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/contacto").permitAll()
+                .requestMatchers(HttpMethod.GET,
+                    "/api/productos/**",
+                    "/api/categorias/**",
+                    "/api/resenas/**",
+                    "/api/promociones/**",
+                    "/api/config/**",
+                    "/api/confi/**",
+                    "/api/productos-realizados",
+                    "/api/adicionales",
+                    "/api/temporada/**"
+                ).permitAll()
 
-    // Todo lo demás necesita autenticación
-    .anyRequest().authenticated()
-)
+                // CLIENTE AUTENTICADO
+                .requestMatchers(
+                    "/api/pedidos/**",
+                    "/api/pedidos",
+                    "/api/pedidos/confirmar",
+                    "/api/pedidos/usuario/**",
+                    "/api/usuarios/mi-perfil",
+                    "/api/contacto/mi-historial",
+                    "/api/resenas"
+                ).authenticated()
+
+                // ADMIN
+                .requestMatchers("/api/promociones/**").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/pedidos/todos").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/pedidos/**/estado").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/usuarios/todos", "/api/usuarios/modificar/**", "/api/usuarios/eliminar/**").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/contacto/todos").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/pagos/**").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/dashboard/admin").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/resenas/todas").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/resenas/**").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/config/qr/**").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/qr/admin").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/config/garantias/**").hasAuthority("ROLE_Administrador")
+
+                // TODO LO DEMÁS
+                .anyRequest().authenticated()
+            )
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -122,7 +121,6 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of("http://localhost:4200"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
-        
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -130,3 +128,4 @@ public class SecurityConfig {
         return source;
     }
 }
+
