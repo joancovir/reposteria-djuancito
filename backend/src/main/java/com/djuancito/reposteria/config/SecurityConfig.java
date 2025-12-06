@@ -5,6 +5,8 @@ import com.djuancito.reposteria.servicio.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationConfiguration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -37,24 +39,18 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // PERMITE TODO EL FRONTEND (esto es lo que faltaba)
-                .requestMatchers("/", "/index.html", "/static/**", "/assets/**", "/favicon.ico", 
+                .requestMatchers("/", "/index.html", "/static/**", "/assets/**", "/favicon.ico",
                                  "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.jpg", "/**/*.svg").permitAll()
-                
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                 .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
                 .requestMatchers("/api/qr/activos").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/contacto").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/productos/**", "/api/promociones/**", "/api/config/**").permitAll()
-
-                // Tus rutas protegidas
                 .requestMatchers("/api/pedidos/**", "/api/usuarios/mi-perfil").authenticated()
                 .requestMatchers("/api/**").hasAuthority("ROLE_Administrador")
-
                 .anyRequest().permitAll()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 
@@ -73,5 +69,11 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    // ESTE ES EL BEAN QUE FALTABA Y HACÍA QUE TODO FALLE
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }
