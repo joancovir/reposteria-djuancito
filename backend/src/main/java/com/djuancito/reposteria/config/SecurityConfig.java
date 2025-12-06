@@ -41,10 +41,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // SIRVE TODO EL FRONTEND (ANGULAR)
+                // SIRVE TODO EL FRONTEND ANGULAR
                 .requestMatchers("/", "/index.html", "/static/**", "/assets/**", "/favicon.ico", "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.jpg", "/**").permitAll()
 
-                // OPCIONES
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                 // API PÚBLICAS
@@ -91,6 +90,7 @@ public class SecurityConfig {
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
