@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: '/api'   // ← ESTO ES LO CORRECTO EN RAILWAY
+  apiUrl: 'https://reposteria-djuancito-production.up.railway.app/api'  // ← CAMBIA ESTO
 };
