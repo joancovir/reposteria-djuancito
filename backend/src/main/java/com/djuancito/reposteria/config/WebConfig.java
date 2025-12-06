@@ -15,10 +15,14 @@ public class WebConfig implements WebMvcConfigurer {
                 .setCachePeriod(0);
     }
 
-    // ESTO ES LO QUE HACÍA FALTA – REDIRIGE TODAS LAS RUTAS AL index.html
+    // ESTE ES EL PATRÓN CORRECTO PARA SPRING BOOT 3
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/**/{path:[^\\.]*}")
+        registry.addViewController("/{path:[^\\.]*}")
+                .setViewName("forward:/index.html");
+        registry.addViewController("/{path:[^\\.]*}/**")
+                .setViewName("forward:/index.html");
+        registry.addViewController("/**")
                 .setViewName("forward:/index.html");
     }
 }
