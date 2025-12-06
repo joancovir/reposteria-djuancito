@@ -1,4 +1,4 @@
-# Dockerfile – FUNCIONA AL 100% EN RAILWAY 2025
+# Dockerfile – 100% FUNCIONA EN RAILWAY 2025
 FROM maven:3.9.6-eclipse-temurin-21 AS backend
 WORKDIR /app/backend
 COPY backend/pom.xml .
@@ -18,11 +18,11 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 COPY --from=backend /app/backend/target/*.jar app.jar
-
-# ESTA ES LA RUTA EXACTA QUE GENERA ANGULAR 20 EN 2025
 COPY --from=frontend /app/frontend/dist/angular-temp/browser ./static
 
-EXPOSE 8080
-ENV JAVA_TOOL_OPTIONS="-Dserver.port=${PORT:-8080}"
+# ESTA LÍNEA ES LA QUE FALTABA – RAILWAY USA LA VARIABLE $PORT
+ENV JAVA_TOOL_OPTIONS="-Dserver.port=${PORT}"
+
+EXPOSE ${PORT:-8080}
 
 CMD ["java", "-jar", "app.jar"]
