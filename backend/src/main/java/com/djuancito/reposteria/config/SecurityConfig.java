@@ -41,43 +41,23 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // ← ESTO ES LO QUE FALTABA – SIRVE TODO EL FRONTEND
-                .requestMatchers("/", "/index.html", "/static/**", "/assets/**", "/favicon.ico", "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.jpg").permitAll()
+                // SIRVE TODO EL FRONTEND (ANGULAR)
+                .requestMatchers("/", "/index.html", "/static/**", "/assets/**", "/favicon.ico", "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.jpg", "/**").permitAll()
 
                 // OPCIONES
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                // PÚBLICOS
-                .requestMatchers("/login", "/register").permitAll()
-                .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
-                .requestMatchers("/api/qr/activos").permitAll()
+                // API PÚBLICAS
+                .requestMatchers("/api/usuarios/login", "/api/usuarios/registro", "/api/qr/activos").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/contacto").permitAll()
-                .requestMatchers(HttpMethod.GET,
-                    "/api/productos/**",
-                    "/api/categorias/**",
-                    "/api/resenas/**",
-                    "/api/promociones/**",
-                    "/api/config/**",
-                    "/api/confi/**",
-                    "/api/productos-realizados",
-                    "/api/adicionales",
-                    "/api/temporada/**"
-                ).permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/productos/**", "/api/promociones/**", "/api/config/**", "/api/productos-realizados", "/api/adicionales", "/api/temporada/**").permitAll()
 
-                // CLIENTE AUTENTICADO
+                // CLIENTE
                 .requestMatchers("/api/pedidos/**", "/api/usuarios/mi-perfil").authenticated()
 
                 // ADMIN
-                .requestMatchers("/api/promociones/**").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/pedidos/todos", "/api/pedidos/**/estado").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/contacto/todos").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/pagos/**").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/dashboard/admin").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/resenas/todas", "/api/resenas/**").hasAuthority("ROLE_Administrador")
-                .requestMatchers("/api/config/qr/**", "/api/qr/admin", "/api/config/garantias/**").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/promociones/**", "/api/pedidos/todos", "/api/pedidos/**/estado", "/api/usuarios/**", "/api/contacto/todos", "/api/pagos/**", "/api/dashboard/admin", "/api/resenas/todas", "/api/resenas/**", "/api/config/qr/**", "/api/qr/admin", "/api/config/garantias/**").hasAuthority("ROLE_Administrador")
 
-                // ← TODAS LAS RUTAS DEL FRONTEND (Angular) → PERMITIDAS
                 .anyRequest().permitAll()
             )
             .authenticationProvider(authenticationProvider())
@@ -86,5 +66,33 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ... el resto igual (authenticationProvider, passwordEncoder, cors, etc.)
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsServiceImpl);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 }
