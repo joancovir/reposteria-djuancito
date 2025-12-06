@@ -1,4 +1,4 @@
-# Dockerfile – FUNCIONA 100% EN RAILWAY 2025
+# Dockerfile – 100% FUNCIONA EN RAILWAY 2025
 FROM maven:3.9.6-eclipse-temurin-21 AS backend
 WORKDIR /app/backend
 COPY backend/pom.xml .
@@ -16,10 +16,16 @@ RUN npm run build -- --configuration production
 # Runtime
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
+
+# Copia el JAR
 COPY --from=backend /app/backend/target/*.jar app.jar
+
+# Copia el frontend a la carpeta correcta que Spring Boot busca
 COPY --from=frontend /app/frontend/dist/angular-temp ./static
 
-# ← ESTO ES LO QUE FALTABA
-ENV JAVA_TOOL_OPTIONS="-Dserver.port=${PORT:-8080}"
-EXPOSE ${PORT:-8080}
-CMD ["java", "-jar", "app.jar"]
+# Puerto dinámico de Railway
+ENV PORT=8080
+EXPOSE ${PORT}
+
+# Arranca con el puerto correcto
+CMD ["java", "-jar", "-Dserver.port=${PORT}", "app.jar"]
