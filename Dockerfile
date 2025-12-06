@@ -1,4 +1,4 @@
-# Dockerfile – FUNCIONA AL 100% CON ANGULAR 20 + SPRING BOOT EN RAILWAY 2025
+# Dockerfile – FUNCIONA 100% CON ANGULAR 20 + SPRING BOOT EN RAILWAY
 FROM maven:3.9.6-eclipse-temurin-21 AS backend
 WORKDIR /app/backend
 COPY backend/pom.xml .
@@ -19,7 +19,7 @@ WORKDIR /app
 
 COPY --from=backend /app/backend/target/*.jar app.jar
 
-# ESTA ES LA RUTA CORRECTA PARA ANGULAR 20
+# ESTA ES LA RUTA EXACTA QUE GENERA ANGULAR 20
 COPY --from=frontend /app/frontend/dist/angular-temp/browser ./static
 
 EXPOSE 8080
