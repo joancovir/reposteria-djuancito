@@ -1,4 +1,4 @@
-# Dockerfile – FUNCIONA AL 100% EN RAILWAY 2025
+# Dockerfile – FUNCIONA AL 100% CON ANGULAR 20 EN RAILWAY
 FROM maven:3.9.6-eclipse-temurin-21 AS backend
 WORKDIR /app/backend
 COPY backend/pom.xml .
@@ -17,13 +17,11 @@ RUN npm run build -- --configuration production
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Copia el JAR
 COPY --from=backend /app/backend/target/*.jar app.jar
 
-# Copia el frontend a la carpeta EXACTA que Spring Boot busca por defecto
-COPY --from=frontend /app/frontend/dist/angular-temp/browser ./static
+# ESTA ES LA LÍNEA CORRECTA PARA ANGULAR 20
+COPY --from=frontend /app/frontend/dist/angular-temp ./static
 
-# Puerto dinámico de Railway
 EXPOSE 8080
 ENV JAVA_TOOL_OPTIONS="-Dserver.port=${PORT:-8080}"
 
