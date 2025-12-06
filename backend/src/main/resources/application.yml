@@ -20,18 +20,11 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
 
   mvc:
-    throw-exception-if-no-handler-found: false
+    throw-exception-if-no-handler-found: true   # ← ESTA LÍNEA ES LA QUE FALTABA
     static-path-pattern: /**
   web:
     resources:
       static-locations: classpath:/static/
-
-  # ESTA ES LA LÍNEA QUE ARREGLA EL 500 Y EL BUCLE INFINITO
-  security:
-    user:
-      name: admin
-      password: admin
-      roles: Administrador
 
 jwt:
   secret: ${JWT_SECRET}
