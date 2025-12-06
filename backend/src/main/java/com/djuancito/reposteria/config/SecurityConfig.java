@@ -5,10 +5,6 @@ import com.djuancito.reposteria.servicio.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,56 +22,40 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
-    public SecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl, JwtAuthenticationFilter jwtAuthFilter) {
-        this.userDetailsServiceImpl = userDetailsServiceImpl;
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, UserDetailsServiceImpl userDetailsServiceImpl) {
         this.jwtAuthFilter = jwtAuthFilter;
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // SIRVE TODO EL FRONTEND ANGULAR
-                .requestMatchers("/", "/index.html", "/static/**", "/assets/**", "/favicon.ico", "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.jpg", "/**").permitAll()
-
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                // API PÚBLICAS
-                .requestMatchers("/api/usuarios/login", "/api/usuarios/registro", "/api/qr/activos").permitAll()
+                // PERMITE TODO EL FRONTEND (esto es lo que faltaba)
+                .requestMatchers("/", "/index.html", "/static/**", "/assets/**", "/favicon.ico", 
+                                 "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.jpg", "/**/*.svg").permitAll()
+                
+                .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
+                .requestMatchers("/api/qr/activos").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/contacto").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/productos/**", "/api/promociones/**", "/api/config/**", "/api/productos-realizados", "/api/adicionales", "/api/temporada/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/productos/**", "/api/promociones/**", "/api/config/**").permitAll()
 
-                // CLIENTE
+                // Tus rutas protegidas
                 .requestMatchers("/api/pedidos/**", "/api/usuarios/mi-perfil").authenticated()
-
-                // ADMIN
-                .requestMatchers("/api/promociones/**", "/api/pedidos/todos", "/api/pedidos/**/estado", "/api/usuarios/**", "/api/contacto/todos", "/api/pagos/**", "/api/dashboard/admin", "/api/resenas/todas", "/api/resenas/**", "/api/config/qr/**", "/api/qr/admin", "/api/config/garantias/**").hasAuthority("ROLE_Administrador")
+                .requestMatchers("/api/**").hasAuthority("ROLE_Administrador")
 
                 .anyRequest().permitAll()
             )
-            .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsServiceImpl);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
     }
 
     @Bean
@@ -87,10 +67,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
