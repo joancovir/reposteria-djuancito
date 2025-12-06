@@ -20,9 +20,6 @@ WORKDIR /app
 COPY --from=backend /app/backend/target/*.jar app.jar
 COPY --from=frontend /app/frontend/dist/angular-temp/browser ./static
 
-# ESTA LÍNEA ES LA QUE FALTABA – RAILWAY USA LA VARIABLE $PORT
-ENV JAVA_TOOL_OPTIONS="-Dserver.port=${PORT}"
-
-EXPOSE ${PORT:-8080}
-
-CMD ["java", "-jar", "app.jar"]
+# ESTAS 2 LÍNEAS SON LAS QUE HACEN QUE RAILWAY FUNCIONE
+EXPOSE 8080
+CMD ["java", "-jar", "app.jar", "--server.port=${PORT:-8080}"]
