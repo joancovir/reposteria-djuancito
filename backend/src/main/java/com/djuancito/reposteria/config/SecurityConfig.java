@@ -77,10 +77,14 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
 
             // === CLIENTE AUTENTICADO (solo necesita estar logueado) ===
             .requestMatchers(
-                "/api/pedidos", "/api/pedidos/**",
-                "/api/usuarios/mi-perfil",
-                "/api/contacto/mi-historial"
-            ).authenticated()
+                    "/api/pedidos/**",
+                    "/api/pedidos",
+                    "/api/pedidos/confirmar",
+                    "/api/pedidos/usuario/**",
+                    "/api/usuarios/mi-perfil",
+                    "/api/contacto/mi-historial",
+                    "/api/resenas"
+                ).authenticated()
 
             // === SOLO ADMINISTRADOR (CORREGIDOS - SIN DUPLICADOS) ===
             .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_Administrador")
