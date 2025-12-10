@@ -1,9 +1,10 @@
 // src/app/paginas/admin/gestion-qr/gestion-qr.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
+import { environment } from '../../../../../src/environments/environment'; // ← IMPORTANTE
 
 interface QrPago {
   id?: number;
@@ -22,22 +23,29 @@ interface QrPago {
   styleUrls: ['./gestion-qr.css']
 })
 export class GestionQr implements OnInit {
-
   qrs: QrPago[] = [];
   modalVisible = false;
   esEdicion = false;
-  form: QrPago = { tipo: 'YAPE', imagenUrl: '', telefono: '999675771', nombrePropietario: 'Jessica Chuñe Liza', activo: true };
+  form: QrPago = { 
+    tipo: 'YAPE', 
+    imagenUrl: '', 
+    telefono: '999675771', 
+    nombrePropietario: 'Jessica Chuñe Liza', 
+    activo: true 
+  };
   imagenPreview = '';
 
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl; // ← ESTO ES LA CLAVE
 
   ngOnInit() {
     this.cargarQrs();
   }
 
   cargarQrs() {
-    this.http.get<QrPago[]>('http://localhost:8080/api/config/qr/admin').subscribe({
-      next: (data) => this.qrs = data
+    this.http.get<QrPago[]>(`${this.apiUrl}/config/qr/admin`).subscribe({
+      next: (data) => this.qrs = data,
+      error: (err) => console.error('Error cargando QRs:', err)
     });
   }
 
@@ -48,7 +56,13 @@ export class GestionQr implements OnInit {
       this.imagenPreview = qr.imagenUrl;
     } else {
       this.esEdicion = false;
-      this.form = { tipo: 'YAPE', imagenUrl: '', telefono: '999675771', nombrePropietario: 'Jessica Chuñe Liza', activo: true };
+      this.form = { 
+        tipo: 'YAPE', 
+        imagenUrl: '', 
+        telefono: '999675771', 
+        nombrePropietario: 'Jessica Chuñe Liza', 
+        activo: true 
+      };
       this.imagenPreview = '';
     }
     this.modalVisible = true;
@@ -77,23 +91,28 @@ export class GestionQr implements OnInit {
     }
 
     const request = this.esEdicion
-      ? this.http.put(`http://localhost:8080/api/config/qr/${this.form.id}`, this.form)
-      : this.http.post('http://localhost:8080/api/config/qr', this.form);
+      ? this.http.put(`${this.apiUrl}/config/qr/${this.form.id}`, this.form)
+      : this.http.post(`${this.apiUrl}/config/qr`, this.form);
 
     request.subscribe({
       next: () => {
         this.cargarQrs();
         this.cerrarModal();
         alert(this.esEdicion ? 'QR actualizado' : 'QR creado');
+      },
+      error: (err) => {
+        console.error('Error al guardar QR:', err);
+        alert('Error al guardar el QR');
       }
     });
   }
 
   toggleActivo(qr: QrPago) {
-    this.http.patch(`http://localhost:8080/api/config/qr/${qr.id}/toggle`, {}).subscribe({
+    this.http.patch(`${this.apiUrl}/config/qr/${qr.id}/toggle`, {}).subscribe({
       next: () => {
         qr.activo = !qr.activo;
-      }
+      },
+      error: (err) => console.error('Error toggle activo:', err)
     });
   }
 }
