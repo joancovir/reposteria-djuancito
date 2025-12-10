@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Contacto } from '../modelos/contacto'; 
+import { environment } from '../../../src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { Contacto } from '../modelos/contacto';
 export class ContactoService {
 
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/contacto'; 
+private apiUrl = environment.apiUrl + '/contacto'; 
 
 
   obtenerMiHistorial(): Observable<Contacto[]> {
