@@ -111,7 +111,7 @@ export class PersonalizarTorta implements OnInit {
     }
   }
 
- onSubmit() {
+onSubmit(): void {
   if (!this.authService.estaLogueado()) {
     localStorage.setItem('torta_pendiente', JSON.stringify(this.form.value));
     alert('Debes iniciar sesión para continuar');
@@ -125,19 +125,31 @@ export class PersonalizarTorta implements OnInit {
     productoId: null,
     nombre: this.necesitaCotizacion ? 'Torta Personalizada (A cotizar)' : 'Torta Personalizada',
     precioBase: this.necesitaCotizacion ? 0 : this.precioCalculado,
+    precioUnitario: this.necesitaCotizacion ? 0 : this.precioCalculado,
     cantidad: 1,
     categoria: 'torta',
     imagenUrl: 'assets/imagenes/torta-personalizada.jpg',
     personalizable: true,
     esPersonalizada: true,
     necesitaCotizacion: this.necesitaCotizacion,
-    personalizacion: {
-      ...values,
-    }
+    personalizacion: { ...values },
+    precioCalculado: this.precioCalculado,
+    necesitaCotizacion: this.necesitaCotizacion
   };
 
-  this.carritoService.agregarAlCarrito(tortaPersonalizada);
-  this.router.navigate(['/cliente/mi-pedido']);
+  // ¡AQUÍ ESTÁ LA CLAVE!
+  if (tortaPersonalizada.esPersonalizada) {
+    // Guardamos temporalmente y vamos a entrega
+    localStorage.setItem('torta_pendiente', JSON.stringify({
+      ...tortaPersonalizada,
+      formValues: values
+    }));
+    this.router.navigate(['/cliente/entrega']);
+  } else {
+    // (Solo por si en el futuro agregas productos normales)
+    this.carritoService.agregarAlCarrito(tortaPersonalizada);
+    this.router.navigate(['/cliente/mi-pedido']);
+  }
 }
 
   regresar() {
