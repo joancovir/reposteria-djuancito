@@ -1,12 +1,23 @@
+// src/app/modelos/pedido-request-dto.ts
+
+export interface PersonalizacionDTO {
+  descripcionExtra?: string;
+  costoAdicional?: number;
+  adicionalesSeleccionados?: Array<{
+    adicionalId: number | null;
+    nombre: string;
+    categoria: string;
+    costoAdicional: number;
+  }>;
+}
+
 export interface DetalleRequestDTO {
-  productoId?: number | null;
+  productoId: number | null;
   cantidad: number;
   precioUnitario: number;
   subtotal: number;
-  personalizacion?: {
-    descripcionExtra?: string;
-    costoAdicional?: number;
-  };
+  promocionId?: number | null;
+  personalizacion?: PersonalizacionDTO;
 }
 
 export interface PedidoRequestDTO {
