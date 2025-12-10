@@ -1,5 +1,6 @@
 package com.djuancito.reposteria.config;
-
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import com.djuancito.reposteria.config.filter.JwtAuthenticationFilter;
 import com.djuancito.reposteria.servicio.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
