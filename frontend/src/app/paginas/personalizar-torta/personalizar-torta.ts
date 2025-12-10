@@ -121,21 +121,21 @@ onSubmit(): void {
 
   const values = this.form.value;
 
-  const tortaPersonalizada: any = {
-    productoId: null,
-    nombre: this.necesitaCotizacion ? 'Torta Personalizada (A cotizar)' : 'Torta Personalizada',
-    precioBase: this.necesitaCotizacion ? 0 : this.precioCalculado,
-    precioUnitario: this.necesitaCotizacion ? 0 : this.precioCalculado,
-    cantidad: 1,
-    categoria: 'torta',
-    imagenUrl: 'assets/imagenes/torta-personalizada.jpg',
-    personalizable: true,
-    esPersonalizada: true,
-    necesitaCotizacion: this.necesitaCotizacion,
-    personalizacion: { ...values },
-    precioCalculado: this.precioCalculado,
-    necesitaCotizacion: this.necesitaCotizacion
-  };
+const tortaPersonalizada: any = {
+  productoId: null,
+  nombre: this.necesitaCotizacion ? 'Torta Personalizada (A cotizar)' : 'Torta Personalizada',
+  precioBase: this.necesitaCotizacion ? 0 : this.precioCalculado,
+  precioUnitario: this.necesitaCotizacion ? 0 : this.precioCalculado,
+  cantidad: 1,
+  categoria: 'torta',
+  imagenUrl: 'assets/imagenes/torta-personalizada.jpg',
+  personalizable: true,
+  esPersonalizada: true,
+  necesitaCotizacion: this.necesitaCotizacion,
+  personalizacion: { ...values },
+  precioCalculado: this.precioCalculado
+
+};
 
   // ¡AQUÍ ESTÁ LA CLAVE!
   if (tortaPersonalizada.esPersonalizada) {
