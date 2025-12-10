@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Pago } from '../modelos/pago';
-
+import { environment } from '../../../src/environments/environment'; // Asegúrate de que la ruta sea correcta
 @Injectable({
   providedIn: 'root'
 })
 export class PagoService {
 
-  private apiUrl = 'http://localhost:8080/api/pagos';
+private apiUrl = environment.apiUrl + '/pagos'; 
 
   constructor(private http: HttpClient) { }
 
