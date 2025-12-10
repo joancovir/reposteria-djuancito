@@ -81,21 +81,25 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             // === CONTACTO PÚBLICO (para enviar mensajes) ===
             .requestMatchers(HttpMethod.POST, "/api/contacto").permitAll()
 
-            // === CLIENTE AUTENTICADO (sus pedidos, perfil, historial) ===
+            // === CLIENTE AUTENTICADO 
             .requestMatchers(
-                "/api/pedidos/**",
-                "/api/usuarios/mi-perfil",
-                "/api/contacto/mi-historial"
-            ).authenticated()
+                    "/api/pedidos/**",
+                    "/api/pedidos",
+                    "/api/pedidos/confirmar",
+                    "/api/pedidos/usuario/**",
+                    "/api/usuarios/mi-perfil",
+                    "/api/contacto/mi-historial",
+                    "/api/resenas"
+                ).authenticated()
 
-            // === SOLO ADMINISTRADOR (todo lo que debe estar protegido) ===
+            // === SOLO ADMINISTRADOR 
             .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_Administrador")
             .requestMatchers("/api/pedidos/todos", "/api/pedidos/**/estado").hasAuthority("ROLE_Administrador")
             .requestMatchers("/api/contacto/todos").hasAuthority("ROLE_Administrador")
-            .requestMatchers("/api/pagos/**").hasAuthority("ROLE_Administrador")
-            .requestMatchers("/api/dashboard/admin").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/pagos/**","/api/pagos").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/dashboard/admin","/api/dashboard/admin").hasAuthority("ROLE_Administrador")
             .requestMatchers("/api/resenas/todas").hasAuthority("ROLE_Administrador")  // solo admin ve todas
-            .requestMatchers("/api/config/qr/admin", "/api/config/qr/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/config/qr/admin", "/api/config/qr/**","/api/config/qr").hasAuthority("ROLE_Administrador")
             .requestMatchers("/api/config/garantias/**").hasAuthority("ROLE_Administrador")
 
             // === CUALQUIER OTRA RUTA QUE NO COINCIDA (evita 403 inesperados) ===
