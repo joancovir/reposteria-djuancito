@@ -46,63 +46,53 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
 
-            // === RECURSOS ESTÁTICOS DEL FRONTEND (Angular) ===
+            // === RECURSOS ESTÁTICOS (Angular) ===
             .requestMatchers(
                 "/", "/index.html", "/static/**", "/assets/**", "/favicon.ico",
-                "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.jpg", "/**/*.jpeg", 
+                "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.jpg", "/**/*.jpeg",
                 "/**/*.svg", "/**/*.ico", "/**/*.json", "/**/*.woff", "/**/*.woff2", "/**/*.ttf"
             ).permitAll()
 
-            // === CORS PREFLIGHT ===
+            // === CORS ===
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-            // === AUTENTICACIÓN PÚBLICA ===
+            // === LOGIN Y REGISTRO ===
             .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
 
-            // === ENDPOINTS 100% PÚBLICOS (los que daban 403) ===
+            // === PÚBLICOS (GET) ===
             .requestMatchers(HttpMethod.GET,
                 "/api/productos/**",
                 "/api/categorias/**",
-                "/api/resenas",                    // ← este era el que más dolía
-                "/api/resenas/**",                 // ← también lo dejamos público para leer
-                "/api/promociones/**",
-                "/api/promociones/activas",
-                "/api/adicionales",                // ← ya no da 403
-                "/api/adicionales/**",
-                "/api/temporada/activas",          // ← ya carga
-                "/api/temporada/**",
-                "/api/config/**",
-                "/api/config/garantia/**",
-                "/api/config/qr/activos",
-                "/api/qr/activos",
-                "/api/productos-realizados"        // ← ya carga la galería
+                "/api/resenas", "/api/resenas/**",
+                "/api/promociones/**", "/api/promociones/activas",
+                "/api/adicionales", "/api/adicionales/**",
+                "/api/temporada/activas", "/api/temporada/**",
+                "/api/config/**", "/api/config/garantia/**",
+                "/api/config/qr/activos", "/api/qr/activos",
+                "/api/productos-realizados"
             ).permitAll()
 
-            // === CONTACTO PÚBLICO (para enviar mensajes) ===
+            // === CONTACTO PÚBLICO ===
             .requestMatchers(HttpMethod.POST, "/api/contacto").permitAll()
 
-            // === CLIENTE AUTENTICADO 
+            // === CLIENTE AUTENTICADO (solo necesita estar logueado) ===
             .requestMatchers(
-                    "/api/pedidos/**",
-                    "/api/pedidos",
-                    "/api/pedidos/confirmar",
-                    "/api/pedidos/usuario/**",
-                    "/api/usuarios/mi-perfil",
-                    "/api/contacto/mi-historial",
-                    "/api/resenas"
-                ).authenticated()
+                "/api/pedidos", "/api/pedidos/**",
+                "/api/usuarios/mi-perfil",
+                "/api/contacto/mi-historial"
+            ).authenticated()
 
-            // === SOLO ADMINISTRADOR 
+            // === SOLO ADMINISTRADOR (CORREGIDOS - SIN DUPLICADOS) ===
             .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_Administrador")
             .requestMatchers("/api/pedidos/todos", "/api/pedidos/**/estado").hasAuthority("ROLE_Administrador")
             .requestMatchers("/api/contacto/todos").hasAuthority("ROLE_Administrador")
-            .requestMatchers("/api/pagos/**","/api/pagos").hasAuthority("ROLE_Administrador")
-            .requestMatchers("/api/dashboard/admin","/api/dashboard/admin").hasAuthority("ROLE_Administrador")
-            .requestMatchers("/api/resenas/todas").hasAuthority("ROLE_Administrador")  // solo admin ve todas
-            .requestMatchers("/api/config/qr/admin", "/api/config/qr/**","/api/config/qr").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/pagos", "/api/pagos/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/dashboard/admin").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/resenas/todas").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/config/qr/admin", "/api/config/qr/**").hasAuthority("ROLE_Administrador")
             .requestMatchers("/api/config/garantias/**").hasAuthority("ROLE_Administrador")
 
-            // === CUALQUIER OTRA RUTA QUE NO COINCIDA (evita 403 inesperados) ===
+            // === CUALQUIER OTRA RUTA ===
             .anyRequest().permitAll()
         )
         .authenticationProvider(authenticationProvider())
