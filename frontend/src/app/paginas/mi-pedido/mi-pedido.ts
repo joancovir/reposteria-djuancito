@@ -170,10 +170,10 @@ private apiUrl = environment.apiUrl;
   const request = {
     usuarioId: Number(usuarioActual.usuarioId),
     detalles: detalles,
-    subtotal: Number(this.subtotal.toFixed(2)),
-    garantiaPagada: Number(this.garantia.toFixed(2)),
-    resto: Number(this.resto.toFixed(2)),
-    total: Number(this.subtotal.toFixed(2))
+    subtotal: this.subtotal.toFixed(2),
+    garantiaPagada: this.garantia.toFixed(2),
+    resto: this.resto.toFixed(2),
+    total: this.subtotal.toFixed(2)
   };
 
   console.log('ENVIANDO PEDIDO:', JSON.stringify(request, null, 2));
