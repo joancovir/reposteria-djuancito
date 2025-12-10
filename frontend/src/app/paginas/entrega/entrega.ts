@@ -84,78 +84,81 @@ tienda: ConfigTienda = {
     });
   }
 
-  onSubmit() {
-    if (this.entregaForm.invalid || !this.tortaPersonalizada) return;
+onSubmit() {
+  if (this.entregaForm.invalid || !this.tortaPersonalizada) return;
 
-    const form = this.entregaForm.value;
+  const form = this.entregaForm.value;
 
-    // RECUPERAR LOS ADICIONALES COMPLETOS QUE YA GUARDAMOS
-    const adicionalesSeleccionados = this.tortaPersonalizada.adicionales || [];
+  // RECUPERAR LOS ADICIONALES QUE YA TENEMOS GUARDADOS
+  const adicionales = this.tortaPersonalizada.adicionales || [];
 
-    const detalle: any = {
-      productoId: null,
-      cantidad: 1,
-      precioUnitario: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0),
-      subtotal: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0),
-      promocionId: null,
-      personalizacion: {
-        descripcionExtra: this.tortaPersonalizada.descripcionCompleta || 'Torta personalizada',
-        costoAdicional: this.tortaPersonalizada.costoAdicionales || 0,
-        adicionalesSeleccionados: adicionalesSeleccionados
-          .map((a: any) => a.adicionalId)
-          .filter((id: any) => id !== null && id !== undefined)
-      }
-    };
+  const detalle: any = {
+    productoId: null,
+    cantidad: 1,
+    precioUnitario: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0),
+    subtotal: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0),
+    promocionId: null,
+    personalizacion: {
+      descripcionExtra: this.tortaPersonalizada.descripcionCompleta || 'Torta personalizada',
+      costoAdicional: this.tortaPersonalizada.costoAdicionales || 0,
+      // AQUÍ ESTÁ EL FIX: SOLO ENVÍAS LOS IDs, NADA MÁS
+      adicionalesSeleccionados: adicionales
+        .map((a: any) => a.adicionalId)
+        .filter((id: any) => id !== null && id !== undefined)
+    }
+  };
 
-    const pedidoDto: any = {
-      usuarioId: this.usuario.usuarioId,
-      nota: `Torta Personalizada - ${form.metodo === 'recojo' ? 'RECOJO EN TIENDA' : 'DELIVERY'}\n` +
-            `Fecha: ${form.fechaEntrega}\n` +
-            (form.metodo === 'delivery' 
-              ? `Dirección: ${form.direccionEntrega}\nReferencia: ${form.referencia || 'Sin referencia'}`
-              : `Recojo en: ${this.tienda.direccion}`),
-      detalles: [detalle],
-      subtotal: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0),
-      total: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0),
-      garantiaPagada: 0,
-      resto: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0)
-    };
+  const pedidoDto: any = {
+    usuarioId: this.usuario.usuarioId,
+    nota: `Torta Personalizada - ${form.metodo === 'recojo' ? 'RECOJO EN TIENDA' : 'DELIVERY'}\n` +
+          `Fecha: ${form.fechaEntrega}\n` +
+          (form.metodo === 'delivery'
+            ? `Dirección: ${form.direccionEntrega}\nReferencia: ${form.referencia || 'Sin referencia'}`
+            : `Recojo en: ${this.tienda.direccion}`),
+    detalles: [detalle],
+    subtotal: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0),
+    total: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0),
+    garantiaPagada: 0,
+    resto: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0)
+  };
 
-    console.log('ENVIANDO PEDIDO DE TORTA PERSONALIZADA:', JSON.stringify(pedidoDto, null, 2));
+  console.log('PEDIDO ENVIADO:', JSON.stringify(pedidoDto, null, 2));
 
-    this.pedidoService.crear(pedidoDto).subscribe({
-      next: (pedido: any) => {
-        const entregaData = {
-          pedidoId: pedido.pedidoId,
-          direccionEntrega: form.metodo === 'recojo' ? this.tienda.direccion : form.direccionEntrega,
-          referencia: form.referencia || null,
-          fechaEntrega: form.fechaEntrega,
-          metodo: form.metodo.toUpperCase() as 'DELIVERY' | 'RECOJO',
-          estado: 'PENDIENTE'
-        };
+  this.pedidoService.crear(pedidoDto).subscribe({
+    next: (pedido: any) => {
+      const entregaData = {
+        pedidoId: pedido.pedidoId,
+        direccionEntrega: form.metodo === 'recojo' ? this.tienda.direccion : form.direccionEntrega,
+        referencia: form.referencia || null,
+        fechaEntrega: form.fechaEntrega,
+        metodo: form.metodo.toUpperCase() as 'DELIVERY' | 'RECOJO',
+        estado: 'PENDIENTE'
+      };
 
-        this.pedidoService.crearEntrega(entregaData).subscribe({
-          next: () => {
-            localStorage.setItem('pedido_actual_id', pedido.pedidoId.toString());
-            localStorage.setItem('pago_garantia', JSON.stringify({
-              garantia: 0,
-              resto: this.tortaPersonalizada.precioCalculado,
-              subtotal: this.tortaPersonalizada.precioCalculado
-            }));
-            this.router.navigate(['/cliente/pago-garantia']);
-          },
-          error: (err) => {
-            console.error('Error al guardar entrega:', err);
-            alert('Error al guardar entrega: ' + (err.error?.mensaje || 'Intenta de nuevo'));
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Error al crear pedido personalizado:', err);
-        alert('Error: ' + (err.error?.mensaje || 'No se pudo crear el pedido'));
-      }
-    });
-  }
+      this.pedidoService.crearEntrega(entregaData).subscribe({
+        next: () => {
+          // LIMPIAR todo
+          localStorage.removeItem('torta_pendiente');
+          localStorage.setItem('pedido_actual_id', pedido.pedidoId.toString());
+          localStorage.setItem('pago_garantia', JSON.stringify({
+            garantia: 0,
+            resto: this.tortaPersonalizada.precioCalculado,
+            subtotal: this.tortaPersonalizada.precioCalculado
+          }));
+          this.router.navigate(['/cliente/pago-garantia']);
+        },
+        error: (err) => {
+          console.error('Error entrega:', err);
+          alert('Error al guardar datos de entrega');
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Error al crear pedido:', err);
+      alert('Error al crear el pedido: ' + (err.error?.mensaje || 'Intenta de nuevo'));
+    }
+  });
+}
 
   regresar() {
     this.location.back();
