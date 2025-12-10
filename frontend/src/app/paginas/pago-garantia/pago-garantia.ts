@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { environment } from '../../../src/environments/environment';
+import { environment } from '../../../../src/environments/environment';
+
 interface QrPago {
   id: number;
   tipo: string;
