@@ -1,9 +1,8 @@
-
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Resena } from '../modelos/resena'; 
-
+import { environment } from '../../../src/environments/environment';
 export type EstadoResena = 'pendiente' | 'aprobado' | 'rechazado';
 
 @Injectable({
@@ -12,7 +11,7 @@ export type EstadoResena = 'pendiente' | 'aprobado' | 'rechazado';
 export class ResenaService {
 
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/resenas';
+  private apiUrl = environment.apiUrl + '/resenas'; 
 
  
   getResenasPublicas(): Observable<any[]> { 
@@ -30,4 +29,5 @@ export class ResenaService {
       return this.http.put<Resena>(`${this.apiUrl}/${resenaId}/estado`, body);
   }
 }
+
 
