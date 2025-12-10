@@ -5,12 +5,14 @@ import { Observable } from 'rxjs';
 import { AuthResponseDTO } from '../modelos/authResponse';
 import { Usuario } from '../modelos/usuario';
 import { PasswordChangeDTO } from '../modelos/password-change-dto'; 
+import { environment } from '../../../src/environments/environment'; 
+
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
   
-  private apiUrl = 'http://localhost:8080/api/usuarios'; 
+private apiUrl = environment.apiUrl + '/usuarios'; 
 
   constructor(private http: HttpClient) { }
 
