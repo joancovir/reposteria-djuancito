@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../../../src/environments/environment';
+
 
 @Component({
   selector: 'app-gestion-usuarios',
@@ -12,16 +14,18 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./gestion-usuarios.css']
 })
 export class GestionUsuarios implements OnInit {
-
   usuarios: any[] = [];
   usuariosFiltrados: any[] = [];
   filtro: string = '';
   mensaje = '';
   tipoAlerta = '';
 
-  // Para el modal de editar
+  // Modal de edición
   usuarioEditando: any = null;
   nuevoEstado: string = '';
+
+  // API BASE SIN LOCALHOST
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -36,7 +40,7 @@ export class GestionUsuarios implements OnInit {
   }
 
   cargarUsuarios() {
-    this.http.get<any[]>('http://localhost:8080/api/usuarios/todos').subscribe({
+    this.http.get<any[]>(`${this.apiUrl}/usuarios/todos`).subscribe({
       next: (data) => {
         this.usuarios = data;
         this.usuariosFiltrados = [...data];
@@ -50,19 +54,17 @@ export class GestionUsuarios implements OnInit {
     const term = this.filtro.toLowerCase().trim();
     this.usuariosFiltrados = term
       ? this.usuarios.filter(u =>
-          u.nombre.toLowerCase().includes(term) ||
-          u.email.toLowerCase().includes(term)
+          u.nombre?.toLowerCase().includes(term) ||
+          u.email?.toLowerCase().includes(term)
         )
       : [...this.usuarios];
   }
 
-  // ABRIR MODAL PARA EDITAR
   abrirEditar(usuario: any) {
     this.usuarioEditando = { ...usuario };
     this.nuevoEstado = usuario.estado;
   }
 
-  // GUARDAR CAMBIOS (ESTADO + NOMBRE + TELÉFONO)
   guardarCambios() {
     if (!this.usuarioEditando) return;
 
@@ -72,7 +74,7 @@ export class GestionUsuarios implements OnInit {
       estado: this.nuevoEstado
     };
 
-    this.http.put(`http://localhost:8080/api/usuarios/${this.usuarioEditando.usuarioId}`, body)
+    this.http.put(`${this.apiUrl}/usuarios/${this.usuarioEditando.usuarioId}`, body)
       .subscribe({
         next: () => {
           const usuario = this.usuarios.find(u => u.usuarioId === this.usuarioEditando.usuarioId);
@@ -83,7 +85,7 @@ export class GestionUsuarios implements OnInit {
           }
           this.mostrarAlerta('Usuario actualizado correctamente', 'success');
           this.usuarioEditando = null;
-          this.cargarUsuarios(); // recarga por si cambió algo más
+          this.filtrarUsuarios(); // más rápido que recargar todo
         },
         error: (err) => {
           console.error(err);
@@ -92,18 +94,16 @@ export class GestionUsuarios implements OnInit {
       });
   }
 
-  // ELIMINAR USUARIO (solo si no es admin)
   eliminarUsuario(usuario: any) {
     if (usuario.usuarioId === 1) {
       this.mostrarAlerta('No puedes eliminar al administrador', 'danger');
       return;
     }
-
     if (confirm(`¿Seguro que deseas eliminar a ${usuario.nombre}?`)) {
-      this.http.delete(`http://localhost:8080/api/usuarios/${usuario.usuarioId}`).subscribe({
+      this.http.delete(`${this.apiUrl}/usuarios/${usuario.usuarioId}`).subscribe({
         next: () => {
           this.usuarios = this.usuarios.filter(u => u.usuarioId !== usuario.usuarioId);
-          this.usuariosFiltrados = [...this.usuarios];
+          this.filtrarUsuarios();
           this.mostrarAlerta('Usuario eliminado', 'success');
         },
         error: () => this.mostrarAlerta('Error al eliminar', 'danger')
