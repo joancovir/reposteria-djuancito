@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'; 
 import { Observable } from 'rxjs';
 import { Producto } from '../modelos/producto';
+import { environment } from '../../../src/environments/environment'; 
+
 export interface ProductoRealizado {
   realizadoId: number;
   nombre: string;
@@ -15,9 +17,9 @@ export interface ProductoRealizado {
   providedIn: 'root'
 })
 export class ProductoFiltro {
-  private apiUrl = 'http://localhost:8080/api/productos';
-  private apiRealizadosUrl = 'http://localhost:8080/api/productos-realizados';
-
+private apiUrl = environment.apiUrl + '/productos'; 
+  
+  private apiRealizadosUrl = environment.apiUrl + '/productos-realizados'; 
   constructor(private http: HttpClient) { }
 
   obtenerPersonalizables(): Observable<Producto[]> {
