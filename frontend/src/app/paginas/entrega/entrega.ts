@@ -82,53 +82,74 @@ export class Entrega implements OnInit {
     });
   }
 
-  onSubmit() {
+ onSubmit() {
   if (this.entregaForm.invalid || !this.tortaPersonalizada) return;
 
   const form = this.entregaForm.value;
 
+  // RECREAMOS LOS ADICIONALES COMPLETOS (como en el carrito)
+  const adicionalesCompletos = (this.tortaPersonalizada.adicionales || []).map((ad: any) => ({
+    adicionalId: ad.adicionalId,
+    nombre: ad.nombre,
+    categoria: ad.categoria || 'Extra',
+    costoAdicional: ad.costoAdicional || ad.precio || 0
+  }));
+
   const detalle: DetalleRequestDTO = {
-    productoId: null,
+    productoId: null, // torta personalizada no tiene productoId
     cantidad: 1,
-    precioUnitario: this.tortaPersonalizada.precioCalculado || 0,
-    subtotal: this.tortaPersonalizada.precioCalculado || 0,
+    precioUnitario: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0),
+    subtotal: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0),
+    promocionId: null,
     personalizacion: {
-      descripcionExtra: this.tortaPersonalizada.descripcionCompleta || 
-        `Torta personalizada - ${this.tortaPersonalizada.sabor} con ${this.tortaPersonalizada.relleno}`
+      descripcionExtra: this.tortaPersonalizada.descripcionCompleta ||
+        `Torta ${this.tortaPersonalizada.pisos} piso(s) de ${this.tortaPersonalizada.sabor} con relleno de ${this.tortaPersonalizada.relleno}`,
+      costoAdicional: this.tortaPersonalizada.costoAdicionales || 0,
+      adicionalesSeleccionados: adicionalesCompletos // AQUÍ ESTÁ LA MAGIA
     }
   };
 
   const pedidoDto: PedidoRequestDTO = {
     usuarioId: this.usuario.usuarioId,
-    nota: `Torta Personalizada - ${form.metodo === 'recojo' ? 'RECOJO EN TIENDA' : 'DELIVERY'}`,
+    nota: `Torta Personalizada - ${form.metodo === 'recojo' ? 'RECOJO EN TIENDA' : 'DELIVERY'}\n` +
+          `Fecha: ${form.fechaEntrega}\n` +
+          (form.metodo === 'delivery' ? `Dirección: ${form.direccionEntrega}\nReferencia: ${form.referencia || 'Sin referencia'}` : ''),
     detalles: [detalle],
-    subtotal: this.tortaPersonalizada.precioCalculado || 0,
-    total: this.tortaPersonalizada.precioCalculado || 0,
+    subtotal: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0),
+    total: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0),
     garantiaPagada: 0,
-    resto: this.tortaPersonalizada.precioCalculado || 0
+    resto: Number(this.tortaPersonalizada.precioCalculado?.toFixed(2) || 0)
   };
 
+  console.log('ENVIANDO TORTA PERSONALIZADA:', JSON.stringify(pedidoDto, null, 2));
 
-    this.pedidoService.crear(pedidoDto).subscribe({
-      next: (pedido: any) => {
-        const entregaData = {
-          pedidoId: pedido.pedidoId,
-          direccionEntrega: form.direccionEntrega,
-          referencia: form.referencia || null,
-          fechaEntrega: form.fechaEntrega,
-          metodo: form.metodo.toUpperCase() as 'DELIVERY' | 'RECOJO',
-          estado: 'PENDIENTE'
-        };
+  this.pedidoService.crear(pedidoDto).subscribe({
+    next: (pedido: any) => {
+      const entregaData = {
+        pedidoId: pedido.pedidoId,
+        direccionEntrega: form.metodo === 'recojo' ? this.tienda.direccion : form.direccionEntrega,
+        referencia: form.referencia || null,
+        fechaEntrega: form.fechaEntrega,
+        metodo: form.metodo.toUpperCase() as 'DELIVERY' | 'RECOJO',
+        estado: 'PENDIENTE'
+      };
 
-        this.pedidoService.crearEntrega(entregaData).subscribe({
-          next: () => {
-            localStorage.setItem('pedido_actual_id', pedido.pedidoId);
-            this.router.navigate(['/cliente/pago-garantia']);
-          },
-          error: (err) => alert('Error al guardar entrega: ' + (err.error?.mensaje || 'Intenta de nuevo'))
-        });
-      },
-      error: (err) => alert('Error al crear pedido: ' + (err.error?.mensaje || err.message))
-    });
-  }
+      this.pedidoService.crearEntrega(entregaData).subscribe({
+        next: () => {
+          localStorage.setItem('pedido_actual_id', pedido.pedidoId.toString());
+          localStorage.setItem('pago_garantia', JSON.stringify({
+            garantia: 0,
+            resto: this.tortaPersonalizada.precioCalculado,
+            subtotal: this.tortaPersonalizada.precioCalculado
+          }));
+          this.router.navigate(['/cliente/pago-garantia']);
+        },
+        error: (err) => alert('Error al guardar entrega: ' + (err.error?.mensaje || 'Intenta de nuevo'))
+      });
+    },
+    error: (err) => {
+      console.error('Error creando pedido personalizado:', err);
+      alert('Error: ' + (err.error?.mensaje || 'No se pudo crear el pedido'));
+    }
+  });
 }
