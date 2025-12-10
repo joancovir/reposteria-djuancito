@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Pedido } from '../modelos/pedido';
+import { environment } from '../../../src/environments/environment'; 
 
 import { 
   PedidoRequestDTO, 
@@ -14,8 +15,8 @@ import {
 export class PedidoService {
 
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/pedidos';
-  private entregaUrl = 'http://localhost:8080/api/entregas';
+  private apiUrl = environment.apiUrl + '/pedidos'; 
+  private entregaUrl = environment.apiUrl + '/entregas'; 
 
   obtenerPedidosPorUsuario(usuarioId: number): Observable<Pedido[]> {
     return this.http.get<Pedido[]>(`${this.apiUrl}/usuario/${usuarioId}`);
