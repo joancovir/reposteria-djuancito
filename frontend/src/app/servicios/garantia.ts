@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, map } from 'rxjs';
+import { environment } from '../../../src/environments/environment';
 
 export interface OpcionGarantia {
   id: number;
@@ -13,7 +14,7 @@ export interface OpcionGarantia {
 @Injectable({ providedIn: 'root' })
 export class GarantiaService {
 
-  private api = 'http://localhost:8080/api/config';
+private api = environment.apiUrl + '/config'; 
 
   private opciones = new BehaviorSubject<number[]>([]);
   opciones$ = this.opciones.asObservable();
