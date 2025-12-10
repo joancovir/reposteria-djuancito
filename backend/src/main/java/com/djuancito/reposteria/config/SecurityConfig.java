@@ -30,7 +30,13 @@ public class SecurityConfig {
         this.jwtAuthFilter = jwtAuthFilter;
         this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
-
+@Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsServiceImpl);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
   @Bean
 public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
