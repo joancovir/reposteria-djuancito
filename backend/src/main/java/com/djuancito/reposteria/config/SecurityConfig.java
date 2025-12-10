@@ -31,27 +31,74 @@ public class SecurityConfig {
         this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/index.html", "/static/**", "/assets/**", "/favicon.ico",
-                                 "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.jpg", "/**/*.svg").permitAll()
-                .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
-                .requestMatchers("/api/qr/activos").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/contacto").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/productos/**", "/api/promociones/**", "/api/config/**").permitAll()
-                .requestMatchers("/api/pedidos/**", "/api/usuarios/mi-perfil").authenticated()
-                .requestMatchers("/api/**").hasAuthority("ROLE_Administrador")
-                .anyRequest().permitAll()
-            )
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
+  @Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .csrf(csrf -> csrf.disable())
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(auth -> auth
+
+            // === RECURSOS ESTÁTICOS DEL FRONTEND (Angular) ===
+            .requestMatchers(
+                "/", "/index.html", "/static/**", "/assets/**", "/favicon.ico",
+                "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.jpg", "/**/*.jpeg", 
+                "/**/*.svg", "/**/*.ico", "/**/*.json", "/**/*.woff", "/**/*.woff2", "/**/*.ttf"
+            ).permitAll()
+
+            // === CORS PREFLIGHT ===
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+            // === AUTENTICACIÓN PÚBLICA ===
+            .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll()
+
+            // === ENDPOINTS 100% PÚBLICOS (los que daban 403) ===
+            .requestMatchers(HttpMethod.GET,
+                "/api/productos/**",
+                "/api/categorias/**",
+                "/api/resenas",                    // ← este era el que más dolía
+                "/api/resenas/**",                 // ← también lo dejamos público para leer
+                "/api/promociones/**",
+                "/api/promociones/activas",
+                "/api/adicionales",                // ← ya no da 403
+                "/api/adicionales/**",
+                "/api/temporada/activas",          // ← ya carga
+                "/api/temporada/**",
+                "/api/config/**",
+                "/api/config/garantia/**",
+                "/api/config/qr/activos",
+                "/api/qr/activos",
+                "/api/productos-realizados"        // ← ya carga la galería
+            ).permitAll()
+
+            // === CONTACTO PÚBLICO (para enviar mensajes) ===
+            .requestMatchers(HttpMethod.POST, "/api/contacto").permitAll()
+
+            // === CLIENTE AUTENTICADO (sus pedidos, perfil, historial) ===
+            .requestMatchers(
+                "/api/pedidos/**",
+                "/api/usuarios/mi-perfil",
+                "/api/contacto/mi-historial"
+            ).authenticated()
+
+            // === SOLO ADMINISTRADOR (todo lo que debe estar protegido) ===
+            .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/pedidos/todos", "/api/pedidos/**/estado").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/contacto/todos").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/pagos/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/dashboard/admin").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/resenas/todas").hasAuthority("ROLE_Administrador")  // solo admin ve todas
+            .requestMatchers("/api/config/qr/admin", "/api/config/qr/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/config/garantias/**").hasAuthority("ROLE_Administrador")
+
+            // === CUALQUIER OTRA RUTA QUE NO COINCIDA (evita 403 inesperados) ===
+            .anyRequest().permitAll()
+        )
+        .authenticationProvider(authenticationProvider())
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+    return http.build();
+}
 
     @Bean
     public PasswordEncoder passwordEncoder() {
