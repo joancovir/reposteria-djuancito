@@ -111,17 +111,18 @@ export class PersonalizarTorta implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.authService.estaLogueado()) {
-      localStorage.setItem('torta_pendiente', JSON.stringify(this.prepararTorta()));
-      alert('Debes iniciar sesión para continuar');
-      this.router.navigate(['/iniciar-sesion'], { queryParams: { returnUrl: '/cliente/personalizar-torta' } });
-      return;
-    }
-
-    const torta = this.prepararTorta();
-    localStorage.setItem('torta_pendiente', JSON.stringify(torta));
-    this.router.navigate(['/cliente/entrega']);
+  if (!this.authService.estaLogueado()) {
+    localStorage.setItem('torta_pendiente', JSON.stringify(this.prepararTorta()));
+    alert('Debes iniciar sesión para continuar');
+    this.router.navigate(['/iniciar-sesion'], { queryParams: { returnUrl: '/cliente/personalizar-torta' } });
+    return;
   }
+
+  // SIEMPRE guarda y va a entrega
+  const torta = this.prepararTorta();
+  localStorage.setItem('torta_pendiente', JSON.stringify(torta));
+  this.router.navigate(['/cliente/entrega']);
+}
 
   private prepararTorta(): any {
     const values = this.form.value;
