@@ -127,7 +127,7 @@ export class GestionQr implements OnInit {
       next: () => {
         this.cargarQrs();
         this.cerrarModal();
-        alert(this.esEdicion ? 'QR actualizado con éxito : 'QR creado con éxito');
+        alert(this.esEdicion ? 'QR actualizado con éxito' : 'QR creado con éxito');
       },
       error: (err) => {
         console.error('Error guardando QR:', err);
