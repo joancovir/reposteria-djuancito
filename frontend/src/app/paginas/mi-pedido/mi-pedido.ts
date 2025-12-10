@@ -6,7 +6,7 @@ import { CarritoService } from '../../servicios/carrito';
 import { GarantiaService } from '../../servicios/garantia';
 import { AutenticacionService } from '../../servicios/autenticacion';
 import { Subscription } from 'rxjs';
-
+import { environment } from '../../../src/environments/environment';
 interface Adicional {
   adicionalId: number;
   nombre: string;
@@ -32,7 +32,7 @@ export class MiPedido implements OnInit, OnDestroy {
 
   // Lista completa de adicionales (para mostrar nombres y precios)
   adicionalesDisponibles: Adicional[] = [];
-
+private apiUrl = environment.apiUrl;
   constructor(
     private carritoService: CarritoService,
     private garantiaService: GarantiaService,
@@ -54,7 +54,7 @@ export class MiPedido implements OnInit, OnDestroy {
 
   // CARGAR ADICIONALES PARA MOSTRAR NOMBRE Y PRECIO EN CARRITO
   cargarAdicionales() {
-    this.http.get<Adicional[]>('http://localhost:8080/api/adicionales').subscribe({
+    this.http.get<Adicional[]>(`${this.apiUrl}/adicionales`).subscribe({
       next: (data) => this.adicionalesDisponibles = data,
       error: (err) => console.error('Error cargando adicionales:', err)
     });
@@ -182,8 +182,7 @@ export class MiPedido implements OnInit, OnDestroy {
     'Content-Type': 'application/json'
   });
 
-  this.http.post<any>('http://localhost:8080/api/pedidos', request, { headers })
-    .subscribe({
+  this.http.post<any>(`${this.apiUrl}/pedidos`, request, { headers }).subscribe({
       next: (res) => {
         console.log('PEDIDO CREADO CON ÉXITO:', res);
         localStorage.setItem('pedido_confirmado_id', res.pedidoId.toString());
