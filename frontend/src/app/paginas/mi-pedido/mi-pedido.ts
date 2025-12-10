@@ -6,7 +6,8 @@ import { CarritoService } from '../../servicios/carrito';
 import { GarantiaService } from '../../servicios/garantia';
 import { AutenticacionService } from '../../servicios/autenticacion';
 import { Subscription } from 'rxjs';
-import { environment } from '../../../src/environments/environment';
+import { environment } from '../../../../src/environments/environment';
+
 interface Adicional {
   adicionalId: number;
   nombre: string;
