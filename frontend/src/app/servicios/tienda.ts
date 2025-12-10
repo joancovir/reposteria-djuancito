@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../src/environments/environment'; 
 
 export interface ConfigTienda {
   nombreTienda: string;
@@ -14,7 +15,7 @@ export interface ConfigTienda {
   providedIn: 'root'
 })
 export class TiendaService {
-  private apiUrl = 'http://localhost:8080/api/config-tienda';
+private apiUrl = environment.apiUrl + '/config-tienda'; 
 
   constructor(private http: HttpClient) {}
 
