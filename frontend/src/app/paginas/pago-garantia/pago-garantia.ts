@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-
+import { environment } from '../../../src/environments/environment';
 interface QrPago {
   id: number;
   tipo: string;
@@ -24,7 +24,7 @@ export class PagoGarantia implements OnInit {
   subtotal = 0;
   qrList: QrPago[] = [];
   qrAmpliado = '';
-
+private apiUrl = environment.apiUrl;
   constructor(
     private http: HttpClient,
     private router: Router
@@ -49,7 +49,7 @@ export class PagoGarantia implements OnInit {
   }
 
   cargarQrDesdeBackend() {
-    this.http.get<QrPago[]>('http://localhost:8080/api/config/qr/activos').subscribe({
+   this.http.get<QrPago[]>(`${this.apiUrl}/config/qr/activos`).subscribe({
       next: (data) => {
         this.qrList = data;
       },
