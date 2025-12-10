@@ -1,9 +1,10 @@
+// src/app/paginas/cliente/personalizar-torta/personalizar-torta.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { Adicional } from '../../modelos/adicional';
 import { AdicionalService } from '../../servicios/adicional';
-import { CarritoService} from '../../servicios/carrito';
+import { CarritoService } from '../../servicios/carrito';
 import { AutenticacionService } from '../../servicios/autenticacion';
 import { Router } from '@angular/router';
 
@@ -15,13 +16,11 @@ import { Router } from '@angular/router';
   styleUrls: ['./personalizar-torta.css']
 })
 export class PersonalizarTorta implements OnInit {
-
   form: FormGroup;
   bizcochos: Adicional[] = [];
   rellenos: Adicional[] = [];
   toppings: Adicional[] = [];
   decorados: Adicional[] = [];
-
   necesitaCotizacion = false;
   precioCalculado = 0;
 
@@ -53,10 +52,11 @@ export class PersonalizarTorta implements OnInit {
       this.toppings = data.filter(a => a.categoria === 'topping');
       this.decorados = data.filter(a => a.categoria === 'decorado');
 
-      // Valor por defecto
+      // Valor por defecto si existe
       if (this.bizcochos.length > 0) {
         this.form.patchValue({ saborBizcocho: this.bizcochos[0].nombre });
       }
+
       this.calcularPrecio();
     });
 
@@ -64,12 +64,11 @@ export class PersonalizarTorta implements OnInit {
   }
 
   calcularPrecio() {
-    let precio = 120; // precio base de torta
+    let precio = 120; // Precio base
     this.necesitaCotizacion = false;
-
     const values = this.form.value;
 
-    // BIZCOCHO
+    // Bizcocho personalizado
     if (values.otroBizcocho?.trim()) {
       this.necesitaCotizacion = true;
     } else if (values.saborBizcocho) {
@@ -77,21 +76,21 @@ export class PersonalizarTorta implements OnInit {
       if (biz) precio += biz.costoAdicional;
     }
 
-    // RELLENOS
+    // Rellenos
     values.rellenos.forEach((nombre: string) => {
       const item = this.rellenos.find(r => r.nombre === nombre);
       if (item) precio += item.costoAdicional;
     });
     if (values.otroRelleno?.trim()) this.necesitaCotizacion = true;
 
-    // TOPPINGS
+    // Toppings
     values.toppings.forEach((nombre: string) => {
       const item = this.toppings.find(t => t.nombre === nombre);
       if (item) precio += item.costoAdicional;
     });
     if (values.otroTopping?.trim()) this.necesitaCotizacion = true;
 
-    // DECORADOS
+    // Decorados
     values.decorados.forEach((nombre: string) => {
       const item = this.decorados.find(d => d.nombre === nombre);
       if (item) precio += item.costoAdicional;
@@ -107,50 +106,119 @@ export class PersonalizarTorta implements OnInit {
       arr.push(new FormControl(e.target.value));
     } else {
       const i = arr.controls.findIndex(x => x.value === e.target.value);
-      arr.removeAt(i);
+      if (i >= 0) arr.removeAt(i);
     }
   }
 
-onSubmit(): void {
-  if (!this.authService.estaLogueado()) {
-    localStorage.setItem('torta_pendiente', JSON.stringify(this.form.value));
-    alert('Debes iniciar sesión para continuar');
-    this.router.navigate(['/iniciar-sesion'], { queryParams: { returnUrl: '/cliente/personalizar-torta' } });
-    return;
-  }
+  onSubmit(): void {
+    if (!this.authService.estaLogueado()) {
+      localStorage.setItem('torta_pendiente', JSON.stringify(this.prepararTorta()));
+      alert('Debes iniciar sesión para continuar');
+      this.router.navigate(['/iniciar-sesion'], { queryParams: { returnUrl: '/cliente/personalizar-torta' } });
+      return;
+    }
 
-  const values = this.form.value;
-
-const tortaPersonalizada: any = {
-  productoId: null,
-  nombre: this.necesitaCotizacion ? 'Torta Personalizada (A cotizar)' : 'Torta Personalizada',
-  precioBase: this.necesitaCotizacion ? 0 : this.precioCalculado,
-  precioUnitario: this.necesitaCotizacion ? 0 : this.precioCalculado,
-  cantidad: 1,
-  categoria: 'torta',
-  imagenUrl: 'assets/imagenes/torta-personalizada.jpg',
-  personalizable: true,
-  esPersonalizada: true,
-  necesitaCotizacion: this.necesitaCotizacion,
-  personalizacion: { ...values },
-  precioCalculado: this.precioCalculado
-
-};
-
-  // ¡AQUÍ ESTÁ LA CLAVE!
-  if (tortaPersonalizada.esPersonalizada) {
-    // Guardamos temporalmente y vamos a entrega
-    localStorage.setItem('torta_pendiente', JSON.stringify({
-      ...tortaPersonalizada,
-      formValues: values
-    }));
+    const torta = this.prepararTorta();
+    localStorage.setItem('torta_pendiente', JSON.stringify(torta));
     this.router.navigate(['/cliente/entrega']);
-  } else {
-    // (Solo por si en el futuro agregas productos normales)
-    this.carritoService.agregarAlCarrito(tortaPersonalizada);
-    this.router.navigate(['/cliente/mi-pedido']);
   }
-}
+
+  private prepararTorta(): any {
+    const values = this.form.value;
+
+    // Construir lista completa de adicionales seleccionados
+    const adicionalesSeleccionados: any[] = [];
+
+    // Bizcocho
+    let bizcochoNombre = values.saborBizcocho;
+    let bizcochoAdicional = 0;
+    if (values.otroBizcocho?.trim()) {
+      bizcochoNombre = values.otroBizcocho.trim();
+    } else if (values.saborBizcocho) {
+      const biz = this.bizcochos.find(b => b.nombre === values.saborBizcocho);
+      if (biz) {
+        adicionalesSeleccionados.push(biz);
+        bizcochoAdicional = biz.costoAdicional;
+      }
+    }
+
+    // Rellenos
+    values.rellenos.forEach((nombre: string) => {
+      const relleno = this.rellenos.find(r => r.nombre === nombre);
+      if (relleno) adicionalesSeleccionados.push(relleno);
+    });
+    if (values.otroRelleno?.trim()) {
+      adicionalesSeleccionados.push({
+        adicionalId: null,
+        nombre: values.otroRelleno.trim(),
+        categoria: 'relleno',
+        costoAdicional: 0
+      });
+    }
+
+    // Toppings
+    values.toppings.forEach((nombre: string) => {
+      const topping = this.toppings.find(t => t.nombre === nombre);
+      if (topping) adicionalesSeleccionados.push(topping);
+    });
+    if (values.otroTopping?.trim()) {
+      adicionalesSeleccionados.push({
+        adicionalId: null,
+        nombre: values.otroTopping.trim(),
+        categoria: 'topping',
+        costoAdicional: 0
+      });
+    }
+
+    // Decorados
+    values.decorados.forEach((nombre: string) => {
+      const decorado = this.decorados.find(d => d.nombre === nombre);
+      if (decorado) adicionalesSeleccionados.push(decorado);
+    });
+    if (values.otroDecorado?.trim()) {
+      adicionalesSeleccionados.push({
+        adicionalId: null,
+        nombre: values.otroDecorado.trim(),
+        categoria: 'decorado',
+        costoAdicional: 0
+      });
+    }
+
+    // Descripción completa
+    const descripcionCompleta = [
+      bizcochoNombre,
+      values.rellenos.length > 0 ? `con ${values.rellenos.join(' y ')}` : '',
+      values.otroRelleno ? `+ ${values.otroRelleno.trim()}` : '',
+      values.toppings.length > 0 ? `+ ${values.toppings.join(', ')}` : '',
+      values.otroTopping ? `+ ${values.otroTopping.trim()}` : '',
+      values.decorados.length > 0 ? `+ ${values.decorados.join(', ')}` : '',
+      values.otroDecorado ? `+ ${values.otroDecorado.trim()}` : '',
+      values.instrucciones ? `(Nota: ${values.instrucciones.trim()})` : ''
+    ].filter(Boolean).join(' ').trim();
+
+    const costoAdicionales = adicionalesSeleccionados.reduce((sum, a) => sum + (a.costoAdicional || 0), 0);
+
+    return {
+      productoId: null,
+      nombre: this.necesitaCotizacion ? 'Torta Personalizada (A cotizar)' : 'Torta Personalizada',
+      precioBase: 120,
+      precioUnitario: this.precioCalculado,
+      precioCalculado: this.precioCalculado,
+      cantidad: 1,
+      categoria: 'torta',
+      imagenUrl: 'assets/imagenes/torta-personalizada.jpg',
+      esPersonalizada: true,
+      necesitaCotizacion: this.necesitaCotizacion,
+      descripcionCompleta,
+      costoAdicionales,
+      adicionales: adicionalesSeleccionados,
+      personalizacion: {
+        descripcionExtra: descripcionCompleta || 'Torta personalizada',
+        costoAdicional: costoAdicionales,
+        adicionalesSeleccionados: adicionalesSeleccionados.map(a => a.adicionalId).filter(Boolean)
+      }
+    };
+  }
 
   regresar() {
     this.location.back();
