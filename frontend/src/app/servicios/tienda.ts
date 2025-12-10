@@ -8,6 +8,8 @@ export interface ConfigTienda {
   direccion: string;
   referencia: string;
   telefono: string;
+  latitud: number;
+  longitud: number;
   googleMapsEmbed: string;
 }
 
