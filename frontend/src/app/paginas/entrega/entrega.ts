@@ -19,14 +19,15 @@ export class Entrega implements OnInit {
   entregaForm!: FormGroup;
   usuario: any = null;
   tortaPersonalizada: any = null;
-  tienda: ConfigTienda = {
-    nombreTienda: 'Cargando...',
-    direccion: 'Av. Larco 123, Miraflores',
-    referencia: 'Frente al Parque Kennedy',
-    telefono: '999 999 999',
-    googleMapsEmbed: ''
-  };
-
+tienda: ConfigTienda = {
+  nombreTienda: 'Cargando...',
+  direccion: 'Av. Larco 123, Miraflores',
+  referencia: 'Frente al Parque Kennedy',
+  telefono: '999 999 999',
+  googleMapsEmbed: '',
+  latitud: -12.130022,
+  longitud: -77.030722
+};
   constructor(
     private fb: FormBuilder,
     private auth: AutenticacionService,
