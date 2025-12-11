@@ -12,7 +12,6 @@
             <p class="text-muted small">Resto al recibir: S/ {{ resto | number:'1.2-2' }}</p>
           </div>
 
-          <!-- QRs de Yape y Plin -->
           <div class="row justify-content-center g-4 mb-5">
             <div class="col-6" *ngFor="let qr of qrList; let i = index">
               <div class="text-center">
@@ -33,18 +32,34 @@
             </div>
           </div>
 
-          <!-- Botón Ya Pagué -->
           <div class="mb-4">
-  <label class="form-label fw-bold">Código de operación (Yape/Plin)</label>
-  <input type="text" class="form-control form-control-lg text-center" 
-         [(ngModel)]="codigoOperacion" placeholder="Ej: 123456789" required>
-</div>
+            <label class="form-label fw-bold">Selecciona el método que usaste</label>
+            <div class="btn-group w-100" role="group">
+              <button type="button" 
+                      class="btn py-3 fw-bold"
+                      [ngClass]="{'btn-success': metodoSeleccionado === 'yape', 'btn-outline-secondary': metodoSeleccionado !== 'yape'}"
+                      (click)="metodoSeleccionado = 'yape'">
+                  Yape
+              </button>
+              <button type="button" 
+                      class="btn py-3 fw-bold"
+                      [ngClass]="{'btn-success': metodoSeleccionado === 'plin', 'btn-outline-secondary': metodoSeleccionado !== 'plin'}"
+                      (click)="metodoSeleccionado = 'plin'">
+                  Plin
+              </button>
+            </div>
+          </div>
 
-<!-- Botón Ya Pagué -->
-<button class="btn btn-success btn-lg w-100 py-4 fw-bold fs-4 rounded-4 shadow"
-        (click)="confirmarPagoGarantia()">
-  ¡YA PAGUÉ LA GARANTÍA!
-</button>
+          <div class="mb-4">
+            <label class="form-label fw-bold">Código de operación (requerido)</label>
+            <input type="text" class="form-control form-control-lg text-center" 
+                   [(ngModel)]="codigoOperacion" placeholder="Ej: 123456789" required>
+          </div>
+
+          <button class="btn btn-success btn-lg w-100 py-4 fw-bold fs-4 rounded-4 shadow"
+                  (click)="confirmarPagoGarantia()">
+            ¡YA PAGUÉ LA GARANTÍA!
+          </button>
 
           <div class="mt-4">
             <a routerLink="/cliente/mis-pedidos" class="text-muted small text-decoration-none">
@@ -57,7 +72,6 @@
   </div>
 </div>
 
-<!-- MODAL: QR AMPLIADO -->
 <div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content bg-dark border-0 rounded-4 overflow-hidden">
@@ -73,7 +87,6 @@
   </div>
 </div>
 
-<!-- MODAL: PAGO EXITOSO -->
 <div class="modal fade" id="modalPagoExitoso" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg rounded-4">
