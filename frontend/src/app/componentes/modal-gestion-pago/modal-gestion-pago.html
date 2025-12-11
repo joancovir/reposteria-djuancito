@@ -45,17 +45,24 @@
         </span>
         
         <ng-container *ngIf="pago.estado === 'pendiente_validacion'">
-          <div class="action-buttons">
-            <button class="btn-pago-accion btn-validar" (click)="cambiarEstadoPago(pago, 'validado')" [disabled]="isUpdatingPago === pago.pagoId">
-                <span *ngIf="isUpdatingPago !== pago.pagoId">Validar</span>
-                <span *ngIf="isUpdatingPago === pago.pagoId">⚙️</span>
-            </button>
-            <button class="btn-pago-accion btn-rechazar" (click)="cambiarEstadoPago(pago, 'rechazado')" [disabled]="isUpdatingPago === pago.pagoId">
-                <span *ngIf="isUpdatingPago !== pago.pagoId">Rechazar</span>
-                <span *ngIf="isUpdatingPago === pago.pagoId">⚙️</span>
-            </button>
-          </div>
-        </ng-container>
+  <div class="action-buttons">
+    <button 
+      class="btn-pago-accion btn-validar"
+      (click)="cambiarEstadoPago(pago, 'validar')"
+      [disabled]="isUpdatingPago === pago.pagoId">
+      <span *ngIf="isUpdatingPago !== pago.pagoId">Validar</span>
+      <span *ngIf="isUpdatingPago === pago.pagoId">Procesando...</span>
+    </button>
+
+    <button 
+      class="btn-pago-accion btn-rechazar"
+      (click)="cambiarEstadoPago(pago, 'rechazar')"
+      [disabled]="isUpdatingPago === pago.pagoId">
+      <span *ngIf="isUpdatingPago !== pago.pagoId">Rechazar</span>
+      <span *ngIf="isUpdatingPago === pago.pagoId">Procesando...</span>
+    </button>
+  </div>
+</ng-container>
 
         <!-- Enlace de Comprobante (Se mueve aquí para que esté cerca del estado/acciones) -->
          <a *ngIf="pago.comprobanteUrl" [href]="pago.comprobanteUrl" target="_blank" class="comprobante-link">
