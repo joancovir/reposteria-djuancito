@@ -2,14 +2,25 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="text-primary fw-bold">Gestión de Pagos</h2>
     <button class="btn btn-outline-primary btn-sm" (click)="refrescar()">
-      Actualizar
+      <i class="bi bi-arrow-clockwise"></i> Actualizar
     </button>
   </div>
 
   <div class="filtros mb-4 d-flex gap-3 flex-wrap">
-    <input type="text" class="form-control" placeholder="Buscar por ID pago, ID pedido, código..."
-           [(ngModel)]="buscar" (input)="filtrarYPaginar()" style="width: 380px;">
-    <select class="form-select" [(ngModel)]="estadoFiltro" (change)="filtrarYPaginar()" style="width: 220px;">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Buscar por ID pago, ID pedido, código..."
+      [(ngModel)]="buscar"
+      (input)="filtrarYPaginar()"
+      style="width: 380px;"
+    />
+    <select
+      class="form-select"
+      [(ngModel)]="estadoFiltro"
+      (change)="filtrarYPaginar()"
+      style="width: 220px;"
+    >
       <option value="todos">Todos los estados</option>
       <option value="pendiente_validacion">Pendiente</option>
       <option value="validado">Validado</option>
@@ -22,11 +33,11 @@
   </div>
 
   <div class="table-responsive" *ngIf="!cargando && pagosPaginados.length > 0">
-    <table class="table table-hover align-middle">
+    <table class="table table-hover align-middle table-bordered">
       <thead class="table-primary">
         <tr>
           <th>ID Pago</th>
-          <th>ID Pedido</th> <!-- NUEVA COLUMNA -->
+          <th>ID Pedido</th>
           <th>Monto</th>
           <th>Fecha</th>
           <th>Método</th>
@@ -42,33 +53,54 @@
           <td><strong class="text-info">#{{ p.pedidoId || '-' }}</strong></td>
           <td class="fw-bold text-success">S/ {{ p.montoAbonado | number:'1.2-2' }}</td>
           <td>{{ p.fechaPago | date:'dd/MM/yyyy HH:mm' }}</td>
+
+          <!-- SELECT PARA CAMBIAR MÉTODO -->
           <td>
-            <span class="badge bg-info text-dark">{{ p.metodo | uppercase }}</span>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="p.metodo"
+              (change)="actualizarMetodo(p)"
+              [disabled]="p.estado === 'validado'"
+            >
+              <option value="PENDIENTE">PENDIENTE</option>
+              <option value="yape">YAPE</option>
+              <option value="plin">PLIN</option>
+              <option value="efectivo">EFECTIVO</option>
+            </select>
           </td>
+
           <td>
             <code class="bg-light px-2 py-1 rounded">{{ p.codigoOperacion || '-' }}</code>
           </td>
+
           <td>
-            <span class="badge" [ngClass]="p.tipoPago === 'GARANTIA' ? 'bg-warning text-dark' : 'bg-success'">
-              {{ p.tipoPago }}
+            <span
+              class="badge fs-6"
+              [ngClass]="p.tipoPago === 'GARANTIA' ? 'bg-warning text-dark' : 'bg-success'"
+            >
+              {{ p.tipoPago || 'TOTAL' }}
             </span>
           </td>
+
           <td>
             <span class="badge fs-6" [ngClass]="estadoColor(p.estado)">
               {{ p.estado.replace('_', ' ') | titlecase }}
             </span>
           </td>
+
           <td class="text-center">
-            <button class="btn btn-success btn-sm me-2"
-                    (click)="cambiarEstado(p, 'validado')"
-                    [disabled]="p.estado === 'validado'"
-                    title="Validar pago">
+            <button
+              class="btn btn-success btn-sm me-2"
+              (click)="cambiarEstado(p, 'validado')"
+              [disabled]="p.estado === 'validado'"
+            >
               Validar
             </button>
-            <button class="btn btn-danger btn-sm"
-                    (click)="cambiarEstado(p, 'rechazado')"
-                    [disabled]="p.estado === 'rechazado'"
-                    title="Rechazar pago">
+            <button
+              class="btn btn-danger btn-sm"
+              (click)="cambiarEstado(p, 'rechazado')"
+              [disabled]="p.estado === 'rechazado'"
+            >
               Rechazar
             </button>
           </td>
@@ -77,13 +109,25 @@
     </table>
   </div>
 
-  <!-- Paginación y mensajes de vacío como antes -->
+  <!-- Paginación -->
   <div class="d-flex justify-content-center mt-4" *ngIf="totalPaginas() > 1">
-    <button class="btn btn-outline-primary me-3" [disabled]="paginaActual === 1"
-            (click)="paginaActual = paginaActual - 1">Anterior</button>
-    <span class="fw-bold">Página {{ paginaActual }} de {{ totalPaginas() }}</span>
-    <button class="btn btn-outline-primary ms-3" [disabled]="paginaActual === totalPaginas()"
-            (click)="paginaActual = paginaActual + 1">Siguiente</button>
+    <button
+      class="btn btn-outline-primary me-3"
+      [disabled]="paginaActual === 1"
+      (click)="paginaActual = paginaActual - 1"
+    >
+      Anterior
+    </button>
+    <span class="fw-bold align-self-center">
+      Página {{ paginaActual }} de {{ totalPaginas() }}
+    </span>
+    <button
+      class="btn btn-outline-primary ms-3"
+      [disabled]="paginaActual === totalPaginas()"
+      (click)="paginaActual = paginaActual + 1"
+    >
+      Siguiente
+    </button>
   </div>
 
   <div *ngIf="!cargando && pagos.length === 0" class="alert alert-info text-center mt-5">
