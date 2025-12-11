@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PagoService } from '../../../servicios/pago';
-import { Pago, EstadoPago } from '../../../modelos/pago';
-import { Pago, EstadoPago, MetodoPago } from '../../../modelos/pago';
+import { Pago, EstadoPago, MetodoPago } from '../../../modelos/pago'; // UN SOLO IMPORT
+
 @Component({
   selector: 'app-gestion-pagos',
   standalone: true,
@@ -34,8 +34,7 @@ export class GestionPagos implements OnInit {
         this.filtrarYPaginar();
         this.cargando = false;
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
         alert('Error al cargar pagos');
         this.cargando = false;
       }
@@ -46,12 +45,13 @@ export class GestionPagos implements OnInit {
     let temp = [...this.pagos];
 
     if (this.buscar) {
-      const busqueda = this.buscar.toLowerCase();
+      const term = this.buscar.toLowerCase();
       temp = temp.filter(p =>
-        p.pagoId.toString().includes(busqueda) ||
-        (p.codigoOperacion?.toLowerCase().includes(busqueda)) ||
-        (p.metodo?.toLowerCase().includes(busqueda)) ||
-        p.tipoPago?.toLowerCase().includes(busqueda)
+        p.pagoId.toString().includes(term) ||
+        p.pedidoId?.toString().includes(term) ||
+        p.codigoOperacion?.toLowerCase().includes(term) ||
+        p.metodo?.toLowerCase().includes(term) ||
+        p.tipoPago?.toLowerCase().includes(term)
       );
     }
 
@@ -72,28 +72,25 @@ export class GestionPagos implements OnInit {
     return Math.ceil(this.pagosFiltrados.length / this.itemsPorPagina);
   }
 
-cambiarEstado(pago: Pago, nuevoEstado: 'validado' | 'rechazado') {
-  const accion = nuevoEstado === 'validado' ? 'VALIDAR' : 'RECHAZAR';
-  if (!confirm(`¿Estás seguro de ${accion} este pago de S/ ${pago.montoAbonado}?`)) {
-    return;
+  cambiarEstado(pago: Pago, nuevoEstado: 'validado' | 'rechazado') {
+    const accion = nuevoEstado === 'validado' ? 'VALIDAR' : 'RECHAZAR';
+    if (!confirm(`¿Estás seguro de ${accion} este pago de S/ ${pago.montoAbonado}?`)) return;
+
+    this.pagoService.actualizarEstadoPago(pago.pagoId, nuevoEstado).subscribe({
+      next: (res) => {
+        pago.estado = res.estado;
+
+        if (nuevoEstado === 'validado' && pago.metodo === MetodoPago.PENDIENTE) {
+          pago.metodo = pago.codigoOperacion?.toUpperCase().includes('YAPE')
+            ? MetodoPago.yape
+            : MetodoPago.plin;
+        }
+
+        alert(`Pago ${accion} exitosamente`);
+      },
+      error: () => alert('Error al actualizar estado')
+    });
   }
-
-  this.pagoService.actualizarEstadoPago(pago.pagoId, nuevoEstado).subscribe({
-    next: (actualizado) => {
-      pago.estado = actualizado.estado;
-
-      // CORREGIDO: comparar con el enum, no con string
-      if (nuevoEstado === 'validado' && pago.metodo === MetodoPago.PENDIENTE) {
-        pago.metodo = pago.codigoOperacion?.startsWith('YAPE') ? MetodoPago.yape : MetodoPago.plin;
-      }
-
-      alert(`Pago ${accion} correctamente`);
-    },
-    error: () => {
-      alert('Error al actualizar el estado');
-    }
-  });
-}
 
   estadoColor(estado: EstadoPago | string) {
     const map: any = {
@@ -104,7 +101,6 @@ cambiarEstado(pago: Pago, nuevoEstado: 'validado' | 'rechazado') {
     return map[estado] || 'badge-secondary';
   }
 
-  // Refrescar lista
   refrescar() {
     this.cargarPagos();
   }
