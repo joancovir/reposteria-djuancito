@@ -44,14 +44,12 @@ export class GestionPagos implements OnInit {
   filtrarYPaginar() {
     let temp = [...this.pagos];
 
-    if (this.buscar) {
+    if (this.buscar.trim()) {
       const term = this.buscar.toLowerCase();
       temp = temp.filter(p =>
         p.pagoId.toString().includes(term) ||
         p.pedidoId?.toString().includes(term) ||
-        p.codigoOperacion?.toLowerCase().includes(term) ||
-        p.metodo?.toLowerCase().includes(term) ||
-        p.tipoPago?.toLowerCase().includes(term)
+        p.codigoOperacion?.toLowerCase().includes(term)
       );
     }
 
@@ -79,26 +77,45 @@ export class GestionPagos implements OnInit {
     this.pagoService.actualizarEstadoPago(pago.pagoId, nuevoEstado).subscribe({
       next: (res) => {
         pago.estado = res.estado;
+        alert(`Pago ${accion.toLowerCase()} exitosamente`);
 
-        if (nuevoEstado === 'validado' && pago.metodo === 'PENDIENTE') {
-  pago.metodo = pago.codigoOperacion?.toUpperCase().includes('YAPE')
-    ? 'yape'
-    : 'plin';
-}
-
-        alert(`Pago ${accion} exitosamente`);
+        // Si se valida y aún está en PENDIENTE, intenta detectar YAPE/PLIN
+        if (nuevoEstado === 'validado' && pago.metodo === 'PENDIENTE' && pago.codigoOperacion) {
+          const nuevoMetodo = pago.codigoOperacion.toUpperCase().includes('YAPE') ? 'yape' : 'plin';
+          pago.metodo = nuevoMetodo;
+          this.actualizarMetodo(pago);
+        }
       },
       error: () => alert('Error al actualizar estado')
     });
   }
 
+  // NUEVO: Permite cambiar manualmente el método
+  actualizarMetodo(pago: Pago) {
+    if (pago.estado === 'validado' && pago.metodo === 'PENDIENTE') {
+      alert('No se puede cambiar método una vez validado');
+      this.cargarPagos();
+      return;
+    }
+
+    this.pagoService.actualizarMetodo(pago.pagoId, pago.metodo).subscribe({
+      next: () => {
+        // Nada, ya se actualizó en pantalla
+      },
+      error: () => {
+        alert('Error al actualizar método');
+        this.cargarPagos();
+      }
+    });
+  }
+
   estadoColor(estado: EstadoPago | string): string {
     const map: Record<string, string> = {
-      pendiente_validacion: 'badge-pendiente',
-      validado: 'badge-aprobado',
-      rechazado: 'badge-rechazado'
+      pendiente_validacion: 'bg-warning text-dark',
+      validado: 'bg-success',
+      rechazado: 'bg-danger'
     };
-    return map[estado] || 'badge-secondary';
+    return map[estado] || 'bg-secondary';
   }
 
   refrescar() {
