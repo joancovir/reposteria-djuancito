@@ -23,15 +23,26 @@ public class PagoServicio {
     public List<Pago> obtenerTodos() {
         return repo.findAll();
     }
-
-    public Pago actualizarEstado(Integer id, String nuevoEstado) {
+// MÉTODO CORREGIDO: ahora funciona con enum MetodoPago
+    public Pago actualizarMetodo(Integer id, String metodoStr) {
         Pago pago = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pago no encontrado"));
 
-        pago.setEstado(EstadoPago.valueOf(nuevoEstado.toUpperCase()));
+        // No permitir cambiar si ya fue validado y estaba PENDIENTE
+        if (pago.getEstado() == EstadoPago.validado && pago.getMetodo() == MetodoPago.PENDIENTE) {
+            throw new RuntimeException("No se puede cambiar el método una vez validado");
+        }
+
+        try {
+            MetodoPago metodo = MetodoPago.valueOf(metodoStr.toUpperCase());
+            pago.setMetodo(metodo);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Método inválido. Usa: PENDIENTE, yape, plin, efectivo");
+        }
+
         return repo.save(pago);
     }
-
+    
     // MÉTODO CORREGIDO: ahora funciona con enum MetodoPago
     public Pago actualizarEstado(Integer id, String nuevoEstadoStr) {
     Pago pago = repo.findById(id)
