@@ -74,7 +74,7 @@ export class PagoGarantia implements OnInit {
       return;
     }
 
-    this.http.post(`${this.apiUrl}/api/pedidos/${this.pedidoId}/pago-garantia`, {
+    this.http.post(`${this.apiUrl}/pedidos/${this.pedidoId}/pago-garantia`, {
       codigoOperacion: this.codigoOperacion.trim(),
       metodo: this.metodoSeleccionado  // GUARDAMOS SI FUE YAPE O PLIN
     }).subscribe({
