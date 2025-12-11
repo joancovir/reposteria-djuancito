@@ -29,49 +29,50 @@ export class ConfirmarPedidoPage implements OnInit {
     }
   }
 
-  irAPago() {
-    const token = localStorage.getItem('jwt_token');
-    if (!token) {
-      alert('No estás autenticado');
-      this.router.navigate(['/iniciar-sesion']);
-      return;
-    }
-
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    const request = {
-      usuarioId: this.pedido.usuarioId,
-      detalles: this.pedido.items.map((item: any) => ({
-        productoId: item.productoId,
-        cantidad: item.cantidad,
-        precioUnitario: item.precio || item.precioUnitario || 0,
-        promocionId: item.promocionId || null,
-        subtotal: (item.precio || item.precioUnitario || 0) * item.cantidad
-      }))
-    };
-
-    console.log('ENVIANDO PEDIDO:', request);
-
-    this.http.post<any>(`${this.apiUrl}/confirmar`, request, { headers }).subscribe({
-      next: (res) => {
-        localStorage.setItem('pedido_confirmado_id', res.pedidoId);
-        localStorage.setItem('pago_garantia', JSON.stringify({
-          garantia: this.pedido.garantia,
-          resto: this.pedido.resto,
-          subtotal: this.pedido.subtotal
-        }));
-        alert('¡Pedido confirmado exitosamente!');
-        this.router.navigate(['/cliente/pago-garantia']);
-      },
-      error: (err) => {
-        console.error('Error completo:', err);
-        alert('Error: ' + (err.error?.message || 'No se pudo confirmar el pedido'));
-      }
-    });
+ irAPago() {
+  const token = localStorage.getItem('jwt_token');
+  if (!token) {
+    alert('No estás autenticado');
+    this.router.navigate(['/iniciar-sesion']);
+    return;
   }
+
+  const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  });
+
+  const request = {
+    usuarioId: this.pedido.usuarioId,
+    detalles: this.pedido.items.map((item: any) => ({
+      productoId: item.productoId,
+      cantidad: item.cantidad,
+      precioUnitario: item.precio || item.precioUnitario || 0,
+      promocionId: item.promocionId || null,
+    }))
+  };
+
+  console.log('ENVIANDO PEDIDO:', request);
+
+  this.http.post<any>(`${this.apiUrl}/confirmar`, request, { headers }).subscribe({
+    next: (res) => {
+      // AQUÍ ESTÁ EL CAMBIO CLAVE:
+      localStorage.setItem('pago_garantia', JSON.stringify({
+        pedidoId: res.pedidoId,           // ESTE ES EL QUE FALTABA
+        garantia: this.pedido.garantia,
+        resto: this.pedido.resto,
+        subtotal: this.pedido.subtotal
+      }));
+
+      alert('¡Pedido confirmado exitosamente!');
+      this.router.navigate(['/cliente/pago-garantia']);
+    },
+    error: (err) => {
+      console.error('Error:', err);
+      alert('Error: ' + (err.error?.message || 'No se pudo confirmar el pedido'));
+    }
+  });
+}
 
   volver() {
     this.router.navigate(['/cliente/mi-pedido']);
