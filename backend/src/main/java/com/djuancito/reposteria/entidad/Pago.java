@@ -48,7 +48,7 @@ public class Pago {
     @Column(name = "codigoOperacion")
     private String codigoOperacion;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = EstadoPago.pendiente_validacion;
-    private EstadoPago estado;
+    @Column(name = "estado", nullable = false)
+@Enumerated(EnumType.STRING)
+private EstadoPago estado = EstadoPago.pendiente_validacion;  // valor por defecto
 }
