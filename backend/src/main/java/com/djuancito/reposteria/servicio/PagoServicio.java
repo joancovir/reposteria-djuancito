@@ -2,12 +2,12 @@ package com.djuancito.reposteria.servicio;
 
 import com.djuancito.reposteria.entidad.Pago;
 import com.djuancito.reposteria.entidad.EstadoPago;
+import com.djuancito.reposteria.entidad.MetodoPago;
 import com.djuancito.reposteria.repositorio.PagoRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PagoServicio {
@@ -15,50 +15,46 @@ public class PagoServicio {
     @Autowired
     private PagoRepositorio repo;
 
-    // LISTAR TODOS CON pedidoId (para que el admin vea el número de pedido)
+    // LISTAR TODOS CON pedidoId visible en JSON
     public List<Pago> obtenerTodosConPedidoId() {
-        return repo.findAll().stream()
-                .peek(p -> {
-                    if (p.getPedido() != null) {
-                        p.setPedidoId(p.getPedido().getId());
-                    }
-                })
-                .collect(Collectors.toList());
+        return repo.findAll();
+        // El @JsonProperty en Pago.java ya hace que pedidoId aparezca
     }
 
-    // Método viejo (puedes dejarlo)
     public List<Pago> obtenerTodos() {
         return repo.findAll();
     }
 
-    // CAMBIAR ESTADO: validar o rechazar
     public Pago actualizarEstado(Integer id, String nuevoEstado) {
         Pago pago = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pago no encontrado: " + id));
+                .orElseThrow(() -> new RuntimeException("Pago no encontrado"));
 
-        try {
-            pago.setEstado(EstadoPago.valueOf(nuevoEstado.toUpperCase()));
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Estado inválido: " + nuevoEstado);
-        }
+        pago.setEstado(EstadoPago.valueOf(nuevoEstado.toUpperCase()));
         return repo.save(pago);
     }
 
-    // CAMBIAR MÉTODO: YAPE / PLIN / EFECTIVO (ahora con public bien escrito)
-    public Pago actualizarMetodo(Integer id, String nuevoMetodo) {
+    // CAMBIAR MÉTODO: ahora acepta String y lo convierte a enum
+    public Pago actualizarMetodo(Integer id, String metodoStr) {
         Pago pago = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pago no encontrado: " + id));
+                .orElseThrow(() -> new RuntimeException("Pago no encontrado"));
 
-        // No permitir cambiar método si ya fue validado y estaba en PENDIENTE
-        if (pago.getEstado() == EstadoPago.validado && "PENDIENTE".equalsIgnoreCase(pago.getMetodo())) {
-            throw new RuntimeException("No se puede cambiar el método una vez validado");
+        if (pago.getEstado() == EstadoPago.validado && pago.getMetodo() == MetodoPago.PENDIENTE) {
+            throw new RuntimeException("No se puede cambiar método una vez validado");
         }
 
-        pago.setMetodo(nuevoMetodo.toLowerCase());
+        MetodoPago metodo;
+        try {
+            metodo = MetodoPago.valueOf(metodoStr.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Método inválido: " + metodoStr);
+        }
+
+        }
+
+        pago.setMetodo(metodo);
         return repo.save(pago);
     }
 
-    // GUARDAR PAGO (para crear nuevos)
     public Pago guardar(Pago pago) {
         return repo.save(pago);
     }
