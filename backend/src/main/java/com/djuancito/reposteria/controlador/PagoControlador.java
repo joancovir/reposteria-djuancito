@@ -17,10 +17,10 @@ public class PagoControlador {
     private PagoServicio pagoServicio;
 
     // LISTAR TODOS (admin)
-    @GetMapping
-public ResponseEntity<List<Pago>> obtenerTodos() {
-    return ResponseEntity.ok(pagoService.obtenerTodosConPedidoId());
-}
+    GetMapping
+    public ResponseEntity<List<Pago>> obtenerTodos() {
+        return ResponseEntity.ok(pagoServicio.obtenerTodos());
+    }
 
     // CAMBIAR ESTADO
     @PutMapping("/{id}/estado")
