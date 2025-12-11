@@ -24,11 +24,15 @@ public class PagoControlador {
 
     // CAMBIAR ESTADO
     @PutMapping("/{id}/estado")
-    public ResponseEntity<Pago> actualizarEstado(@PathVariable Integer id,
-                                                 @RequestBody EstadoPagoRequest request) {
-        Pago pago = pagoServicio.actualizarEstado(id, request.getEstado());
-        return ResponseEntity.ok(pago);
+public ResponseEntity<Pago> actualizarEstado(@PathVariable Integer id,
+                                             @RequestBody Map<String, String> body) {
+    String estado = body.get("estado"); // o "nuevoEstado", según lo que envíe el frontend
+    if (estado == null || estado.isBlank()) {
+        return ResponseEntity.badRequest().body(null);
     }
+    Pago pago = pagoServicio.actualizarEstado(id, estado);
+    return ResponseEntity.ok(pago);
+}
 
     @PutMapping("/{id}/metodo")
 public ResponseEntity<Pago> actualizarMetodo(@PathVariable Integer id,
