@@ -15,7 +15,7 @@ public class PagoServicio {
     @Autowired
     private PagoRepositorio repo;
 
-    // 1. LISTAR TODOS CON pedidoId (para que el admin vea el #pedido)
+    // LISTAR TODOS CON pedidoId (para que el admin vea el número de pedido)
     public List<Pago> obtenerTodosConPedidoId() {
         return repo.findAll().stream()
                 .peek(p -> {
@@ -26,7 +26,12 @@ public class PagoServicio {
                 .collect(Collectors.toList());
     }
 
-    // 2. CAMBIAR ESTADO (validar / rechazar)
+    // Método viejo (puedes dejarlo)
+    public List<Pago> obtenerTodos() {
+        return repo.findAll();
+    }
+
+    // CAMBIAR ESTADO: validar o rechazar
     public Pago actualizarEstado(Integer id, String nuevoEstado) {
         Pago pago = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pago no encontrado: " + id));
@@ -39,11 +44,12 @@ public class PagoServicio {
         return repo.save(pago);
     }
 
-    // 3. CAMBIAR MÉTODO (YAPE / PLIN / EFECTIVO) - ESTE ES EL QUE TENÍA "ublic" MAL
+    // CAMBIAR MÉTODO: YAPE / PLIN / EFECTIVO (ahora con public bien escrito)
     public Pago actualizarMetodo(Integer id, String nuevoMetodo) {
         Pago pago = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pago no encontrado: " + id));
 
+        // No permitir cambiar método si ya fue validado y estaba en PENDIENTE
         if (pago.getEstado() == EstadoPago.validado && "PENDIENTE".equalsIgnoreCase(pago.getMetodo())) {
             throw new RuntimeException("No se puede cambiar el método una vez validado");
         }
@@ -52,16 +58,8 @@ public class PagoServicio {
         return repo.save(pago);
     }
 
-    // 4. GUARDAR PAGO (por si lo necesitas)
+    // GUARDAR PAGO (para crear nuevos)
     public Pago guardar(Pago pago) {
         return repo.save(pago);
     }
-
-    // 5. Método viejo (puedes dejarlo o borrarlo)
-    public List<Pago> obtenerTodos() {
-        return repo.findAll();
-    }
-}
-            .collect(Collectors.toList());
-}
 }
