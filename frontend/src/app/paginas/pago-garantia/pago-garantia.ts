@@ -25,6 +25,7 @@ export class PagoGarantia implements OnInit {
   subtotal = 0;
   qrList: QrPago[] = [];
   qrAmpliado = '';
+  codigoOperacion = '';
 private apiUrl = environment.apiUrl;
   constructor(
     private http: HttpClient,
@@ -35,7 +36,26 @@ private apiUrl = environment.apiUrl;
     this.cargarDatosPedido();
     this.cargarQrDesdeBackend();
   }
+  
+confirmarPagoGarantia() {
+  if (!this.codigoOperacion || this.codigoOperacion.trim() === '') {
+    alert('Por favor ingresa el código de operación');
+    return;
+  }
 
+  const pedidoId = JSON.parse(localStorage.getItem('pago_garantia')!).pedidoId;
+
+  this.http.post(`${this.apiUrl}/api/pedidos/${pedidoId}/pago-garantia`, {
+    codigoOperacion: this.codigoOperacion.trim()
+  }).subscribe({
+    next: () => {
+      this.mostrarExito();
+    },
+    error: () => {
+      alert('Error al registrar el pago. Inténtalo de nuevo.');
+    }
+  });
+}
   cargarDatosPedido() {
     const pagoStr = localStorage.getItem('pago_garantia');
     if (!pagoStr) {
