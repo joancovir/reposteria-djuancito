@@ -140,6 +140,11 @@ public class PedidoServicio {
         return pedidoRepo.save(pedido);
     }
 
+    public Pedido obtenerPorId(Integer pedidoId) {
+    return pedidoRepo.findById(pedidoId).orElse(null);
+   }
+
+    
     @Transactional
     public Pedido crearPedidoConConfirmacion(PedidoRequestDTO dto) {
         Pedido pedido = crearPedido(dto);
