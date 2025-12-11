@@ -79,6 +79,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             .requestMatchers(
                 "/api/pedidos", "/api/pedidos/**",
                 "/api/usuarios/mi-perfil",
+                "/api/pedidos/**/pago-garantia",
                 "/api/contacto/mi-historial"
             ).authenticated()
 
