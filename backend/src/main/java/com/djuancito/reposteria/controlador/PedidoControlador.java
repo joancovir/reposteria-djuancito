@@ -99,7 +99,7 @@ public ResponseEntity<Pedido> crearPedido(@RequestBody PedidoRequestDTO dto) {
         pagoGarantia.setMontoAbonado(dto.getGarantiaPagada());
         pagoGarantia.setFechaPago(LocalDateTime.now());
         pagoGarantia.setTipoPago(TipoPago.GARANTIA);
-        pagoGarantia.setMetodo(MetodoPago.PENDIENTE);
+        pagoGarantia.setMetodo(MetodoPago.yape);
         pagoGarantia.setCodigoOperacion("PENDIENTE_VALIDACION");
         pagoGarantia.setEstado(EstadoPago.pendiente_validacion);
 
