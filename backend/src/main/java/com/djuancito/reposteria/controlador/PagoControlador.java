@@ -18,9 +18,9 @@ public class PagoControlador {
 
     // LISTAR TODOS (admin)
     @GetMapping
-    public ResponseEntity<List<Pago>> obtenerTodos() {
-        return ResponseEntity.ok(pagoServicio.obtenerTodos());
-    }
+public ResponseEntity<List<Pago>> obtenerTodos() {
+    return ResponseEntity.ok(pagoService.obtenerTodosConPedidoId());
+}
 
     // CAMBIAR ESTADO
     @PutMapping("/{id}/estado")
