@@ -15,10 +15,9 @@ public class PagoServicio {
     @Autowired
     private PagoRepositorio repo;
 
-    // LISTAR TODOS CON pedidoId visible en JSON
+    // LISTAR TODOS CON pedidoId visible en el JSON
     public List<Pago> obtenerTodosConPedidoId() {
-        return repo.findAll();
-        // El @JsonProperty en Pago.java ya hace que pedidoId aparezca
+        return repo.findAll(); // Ya tiene @JsonProperty en Pago.java
     }
 
     public List<Pago> obtenerTodos() {
@@ -33,25 +32,23 @@ public class PagoServicio {
         return repo.save(pago);
     }
 
-    // CAMBIAR MÉTODO: ahora acepta String y lo convierte a enum
+    // MÉTODO CORREGIDO: ahora funciona con enum MetodoPago
     public Pago actualizarMetodo(Integer id, String metodoStr) {
         Pago pago = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pago no encontrado"));
 
+        // No permitir cambiar si ya fue validado y estaba PENDIENTE
         if (pago.getEstado() == EstadoPago.validado && pago.getMetodo() == MetodoPago.PENDIENTE) {
-            throw new RuntimeException("No se puede cambiar método una vez validado");
+            throw new RuntimeException("No se puede cambiar el método una vez validado");
         }
 
-        MetodoPago metodo;
         try {
-            metodo = MetodoPago.valueOf(metodoStr.toUpperCase());
+            MetodoPago metodo = MetodoPago.valueOf(metodoStr.toUpperCase());
+            pago.setMetodo(metodo);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Método inválido: " + metodoStr);
+            throw new RuntimeException("Método inválido. Usa: PENDIENTE, yape, plin, efectivo");
         }
 
-        }
-
-        pago.setMetodo(metodo);
         return repo.save(pago);
     }
 
