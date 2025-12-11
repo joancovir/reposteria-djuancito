@@ -76,15 +76,29 @@ public class PedidoControlador {
         }
     }
     
-   @PostMapping
+ @PostMapping
 public ResponseEntity<Pedido> crearPedido(@RequestBody PedidoRequestDTO dto) {
     if (dto == null || dto.getUsuarioId() == null || dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
         return ResponseEntity.badRequest().build();
     }
-    
+
     Pedido pedido = pedidoServicio.crearPedido(dto);
-    
-    // ESTO ES LO QUE FALTABA → FORZAR QUE SE CARGUEN LOS DETALLES
+
+    // === AQUÍ ESTÁ LA MAGIA: CREAR PAGO DE GARANTÍA AUTOMÁTICO ===
+    if (dto.getGarantiaPagada() != null && dto.getGarantiaPagada().doubleValue() > 0) {
+        Pago pagoGarantia = new Pago();
+        pagoGarantia.setPedido(pedido);
+        pagoGarantia.setMonto(dto.getGarantiaPagada());
+        pagoGarantia.setMetodo("PENDIENTE"); // El cliente lo cambia después
+        pagoGarantia.setCodigoOperacion("PENDIENTE_VALIDACION");
+        pagoGarantia.setTipo("GARANTIA");
+        pagoGarantia.setEstado(EstadoPago.pendiente_validacion);
+        pagoGarantia.setFecha(java.util.Date.from(java.time.Instant.now()));
+
+        pagoServicio.guardar(pagoGarantia); // ← ESTO GUARDA EL PAGO EN LA BD
+    }
+
+    // Forzar carga de detalles para el frontend
     Hibernate.initialize(pedido.getDetalles());
     if (pedido.getDetalles() != null) {
         pedido.getDetalles().forEach(detalle -> {
@@ -94,10 +108,9 @@ public ResponseEntity<Pedido> crearPedido(@RequestBody PedidoRequestDTO dto) {
             }
         });
     }
-    
+
     return ResponseEntity.ok(pedido);
 }
-
 @PostMapping("/confirmar")
 public ResponseEntity<?> confirmarPedido(@RequestBody PedidoRequestDTO request) {
     try {
