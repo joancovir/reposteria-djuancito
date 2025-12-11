@@ -12,7 +12,7 @@ import { environment } from '../../../src/environments/environment';
 export class PagoService {
 
   // CORRECTO: solo /api/pagos
-  private apiUrl = `${environment.apiUrl}/api/pagos`;
+  private apiUrl = `${environment.apiUrl}/pagos`;
 
   constructor(private http: HttpClient) { }
 
