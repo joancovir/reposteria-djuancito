@@ -1,105 +1,101 @@
-
 import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Pago, EstadoPago } from '../../modelos/pago'; 
-import { PagoService } from '../../servicios/pago'; 
+import { Pago } from '../../modelos/pago';
+import { PagoService } from '../../servicios/pago';
 
 @Component({
   selector: 'app-modal-gestion-pago',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './modal-gestion-pago.html',
-  styleUrls: ['./modal-gestion-pago.css'] 
+  styleUrls: ['./modal-gestion-pago.css']
 })
 export class ModalGestionPago implements OnInit {
 
   @Input() pedidoId: number | null = null;
-  @Input() pagos: Pago[] = []; 
+  @Input() pagos: Pago[] = [];
   @Input() montoTotal: number = 0;
   @Input() montoGarantia: number = 0;
 
-  // --- Output para notificar cambios ---
-  @Output() pagoActualizado = new EventEmitter<Pago>(); 
+  @Output() pagoActualizado = new EventEmitter<Pago>();
   @Output() volverADetalles = new EventEmitter<void>();
-  // --- Estado interno ---
+
   isUpdatingPago: number | null = null;
   errorMensaje: string | null = null;
-  totalPagadoValidado: number = 0; 
+  totalPagadoValidado: number = 0;
 
-  // --- Inyección de servicios ---
   public bsModalRef = inject(BsModalRef);
   private pagoService = inject(PagoService);
 
-  constructor() {}
-
   ngOnInit(): void {
-    console.log('Modal Gestión Pagos iniciado con:', this.pagos);
-    this.calcularTotalPagadoValidado(); 
+    this.calcularTotalPagadoValidado();
   }
 
-  cambiarEstadoPago(pago: Pago, nuevoEstado: EstadoPago): void {
-    if (!pago || this.isUpdatingPago) return;
+  // ACEPTA SOLO 'validar' o 'rechazar' → convierte al string que espera el backend
+  cambiarEstadoPago(pago: Pago, accion: 'validar' | 'rechazar'): void {
+    if (!pago?.pagoId || this.isUpdatingPago) return;
+
+    const estadoEnviar: 'validado' | 'rechazado' = accion === 'validar' ? 'validado' : 'rechazado';
 
     this.isUpdatingPago = pago.pagoId;
     this.errorMensaje = null;
 
-    this.pagoService.actualizarEstadoPago(pago.pagoId, nuevoEstado).subscribe({
+    this.pagoService.actualizarEstadoPago(pago.pagoId, estadoEnviar).subscribe({
       next: (pagoActualizado) => {
         const index = this.pagos.findIndex(p => p.pagoId === pago.pagoId);
-        if (index > -1) {
-          this.pagos[index] = pagoActualizado;
-        }
+        if (index !== -1) this.pagos[index] = pagoActualizado;
+        this.calcularTotalPagadoValidado();
+        this.pagoActualizado.emit(pagoActualizado);
         this.isUpdatingPago = null;
-        this.calcularTotalPagadoValidado(); 
-        this.pagoActualizado.emit(pagoActualizado); 
       },
       error: (err) => {
-        console.error(`Error al ${nuevoEstado} el pago ${pago.pagoId}:`, err);
-        this.errorMensaje = `Error al ${nuevoEstado} el pago: ${err.error || 'Error desconocido'}`;
+        this.errorMensaje = `Error al ${accion} el pago`;
         this.isUpdatingPago = null;
+        console.error(err);
       }
     });
   }
 
-  // --- Calcular total pagado (solo validados) ---
   calcularTotalPagadoValidado(): void {
     this.totalPagadoValidado = this.pagos
       .filter(p => p.estado === 'validado')
-      .reduce((sum, p) => sum + p.montoAbonado, 0);
+      .reduce((acc, p) => acc + p.montoAbonado, 0);
   }
 
-  // --- Saldo Pendiente ---
   get saldoPendiente(): number {
-      return Math.max(0, this.montoTotal - this.totalPagadoValidado);
+    return Math.max(0, this.montoTotal - this.totalPagadoValidado);
   }
-  
+
   volver(): void {
-      this.volverADetalles.emit(); 
-      this.cerrarModal(); 
+    this.volverADetalles.emit();
+    this.cerrarModal();
   }
-  // --- Cerrar modal ---
+
   cerrarModal(): void {
     this.bsModalRef.hide();
   }
 
-  // --- Helpers para clases CSS y formato (igual que antes) ---
-  getPagoStatusClass(estado: EstadoPago): string {
-    switch (estado) {
-      case 'pendiente_validacion': return 'pago-pendiente';
-      case 'validado': return 'pago-validado';
-      case 'rechazado': return 'pago-rechazado';
-      default: return '';
-    }
+  getPagoStatusClass(estado: string): string {
+    return {
+      'pendiente_validacion': 'pago-pendiente',
+      'validado': 'pago-validado',
+      'rechazado': 'pago-rechazado'
+    }[estado] || '';
   }
-  getPagoItemClass(estado: EstadoPago): string {
-     switch (estado) {
-      case 'pendiente_validacion': return 'item-pendiente';
-      case 'validado': return 'item-validado';
-      case 'rechazado': return 'item-rechazado';
-      default: return '';
-    }
+
+  getPagoItemClass(estado: string): string {
+    return {
+      'pendiente_validacion': 'item-pendiente',
+      'validado': 'item-validado',
+      'rechazado': 'item-rechazado'
+    }[estado] || '';
   }
+
+  formatEstadoPago(estado: string): string {
+    return estado ? estado.replace(/_/g, ' ').toUpperCase() : '';
+  }
+}
   formatEstadoPago(estado: EstadoPago): string {
     if (!estado) return '';
     return estado.replace('_', ' ');
