@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';  // AÑADIDO
 import { Router, RouterLink } from '@angular/router';
 import { environment } from '../../../../src/environments/environment';
 
@@ -15,7 +16,7 @@ interface QrPago {
 @Component({
   selector: 'app-pago-garantia',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule], // AÑADIDO FormsModule
   templateUrl: './pago-garantia.html',
   styleUrls: ['./pago-garantia.css']
 })
@@ -23,16 +24,13 @@ export class PagoGarantia implements OnInit {
   garantia = 0;
   resto = 0;
   subtotal = 0;
-  pedidoId: number | null = null;   // ← AÑADIDO
+  pedidoId: number | null = null;
   qrList: QrPago[] = [];
   qrAmpliado = '';
   codigoOperacion = '';
   private apiUrl = environment.apiUrl;
 
-  constructor(
-    private http: HttpClient,
-    private router: Router
-  ) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
     this.cargarDatosPedido();
@@ -46,7 +44,6 @@ export class PagoGarantia implements OnInit {
       this.router.navigate(['/cliente/mi-pedido']);
       return;
     }
-
     try {
       const pago = JSON.parse(pagoStr);
       this.pedidoId = pago.pedidoId || null;
@@ -59,36 +56,10 @@ export class PagoGarantia implements OnInit {
         this.router.navigate(['/cliente/mi-pedido']);
       }
     } catch (e) {
-      alert('Datos corruptos, vuelve a intentar');
       this.router.navigate(['/cliente/mi-pedido']);
     }
   }
 
-  confirmarPagoGarantia() {
-    if (!this.codigoOperacion || this.codigoOperacion.trim() === '') {
-      alert('Por favor ingresa el código de operación');
-      return;
-    }
-
-    if (!this.pedidoId) {
-      alert('Error: ID de pedido no válido');
-      return;
-    }
-
-    this.http.post(`${this.apiUrl}/api/pedidos/${this.pedidoId}/pago-garantia`, {
-      codigoOperacion: this.codigoOperacion.trim()
-    }).subscribe({
-      next: () => {
-        this.mostrarExito();
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Error al registrar el pago: ' + (err.error?.message || 'Inténtalo de nuevo'));
-      }
-    });
-  }
-
-  // ... el resto (cargarQrDesdeBackend, abrirQr, mostrarExito) queda IGUAL
   cargarQrDesdeBackend() {
     this.http.get<QrPago[]>(`${this.apiUrl}/config/qr/activos`).subscribe({
       next: (data) => this.qrList = data,
@@ -96,15 +67,43 @@ export class PagoGarantia implements OnInit {
     });
   }
 
+  confirmarPagoGarantia() {
+    if (!this.codigoOperacion?.trim()) {
+      alert('Por favor ingresa el código de operación');
+      return;
+    }
+    if (!this.pedidoId) {
+      alert('Error: pedido no válido');
+      return;
+    }
+
+    this.http.post(`${this.apiUrl}/api/pedidos/${this.pedidoId}/pago-garantia`, {
+      codigoOperacion: this.codigoOperacion.trim()
+    }).subscribe({
+      next: () => this.mostrarExito(),
+      error: () => alert('Error al registrar el pago')
+    });
+  }
+
   abrirQr(url: string) {
     this.qrAmpliado = url;
     const modal = document.getElementById('qrModal');
-    if (window as any).bootstrap?.Modal.getOrCreateInstance(modal)?.show();
+    if (modal) {
+      const bootstrap = (window as any).bootstrap;
+      if (bootstrap?.Modal) {
+        new bootstrap.Modal(modal).show();
+      }
+    }
   }
 
   mostrarExito() {
     const modal = document.getElementById('modalPagoExitoso');
-    (window as any).bootstrap?.Modal.getOrCreateInstance(modal)?.show();
+    if (modal) {
+      const bootstrap = (window as any).bootstrap;
+      if (bootstrap?.Modal) {
+        new bootstrap.Modal(modal).show();
+      }
+    }
     setTimeout(() => localStorage.removeItem('pago_garantia'), 5000);
   }
 }
