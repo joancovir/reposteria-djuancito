@@ -1,22 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 import { PagoService } from '../../../servicios/pago';
 import { Pago, EstadoPago } from '../../../modelos/pago';
 
 @Component({
   selector: 'app-gestion-pagos',
   standalone: true,
-  imports: [CommonModule, FormsModule],  
+  imports: [CommonModule, FormsModule],
   templateUrl: './gestion-pagos.html',
   styleUrls: ['./gestion-pagos.css']
 })
 export class GestionPagos implements OnInit {
-
   pagos: Pago[] = [];
   pagosFiltrados: Pago[] = [];
   cargando = true;
-
   buscar = '';
   estadoFiltro: string = 'todos';
   paginaActual = 1;
@@ -52,7 +50,8 @@ export class GestionPagos implements OnInit {
       temp = temp.filter(p =>
         p.pagoId.toString().includes(busqueda) ||
         (p.codigoOperacion?.toLowerCase().includes(busqueda)) ||
-        (p.metodo?.toLowerCase().includes(busqueda))
+        (p.metodo?.toLowerCase().includes(busqueda)) ||
+        p.tipoPago?.toLowerCase().includes(busqueda)
       );
     }
 
@@ -73,10 +72,25 @@ export class GestionPagos implements OnInit {
     return Math.ceil(this.pagosFiltrados.length / this.itemsPorPagina);
   }
 
-  cambiarEstado(pago: Pago, nuevoEstado: string) {
+  cambiarEstado(pago: Pago, nuevoEstado: 'validado' | 'rechazado') {
+    const accion = nuevoEstado === 'validado' ? 'VALIDAR' : 'RECHAZAR';
+    if (!confirm(`¿Estás seguro de ${accion} este pago de S/ ${pago.montoAbonado}?`)) {
+      return;
+    }
+
     this.pagoService.actualizarEstadoPago(pago.pagoId, nuevoEstado).subscribe({
       next: (actualizado) => {
         pago.estado = actualizado.estado;
+
+        // Opcional: cambiar PENDIENTE → YAPE/PLIN al validar
+        if (nuevoEstado === 'validado' && pago.metodo === 'PENDIENTE') {
+          pago.metodo = pago.codigoOperacion?.startsWith('YAPE') ? 'yape' : 'plin';
+        }
+
+        alert(`Pago ${accion} correctamente`);
+      },
+      error: () => {
+        alert('Error al actualizar el estado');
       }
     });
   }
@@ -87,6 +101,11 @@ export class GestionPagos implements OnInit {
       validado: 'badge-aprobado',
       rechazado: 'badge-rechazado'
     };
-    return map[estado] || '';
+    return map[estado] || 'badge-secondary';
+  }
+
+  // Refrescar lista
+  refrescar() {
+    this.cargarPagos();
   }
 }
