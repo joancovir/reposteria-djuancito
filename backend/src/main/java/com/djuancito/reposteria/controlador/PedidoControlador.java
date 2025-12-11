@@ -4,7 +4,7 @@ import com.djuancito.reposteria.entidad.Pedido;
 import com.djuancito.reposteria.entidad.EstadoPedido;
 import com.djuancito.reposteria.entidad.dto.PedidoRequestDTO;
 import com.djuancito.reposteria.servicio.PedidoServicio;
-
+import com.djuancito.reposteria.servicio.PagoServicio; 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/pedidos")
@@ -21,7 +22,8 @@ public class PedidoControlador {
 
     @Autowired
     private PedidoServicio pedidoServicio;
-
+    @Autowired
+    private PagoServicio pagoServicio;
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<Pedido>> obtenerPedidosPorUsuario(@PathVariable Long usuarioId) {
         try {
@@ -76,41 +78,41 @@ public class PedidoControlador {
         }
     }
     
- @PostMapping
-public ResponseEntity<Pedido> crearPedido(@RequestBody PedidoRequestDTO dto) {
-    if (dto == null || dto.getUsuarioId() == null || dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
-        return ResponseEntity.badRequest().build();
+@PostMapping
+    public ResponseEntity<Pedido> crearPedido(@RequestBody PedidoRequestDTO dto) {
+        if (dto == null || dto.getUsuarioId() == null || dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Pedido pedido = pedidoServicio.crearPedido(dto);
+
+        // CREAR AUTOMÁTICAMENTE EL PAGO DE GARANTÍA
+        if (dto.getGarantiaPagada() != null && dto.getGarantiaPagada().doubleValue() > 0) {
+            Pago pagoGarantia = new Pago();
+            pagoGarantia.setPedido(pedido);
+            pagoGarantia.setMonto(dto.getGarantiaPagada());
+            pagoGarantia.setMetodo("PENDIENTE");
+            pagoGarantia.setCodigoOperacion("PENDIENTE_VALIDACION");
+            pagoGarantia.setTipo("GARANTIA");
+            pagoGarantia.setEstado(EstadoPago.pendiente_validacion);
+            pagoGarantia.setFecha(new Date());
+
+            pagoServicio.guardar(pagoGarantia);
+        }
+
+        // Inicializar detalles para el frontend
+        Hibernate.initialize(pedido.getDetalles());
+        if (pedido.getDetalles() != null) {
+            pedido.getDetalles().forEach(detalle -> {
+                Hibernate.initialize(detalle.getProducto());
+                if (detalle.getPersonalizacion() != null) {
+                    Hibernate.initialize(detalle.getPersonalizacion().getAdicionalesSeleccionados());
+                }
+            });
+        }
+
+        return ResponseEntity.ok(pedido);
     }
-
-    Pedido pedido = pedidoServicio.crearPedido(dto);
-
-    // === AQUÍ ESTÁ LA MAGIA: CREAR PAGO DE GARANTÍA AUTOMÁTICO ===
-    if (dto.getGarantiaPagada() != null && dto.getGarantiaPagada().doubleValue() > 0) {
-        Pago pagoGarantia = new Pago();
-        pagoGarantia.setPedido(pedido);
-        pagoGarantia.setMonto(dto.getGarantiaPagada());
-        pagoGarantia.setMetodo("PENDIENTE"); // El cliente lo cambia después
-        pagoGarantia.setCodigoOperacion("PENDIENTE_VALIDACION");
-        pagoGarantia.setTipo("GARANTIA");
-        pagoGarantia.setEstado(EstadoPago.pendiente_validacion);
-        pagoGarantia.setFecha(java.util.Date.from(java.time.Instant.now()));
-
-        pagoServicio.guardar(pagoGarantia); // ← ESTO GUARDA EL PAGO EN LA BD
-    }
-
-    // Forzar carga de detalles para el frontend
-    Hibernate.initialize(pedido.getDetalles());
-    if (pedido.getDetalles() != null) {
-        pedido.getDetalles().forEach(detalle -> {
-            Hibernate.initialize(detalle.getProducto());
-            if (detalle.getPersonalizacion() != null) {
-                Hibernate.initialize(detalle.getPersonalizacion().getAdicionalesSeleccionados());
-            }
-        });
-    }
-
-    return ResponseEntity.ok(pedido);
-}
 @PostMapping("/confirmar")
 public ResponseEntity<?> confirmarPedido(@RequestBody PedidoRequestDTO request) {
     try {
