@@ -23,6 +23,7 @@ export class ModalGestionPago implements OnInit {
 
   isUpdatingPago: number | null = null;
   errorMensaje: string | null = null;
+
   totalPagadoValidado: number = 0;
 
   public bsModalRef = inject(BsModalRef);
@@ -32,7 +33,6 @@ export class ModalGestionPago implements OnInit {
     this.calcularTotalPagadoValidado();
   }
 
-  // ACEPTA SOLO 'validar' o 'rechazar' → convierte al string que espera el backend
   cambiarEstadoPago(pago: Pago, accion: 'validar' | 'rechazar'): void {
     if (!pago?.pagoId || this.isUpdatingPago) return;
 
@@ -77,27 +77,25 @@ export class ModalGestionPago implements OnInit {
   }
 
   getPagoStatusClass(estado: string): string {
-    return {
-      'pendiente_validacion': 'pago-pendiente',
-      'validado': 'pago-validado',
-      'rechazado': 'pago-rechazado'
-    }[estado] || '';
+    switch (estado) {
+      case 'pendiente_validacion': return 'pago-pendiente';
+      case 'validado': return 'pago-validado';
+      case 'rechazado': return 'pago-rechazado';
+      default: return '';
+    }
   }
 
   getPagoItemClass(estado: string): string {
-    return {
-      'pendiente_validacion': 'item-pendiente',
-      'validado': 'item-validado',
-      'rechazado': 'item-rechazado'
-    }[estado] || '';
+    switch (estado) {
+      case 'pendiente_validacion': return 'item-pendiente';
+      case 'validado': return 'item-validado';
+      case 'rechazado': return 'item-rechazado';
+      default: return '';
+    }
   }
 
   formatEstadoPago(estado: string): string {
-    return estado ? estado.replace(/_/g, ' ').toUpperCase() : '';
-  }
-}
-  formatEstadoPago(estado: EstadoPago): string {
     if (!estado) return '';
-    return estado.replace('_', ' ');
+    return estado.replace(/_/g, ' ').toUpperCase();
   }
 }
