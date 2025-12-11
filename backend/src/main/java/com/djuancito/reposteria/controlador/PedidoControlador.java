@@ -119,6 +119,35 @@ public ResponseEntity<Pedido> crearPedido(@RequestBody PedidoRequestDTO dto) {
 
     return ResponseEntity.ok(pedido);
 }
+    @PostMapping("/{pedidoId}/pago-garantia")
+public ResponseEntity<Pago> registrarPagoGarantia(
+        @PathVariable Integer pedidoId,
+        @RequestBody Map<String, String> body) {
+
+    String codigoOperacion = body.get("codigoOperacion");
+    if (codigoOperacion == null || codigoOperacion.trim().isEmpty()) {
+        return ResponseEntity.badRequest().build();
+    }
+
+    Pedido pedido = pedidoServicio.obtenerPorId(pedidoId);
+    if (pedido == null) {
+        return ResponseEntity.notFound().build();
+    }
+
+    Pago pago = new Pago();
+    pago.setPedido(pedido);
+    pago.setMontoAbonado(pedido.getGarantiaPagada());
+    pago.setFechaPago(LocalDateTime.now());
+    pago.setTipoPago(TipoPago.GARANTIA);
+    pago.setMetodo(MetodoPago.PENDIENTE); // El cliente ya pagó, pero aún no validas
+    pago.setCodigoOperacion(codigoOperacion.trim());
+    pago.setEstado(EstadoPago.pendiente_validacion);
+
+    Pago guardado = pagoServicio.guardar(pago);
+    return ResponseEntity.ok(guardado);
+}
+
+    
 @PostMapping("/confirmar")
 public ResponseEntity<?> confirmarPedido(@RequestBody PedidoRequestDTO request) {
     try {
