@@ -21,9 +21,9 @@ export class Entrega implements OnInit {
   tortaPersonalizada: any = null;
 tienda: ConfigTienda = {
   nombreTienda: 'Cargando...',
-  direccion: 'Av. Larco 123, Miraflores',
-  referencia: 'Frente al Parque Kennedy',
-  telefono: '999 999 999',
+  direccion: 'calle arrospedi num. 164',
+  referencia: 'urb caja de deposito',
+  telefono: '960561420',
   googleMapsEmbed: '',
   latitud: -12.130022,
   longitud: -77.030722
