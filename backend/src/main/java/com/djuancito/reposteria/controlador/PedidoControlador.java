@@ -1,7 +1,9 @@
 package com.djuancito.reposteria.controlador;
 
 import com.djuancito.reposteria.entidad.Pedido;
+import com.djuancito.reposteria.entidad.TipoPago;
 import com.djuancito.reposteria.entidad.EstadoPedido;
+import com.djuancito.reposteria.entidad.MetodoPago;
 import com.djuancito.reposteria.entidad.dto.PedidoRequestDTO;
 import com.djuancito.reposteria.servicio.PedidoServicio;
 import com.djuancito.reposteria.servicio.PagoServicio; 
@@ -14,8 +16,11 @@ import com.djuancito.reposteria.entidad.EstadoPago;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.time.LocalDateTime;
 import java.util.Date;
-
+import com.djuancito.reposteria.entidad.TipoPago;
+import com.djuancito.reposteria.entidad.MetodoPago;
+import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/pedidos")
 @CrossOrigin(origins = "*") 
@@ -80,40 +85,40 @@ public class PedidoControlador {
     }
     
 @PostMapping
-    public ResponseEntity<Pedido> crearPedido(@RequestBody PedidoRequestDTO dto) {
-        if (dto == null || dto.getUsuarioId() == null || dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Pedido pedido = pedidoServicio.crearPedido(dto);
-
-        // CREAR AUTOMÁTICAMENTE EL PAGO DE GARANTÍA
-        if (dto.getGarantiaPagada() != null && dto.getGarantiaPagada().doubleValue() > 0) {
-            Pago pagoGarantia = new Pago();
-            pagoGarantia.setPedido(pedido);
-            pagoGarantia.setMonto(dto.getGarantiaPagada());
-            pagoGarantia.setMetodo("PENDIENTE");
-            pagoGarantia.setCodigoOperacion("PENDIENTE_VALIDACION");
-            pagoGarantia.setTipo("GARANTIA");
-            pagoGarantia.setEstado(EstadoPago.pendiente_validacion);
-            pagoGarantia.setFecha(new Date());
-
-            pagoServicio.guardar(pagoGarantia);
-        }
-
-        // Inicializar detalles para el frontend
-        Hibernate.initialize(pedido.getDetalles());
-        if (pedido.getDetalles() != null) {
-            pedido.getDetalles().forEach(detalle -> {
-                Hibernate.initialize(detalle.getProducto());
-                if (detalle.getPersonalizacion() != null) {
-                    Hibernate.initialize(detalle.getPersonalizacion().getAdicionalesSeleccionados());
-                }
-            });
-        }
-
-        return ResponseEntity.ok(pedido);
+public ResponseEntity<Pedido> crearPedido(@RequestBody PedidoRequestDTO dto) {
+    if (dto == null || dto.getUsuarioId() == null || dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
+        return ResponseEntity.badRequest().build();
     }
+
+    Pedido pedido = pedidoServicio.crearPedido(dto);
+
+    // CREAR PAGO DE GARANTÍA AUTOMÁTICO
+    if (dto.getGarantiaPagada() != null && dto.getGarantiaPagada().doubleValue() > 0) {
+        Pago pagoGarantia = new Pago();
+        pagoGarantia.setPedido(pedido);
+        pagoGarantia.setMontoAbonado(dto.getGarantiaPagada());
+        pagoGarantia.setFechaPago(LocalDateTime.now());
+        pagoGarantia.setTipoPago(TipoPago.GARANTIA);
+        pagoGarantia.setMetodo(MetodoPago.PENDIENTE);
+        pagoGarantia.setCodigoOperacion("PENDIENTE_VALIDACION");
+        pagoGarantia.setEstado(EstadoPago.pendiente_validacion);
+
+        pagoServicio.guardar(pagoGarantia);
+    }
+
+    // Inicializar detalles para el frontend
+    Hibernate.initialize(pedido.getDetalles());
+    if (pedido.getDetalles() != null) {
+        pedido.getDetalles().forEach(detalle -> {
+            Hibernate.initialize(detalle.getProducto());
+            if (detalle.getPersonalizacion() != null) {
+                Hibernate.initialize(detalle.getPersonalizacion().getAdicionalesSeleccionados());
+            }
+        });
+    }
+
+    return ResponseEntity.ok(pedido);
+}
 @PostMapping("/confirmar")
 public ResponseEntity<?> confirmarPedido(@RequestBody PedidoRequestDTO request) {
     try {
