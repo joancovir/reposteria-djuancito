@@ -15,7 +15,9 @@ private apiUrl = environment.apiUrl + '/pagos';
   obtenerTodos(): Observable<Pago[]> {
     return this.http.get<Pago[]>(this.apiUrl);
   }
-
+actualizarMetodo(pagoId: number, metodo: string) {
+  return this.http.put<Pago>(`${this.apiUrl}/api/pagos/${pagoId}/metodo`, { metodo });
+}
   actualizarEstadoPago(id: number, estado: string): Observable<Pago> {
     return this.http.put<Pago>(`${this.apiUrl}/${id}/estado`, { estado });
   }
