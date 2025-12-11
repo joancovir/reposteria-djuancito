@@ -13,5 +13,5 @@ public class PedidoRequestDTO {
     private BigDecimal garantiaPagada;
     private BigDecimal resto;
     private BigDecimal total;
-    private String codigoOperacion;  // ← ESTE ES EL CAMPO QUE FALTABA
+    private String codigoOperacion;  
 }
