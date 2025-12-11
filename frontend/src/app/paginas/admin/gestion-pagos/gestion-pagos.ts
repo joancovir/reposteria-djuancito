@@ -80,11 +80,11 @@ export class GestionPagos implements OnInit {
       next: (res) => {
         pago.estado = res.estado;
 
-        if (nuevoEstado === 'validado' && pago.metodo === MetodoPago.PENDIENTE) {
-          pago.metodo = pago.codigoOperacion?.toUpperCase().includes('YAPE')
-            ? MetodoPago.yape
-            : MetodoPago.plin;
-        }
+        if (nuevoEstado === 'validado' && pago.metodo === 'PENDIENTE') {
+  pago.metodo = pago.codigoOperacion?.toUpperCase().includes('YAPE')
+    ? 'yape'
+    : 'plin';
+}
 
         alert(`Pago ${accion} exitosamente`);
       },
