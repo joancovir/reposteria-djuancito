@@ -32,4 +32,27 @@ public class PagoServicio {
     public Pago guardar(Pago pago) {
         return repo.save(pago);
     }
+
+    ublic Pago actualizarMetodo(Integer id, String nuevoMetodo) {
+    Pago pago = repo.findById(id)
+            .orElseThrow(() -> new RuntimeException("Pago no encontrado: " + id));
+
+    if (pago.getEstado() == EstadoPago.validado && "PENDIENTE".equals(pago.getMetodo())) {
+        throw new RuntimeException("No se puede cambiar el método una vez validado");
+    }
+
+    pago.setMetodo(nuevoMetodo.toLowerCase());
+    return repo.save(pago);
+}
+
+// ← MÉTODO PARA OBTENER TODOS CON pedidoId (para el admin)
+public List<Pago> obtenerTodosConPedidoId() {
+    return repo.findAll().stream()
+            .peek(p -> {
+                if (p.getPedido() != null) {
+                    p.setPedidoId(p.getPedido().getId());
+                }
+            })
+            .collect(Collectors.toList());
+}
 }
