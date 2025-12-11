@@ -34,10 +34,17 @@
           </div>
 
           <!-- Botón Ya Pagué -->
-          <button class="btn btn-success btn-lg w-100 py-4 fw-bold fs-4 rounded-4 shadow"
-                  (click)="mostrarExito()">
-            ¡YA PAGUÉ LA GARANTÍA!
-          </button>
+          <div class="mb-4">
+  <label class="form-label fw-bold">Código de operación (Yape/Plin)</label>
+  <input type="text" class="form-control form-control-lg text-center" 
+         [(ngModel)]="codigoOperacion" placeholder="Ej: 123456789" required>
+</div>
+
+<!-- Botón Ya Pagué -->
+<button class="btn btn-success btn-lg w-100 py-4 fw-bold fs-4 rounded-4 shadow"
+        (click)="confirmarPagoGarantia()">
+  ¡YA PAGUÉ LA GARANTÍA!
+</button>
 
           <div class="mt-4">
             <a routerLink="/cliente/mis-pedidos" class="text-muted small text-decoration-none">
