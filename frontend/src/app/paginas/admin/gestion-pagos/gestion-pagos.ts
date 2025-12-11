@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PagoService } from '../../../servicios/pago';
 import { Pago, EstadoPago } from '../../../modelos/pago';
-
+import { Pago, EstadoPago, MetodoPago } from '../../../modelos/pago';
 @Component({
   selector: 'app-gestion-pagos',
   standalone: true,
@@ -72,28 +72,28 @@ export class GestionPagos implements OnInit {
     return Math.ceil(this.pagosFiltrados.length / this.itemsPorPagina);
   }
 
-  cambiarEstado(pago: Pago, nuevoEstado: 'validado' | 'rechazado') {
-    const accion = nuevoEstado === 'validado' ? 'VALIDAR' : 'RECHAZAR';
-    if (!confirm(`¿Estás seguro de ${accion} este pago de S/ ${pago.montoAbonado}?`)) {
-      return;
-    }
-
-    this.pagoService.actualizarEstadoPago(pago.pagoId, nuevoEstado).subscribe({
-      next: (actualizado) => {
-        pago.estado = actualizado.estado;
-
-        // Opcional: cambiar PENDIENTE → YAPE/PLIN al validar
-        if (nuevoEstado === 'validado' && pago.metodo === 'PENDIENTE') {
-          pago.metodo = pago.codigoOperacion?.startsWith('YAPE') ? 'yape' : 'plin';
-        }
-
-        alert(`Pago ${accion} correctamente`);
-      },
-      error: () => {
-        alert('Error al actualizar el estado');
-      }
-    });
+cambiarEstado(pago: Pago, nuevoEstado: 'validado' | 'rechazado') {
+  const accion = nuevoEstado === 'validado' ? 'VALIDAR' : 'RECHAZAR';
+  if (!confirm(`¿Estás seguro de ${accion} este pago de S/ ${pago.montoAbonado}?`)) {
+    return;
   }
+
+  this.pagoService.actualizarEstadoPago(pago.pagoId, nuevoEstado).subscribe({
+    next: (actualizado) => {
+      pago.estado = actualizado.estado;
+
+      // CORREGIDO: comparar con el enum, no con string
+      if (nuevoEstado === 'validado' && pago.metodo === MetodoPago.PENDIENTE) {
+        pago.metodo = pago.codigoOperacion?.startsWith('YAPE') ? MetodoPago.yape : MetodoPago.plin;
+      }
+
+      alert(`Pago ${accion} correctamente`);
+    },
+    error: () => {
+      alert('Error al actualizar el estado');
+    }
+  });
+}
 
   estadoColor(estado: EstadoPago | string) {
     const map: any = {
