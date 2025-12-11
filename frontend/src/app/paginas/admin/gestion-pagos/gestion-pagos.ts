@@ -72,8 +72,6 @@ export class GestionPagos implements OnInit {
     return Math.ceil(this.pagosFiltrados.length / this.itemsPorPagina);
   }
 
- 8}
-
   cambiarEstado(pago: Pago, nuevoEstado: 'validado' | 'rechazado') {
     const accion = nuevoEstado === 'validado' ? 'VALIDAR' : 'RECHAZAR';
     if (!confirm(`¿Estás seguro de ${accion} este pago de S/ ${pago.montoAbonado}?`)) return;
@@ -82,7 +80,6 @@ export class GestionPagos implements OnInit {
       next: (res) => {
         pago.estado = res.estado;
 
-        // AHORA SÍ funciona perfecto
         if (nuevoEstado === 'validado' && pago.metodo === MetodoPago.PENDIENTE) {
           pago.metodo = pago.codigoOperacion?.toUpperCase().includes('YAPE')
             ? MetodoPago.yape
@@ -95,8 +92,8 @@ export class GestionPagos implements OnInit {
     });
   }
 
-  estadoColor(estado: EstadoPago | string) {
-    const map: any = {
+  estadoColor(estado: EstadoPago | string): string {
+    const map: Record<string, string> = {
       pendiente_validacion: 'badge-pendiente',
       validado: 'badge-aprobado',
       rechazado: 'badge-rechazado'
