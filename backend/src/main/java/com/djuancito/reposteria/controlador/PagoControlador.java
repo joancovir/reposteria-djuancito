@@ -31,11 +31,12 @@ public class PagoControlador {
     }
 
     @PutMapping("/{id}/metodo")
-    public ResponseEntity<Pago> actualizarMetodo(@PathVariable Integer id,
-                                                 @RequestBody MetodoPagoRequest request) {
-        Pago pago = pagoServicio.actualizarMetodo(id, request.getMetodo());
-        return ResponseEntity.ok(pago);
-    }
+public ResponseEntity<Pago> actualizarMetodo(@PathVariable Integer id,
+                                             @RequestBody Map<String, String> body) {
+    String metodo = body.get("metodo");
+    Pago pago = pagoServicio.actualizarMetodo(id, metodo);
+    return ResponseEntity.ok(pago);
+}
 }
 
 class EstadoPagoRequest {
