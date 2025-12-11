@@ -29,11 +29,10 @@ export class MiPedido implements OnInit, OnDestroy {
   resto = 0;
   porcentajeGarantia = 50;
   opcionesGarantia: number[] = [];
+  adicionalesDisponibles: Adicional[] = [];
+  private apiUrl = environment.apiUrl;
   private carritoSub!: Subscription;
 
-  // Lista completa de adicionales (para mostrar nombres y precios)
-  adicionalesDisponibles: Adicional[] = [];
-private apiUrl = environment.apiUrl;
   constructor(
     private carritoService: CarritoService,
     private garantiaService: GarantiaService,
@@ -93,7 +92,6 @@ private apiUrl = environment.apiUrl;
     this.subtotal = this.itemsDelCarrito.reduce((acc, item) =>
       acc + (item.precioUnitario * item.cantidad), 0);
     this.subtotal = Math.round(this.subtotal * 100) / 100;
-
     this.garantia = Math.round(this.subtotal * this.porcentajeGarantia / 100 * 100) / 100;
     this.resto = Math.round((this.subtotal - this.garantia) * 100) / 100;
   }
@@ -125,75 +123,78 @@ private apiUrl = environment.apiUrl;
       acc + (item.precioBase * item.cantidad), 0);
   }
 
- confirmarPedido() {
-  const token = localStorage.getItem('jwt_token');
+  confirmarPedido() {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+      localStorage.setItem('redirect_after_login', '/cliente/mi-pedido');
+      alert('¡Debes iniciar sesión para confirmar tu pedido!');
+      this.router.navigate(['/iniciar-sesion']);
+      return;
+    }
 
-  if (!token) {
-    localStorage.setItem('redirect_after_login', '/cliente/mi-pedido');
-    alert('¡Debes iniciar sesión para confirmar tu pedido!');
-    this.router.navigate(['/iniciar-sesion']);
-    return;
-  }
+    const usuarioActual = this.autenticacionService.obtenerUsuarioActual();
+    if (!usuarioActual?.usuarioId) {
+      localStorage.setItem('redirect_after_login', '/cliente/mi-pedido');
+      this.router.navigate(['/iniciar-sesion']);
+      return;
+    }
 
-  const usuarioActual = this.autenticacionService.obtenerUsuarioActual();
-  if (!usuarioActual?.usuarioId) {
-    localStorage.setItem('redirect_after_login', '/cliente/mi-pedido');
-    this.router.navigate(['/iniciar-sesion']);
-    return;
-  }
-
-  const detalles = this.itemsDelCarrito.map((item: any) => {
-    const adicionalesCompletos = (item.personalizacion?.adicionalesSeleccionados || []).map((id: number) => {
-      const adicional = this.adicionalesDisponibles.find(a => a.adicionalId === id);
+    const detalles = this.itemsDelCarrito.map((item: any) => {
+      const adicionalesCompletos = (item.personalizacion?.adicionalesSeleccionados || []).map((id: number) => {
+        const adicional = this.adicionalesDisponibles.find(a => a.adicionalId === id);
+        return {
+          adicionalId: id,
+          nombre: adicional?.nombre || 'Adicional',
+          categoria: adicional?.categoria || '',
+          costoAdicional: adicional?.costoAdicional || 0
+        };
+      });
       return {
-        adicionalId: id,
-        nombre: adicional?.nombre || 'Adicional',
-        categoria: adicional?.categoria || '',
-        costoAdicional: adicional?.costoAdicional || 0
+        productoId: Number(item.productoId),
+        cantidad: Number(item.cantidad),
+        precioUnitario: Number(item.precioUnitario),
+        subtotal: Number((item.precioUnitario * item.cantidad).toFixed(2)),
+        promocionId: item.promocionId ? Number(item.promocionId) : null,
+        personalizacion: item.personalizacion ? {
+          descripcionExtra: item.personalizacion.descripcionExtra || null,
+          costoAdicional: Number(item.personalizacion.costoAdicional || 0),
+          adicionalesSeleccionados: adicionalesCompletos
+        } : null
       };
     });
 
-    return {
-      productoId: Number(item.productoId),
-      cantidad: Number(item.cantidad),
-      precioUnitario: Number(item.precioUnitario),
-      subtotal: Number((item.precioUnitario * item.cantidad).toFixed(2)),
-      promocionId: item.promocionId ? Number(item.promocionId) : null,
-      personalizacion: item.personalizacion ? {
-        descripcionExtra: item.personalizacion.descripcionExtra || null,
-        costoAdicional: Number(item.personalizacion.costoAdicional || 0),
-        adicionalesSeleccionados: adicionalesCompletos  // OBJETOS COMPLETOS, NO IDs
-      } : null
+    const request = {
+      usuarioId: Number(usuarioActual.usuarioId),
+      detalles: detalles,
+      subtotal: this.subtotal.toFixed(2),
+      garantiaPagada: this.garantia.toFixed(2),
+      resto: this.resto.toFixed(2),
+      total: this.subtotal.toFixed(2)
     };
-  });
 
-  const request = {
-    usuarioId: Number(usuarioActual.usuarioId),
-    detalles: detalles,
-    subtotal: this.subtotal.toFixed(2),
-    garantiaPagada: this.garantia.toFixed(2),
-    resto: this.resto.toFixed(2),
-    total: this.subtotal.toFixed(2)
-  };
+    console.log('ENVIANDO PEDIDO:', JSON.stringify(request, null, 2));
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
 
-  console.log('ENVIANDO PEDIDO:', JSON.stringify(request, null, 2));
-
-  const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  });
-
-  this.http.post<any>(`${this.apiUrl}/pedidos`, request, { headers }).subscribe({
+    this.http.post<any>(`${this.apiUrl}/pedidos`, request, { headers }).subscribe({
       next: (res) => {
         console.log('PEDIDO CREADO CON ÉXITO:', res);
-        localStorage.setItem('pedido_confirmado_id', res.pedidoId.toString());
+
+        // Guardar datos para el pago
         localStorage.setItem('pago_garantia', JSON.stringify({
+          pedidoId: res.pedidoId,
           garantia: this.garantia,
           resto: this.resto,
-          subtotal: this.subtotal
+          subtotal: this.subtotal,
+          total: this.subtotal
         }));
 
+        // Vaciar carrito
         this.carritoService.vaciar();
+
+        // Ir directo al pago
         this.router.navigate(['/cliente/pago-garantia']);
       },
       error: (err) => {
@@ -201,4 +202,5 @@ private apiUrl = environment.apiUrl;
         alert('Error: ' + (err.error?.message || 'No se pudo crear el pedido'));
       }
     });
-}}
+  }
+}
