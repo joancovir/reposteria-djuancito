@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PagoService } from '../../../servicios/pago';
-import { Pago, EstadoPago, MetodoPago } from '../../../modelos/pago'; // UN SOLO IMPORT
+import { Pago, EstadoPago, MetodoPago } from '../../../modelos/pago';
 
 @Component({
   selector: 'app-gestion-pagos',
@@ -72,6 +72,8 @@ export class GestionPagos implements OnInit {
     return Math.ceil(this.pagosFiltrados.length / this.itemsPorPagina);
   }
 
+ 8}
+
   cambiarEstado(pago: Pago, nuevoEstado: 'validado' | 'rechazado') {
     const accion = nuevoEstado === 'validado' ? 'VALIDAR' : 'RECHAZAR';
     if (!confirm(`¿Estás seguro de ${accion} este pago de S/ ${pago.montoAbonado}?`)) return;
@@ -80,6 +82,7 @@ export class GestionPagos implements OnInit {
       next: (res) => {
         pago.estado = res.estado;
 
+        // AHORA SÍ funciona perfecto
         if (nuevoEstado === 'validado' && pago.metodo === MetodoPago.PENDIENTE) {
           pago.metodo = pago.codigoOperacion?.toUpperCase().includes('YAPE')
             ? MetodoPago.yape
