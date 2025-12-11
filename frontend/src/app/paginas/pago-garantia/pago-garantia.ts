@@ -15,7 +15,7 @@ interface QrPago {
 @Component({
   selector: 'app-pago-garantia',
   standalone: true,
-  imports: [CommonModule,RouterLink],
+  imports: [CommonModule, RouterLink],
   templateUrl: './pago-garantia.html',
   styleUrls: ['./pago-garantia.css']
 })
@@ -23,10 +23,12 @@ export class PagoGarantia implements OnInit {
   garantia = 0;
   resto = 0;
   subtotal = 0;
+  pedidoId: number | null = null;   // ← AÑADIDO
   qrList: QrPago[] = [];
   qrAmpliado = '';
   codigoOperacion = '';
-private apiUrl = environment.apiUrl;
+  private apiUrl = environment.apiUrl;
+
   constructor(
     private http: HttpClient,
     private router: Router
@@ -36,72 +38,73 @@ private apiUrl = environment.apiUrl;
     this.cargarDatosPedido();
     this.cargarQrDesdeBackend();
   }
-  
-confirmarPagoGarantia() {
-  if (!this.codigoOperacion || this.codigoOperacion.trim() === '') {
-    alert('Por favor ingresa el código de operación');
-    return;
-  }
 
-  const pedidoId = JSON.parse(localStorage.getItem('pago_garantia')!).pedidoId;
-
-  this.http.post(`${this.apiUrl}/api/pedidos/${pedidoId}/pago-garantia`, {
-    codigoOperacion: this.codigoOperacion.trim()
-  }).subscribe({
-    next: () => {
-      this.mostrarExito();
-    },
-    error: () => {
-      alert('Error al registrar el pago. Inténtalo de nuevo.');
-    }
-  });
-}
   cargarDatosPedido() {
     const pagoStr = localStorage.getItem('pago_garantia');
     if (!pagoStr) {
+      alert('No hay pedido pendiente');
       this.router.navigate(['/cliente/mi-pedido']);
       return;
     }
 
-    const pago = JSON.parse(pagoStr);
-    this.garantia = Number(pago.garantia) || 0;
-    this.resto = Number(pago.resto) || 0;
-    this.subtotal = Number(pago.subtotal) || 0;
+    try {
+      const pago = JSON.parse(pagoStr);
+      this.pedidoId = pago.pedidoId || null;
+      this.garantia = Number(pago.garantia) || 0;
+      this.resto = Number(pago.resto) || 0;
+      this.subtotal = Number(pago.subtotal) || 0;
+
+      if (!this.pedidoId) {
+        alert('Error: no se encontró el ID del pedido');
+        this.router.navigate(['/cliente/mi-pedido']);
+      }
+    } catch (e) {
+      alert('Datos corruptos, vuelve a intentar');
+      this.router.navigate(['/cliente/mi-pedido']);
+    }
   }
 
-  cargarQrDesdeBackend() {
-   this.http.get<QrPago[]>(`${this.apiUrl}/config/qr/activos`).subscribe({
-      next: (data) => {
-        this.qrList = data;
+  confirmarPagoGarantia() {
+    if (!this.codigoOperacion || this.codigoOperacion.trim() === '') {
+      alert('Por favor ingresa el código de operación');
+      return;
+    }
+
+    if (!this.pedidoId) {
+      alert('Error: ID de pedido no válido');
+      return;
+    }
+
+    this.http.post(`${this.apiUrl}/api/pedidos/${this.pedidoId}/pago-garantia`, {
+      codigoOperacion: this.codigoOperacion.trim()
+    }).subscribe({
+      next: () => {
+        this.mostrarExito();
       },
-      error: () => {
-        alert('No se pudieron cargar los métodos de pago');
+      error: (err) => {
+        console.error(err);
+        alert('Error al registrar el pago: ' + (err.error?.message || 'Inténtalo de nuevo'));
       }
+    });
+  }
+
+  // ... el resto (cargarQrDesdeBackend, abrirQr, mostrarExito) queda IGUAL
+  cargarQrDesdeBackend() {
+    this.http.get<QrPago[]>(`${this.apiUrl}/config/qr/activos`).subscribe({
+      next: (data) => this.qrList = data,
+      error: () => alert('No se pudieron cargar los métodos de pago')
     });
   }
 
   abrirQr(url: string) {
     this.qrAmpliado = url;
-    const modalElement = document.getElementById('qrModal');
-    if (modalElement) {
-      const bootstrap = (window as any).bootstrap;
-      if (bootstrap) {
-        new bootstrap.Modal(modalElement).show();
-      }
-    }
+    const modal = document.getElementById('qrModal');
+    if (window as any).bootstrap?.Modal.getOrCreateInstance(modal)?.show();
   }
 
   mostrarExito() {
-    const modalElement = document.getElementById('modalPagoExitoso');
-    if (modalElement) {
-      const bootstrap = (window as any).bootstrap;
-      if (bootstrap) {
-        new bootstrap.Modal(modalElement).show();
-      }
-    }
-
-    setTimeout(() => {
-      localStorage.removeItem('pago_garantia');
-    }, 5000);
+    const modal = document.getElementById('modalPagoExitoso');
+    (window as any).bootstrap?.Modal.getOrCreateInstance(modal)?.show();
+    setTimeout(() => localStorage.removeItem('pago_garantia'), 5000);
   }
 }
