@@ -70,25 +70,19 @@ export class GestionPagos implements OnInit {
     return Math.ceil(this.pagosFiltrados.length / this.itemsPorPagina);
   }
 
-  cambiarEstado(pago: Pago, nuevoEstado: 'validado' | 'rechazado') {
-    const accion = nuevoEstado === 'validado' ? 'VALIDAR' : 'RECHAZAR';
-    if (!confirm(`¿Estás seguro de ${accion} este pago de S/ ${pago.montoAbonado}?`)) return;
-
-    this.pagoService.actualizarEstadoPago(pago.pagoId, nuevoEstado).subscribe({
-      next: (res) => {
-        pago.estado = res.estado;
-        alert(`Pago ${accion.toLowerCase()} exitosamente`);
-
-        // Si se valida y aún está en PENDIENTE, intenta detectar YAPE/PLIN
-        if (nuevoEstado === 'validado' && pago.metodo === 'PENDIENTE' && pago.codigoOperacion) {
-          const nuevoMetodo = pago.codigoOperacion.toUpperCase().includes('YAPE') ? 'yape' : 'plin';
-          pago.metodo = nuevoMetodo;
-          this.actualizarMetodo(pago);
-        }
-      },
-      error: () => alert('Error al actualizar estado')
-    });
-  }
+  cambiarEstado(p: Pago, nuevoEstado: 'validado' | 'rechazado') {
+  this.pagoService.actualizarEstadoPago(p.pagoId, nuevoEstado).subscribe({
+    next: (pagoActualizado) => {
+      p.estado = pagoActualizado.estado;
+      p.metodo = pagoActualizado.metodo; // si cambió automáticamente
+      alert('¡Pago ' + (nuevoEstado === 'validado' ? 'VALIDADO' : 'RECHAZADO') + ' con éxito!');
+    },
+    error: (err) => {
+      console.error(err);
+      alert('Error: ' + (err.error?.message || 'No se pudo actualizar'));
+    }
+  });
+}
 
   // NUEVO: Permite cambiar manualmente el método
   actualizarMetodo(pago: Pago) {
