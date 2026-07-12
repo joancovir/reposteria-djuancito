@@ -1,6 +1,6 @@
 /* ===================== CATÁLOGO COMPLETO ===================== */
 .catalogo-wrapper {
-  padding: 30px 15px;
+  padding: 36px 18px 48px;
   max-width: 1400px;
   margin: 0 auto;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,11 +13,12 @@
   gap: 15px;
   align-items: center;
   justify-content: center;
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 16px;
+  background: linear-gradient(135deg, #fff7ef 0%, #ffffff 100%);
+  padding: 22px;
+  border-radius: 20px;
   margin-bottom: 30px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  border: 1px solid rgba(253, 126, 20, 0.12);
 }
 
 .search-group {
@@ -100,25 +101,27 @@
 
 /* TARJETA DE PRODUCTO */
 .product-card {
-  background: white;
-  border-radius: 18px;
+  background: #ffffff;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-  transition: all 0.4s ease;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+  transition: all 0.35s ease;
   height: 100%;
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(0,0,0,0.04);
 }
 
 .product-card:hover {
-  transform: translateY(-12px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+  transform: translateY(-10px);
+  box-shadow: 0 20px 38px rgba(0,0,0,0.14);
 }
 
 .image-container {
   height: 220px;
   overflow: hidden;
-  background: #f5f5f5;
+  background: linear-gradient(135deg, #fff3e6 0%, #f7f7f7 100%);
+  position: relative;
 }
 
 .image-container img {
@@ -155,8 +158,8 @@
 }
 
 .h5 {
-  font-size: 1.25rem;
-  margin-bottom: 8px;
+  font-size: 1.18rem;
+  margin-bottom: 6px;
   color: #222;
 }
 
@@ -168,7 +171,7 @@
 .descripcion {
   flex-grow: 1;
   margin-bottom: 16px;
-  color: #555;
+  color: #5e5e5e;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -176,9 +179,9 @@
 }
 
 .price {
-  font-size: 1.6rem !important;
+  font-size: 1.45rem !important;
   font-weight: 800;
-  color: #28a745 !important;
+  color: #1f8f43 !important;
 }
 
 /* BOTONES */
@@ -187,20 +190,22 @@
 }
 
 .btn-sm {
-  padding: 8px 16px;
+  padding: 8px 14px;
   font-size: 0.9rem;
-  border-radius: 10px;
+  border-radius: 999px;
   font-weight: 600;
 }
 
 .btn-success {
-  background: #28a745;
+  background: linear-gradient(135deg, #2e8b57 0%, #28a745 100%);
   border: none;
+  box-shadow: 0 8px 16px rgba(40, 167, 69, 0.18);
 }
 
 .btn-outline-warning {
   border-color: #fd7e14;
   color: #fd7e14;
+  background: #fffaf5;
 }
 
 .btn-outline-warning:hover {

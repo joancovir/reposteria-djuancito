@@ -1,23 +1,27 @@
 <section class="reviews-section" id="resenas">
-  <h2>Reseñas de Nuestros Clientes</h2>
+  <div class="section-heading">
+    <span class="eyebrow">Experiencias dulces</span>
+    <h2>Reseñas de Nuestros Clientes</h2>
+    <p>Lo que dicen quienes han compartido momentos especiales con nosotros.</p>
+  </div>
 
   <div class="review-wrapper" *ngIf="resenaActual">
-    <!-- Flecha Izquierda -->
     <button class="nav-arrow left" (click)="anterior()" aria-label="Anterior">
-      &#10094; <!-- Código de flecha izquierda -->
+      &#10094;
     </button>
 
     <div class="review-card fade">
       <div class="review-image">
         <img [src]="resenaActual.fotoUrl" alt="Foto del producto reseñado">
+        <div class="review-badge">Cliente feliz</div>
       </div>
       <div class="review-content">
-        <blockquote>
-          “{{ resenaActual.comentario }}”
-        </blockquote>
         <div class="review-rating">
           <span>{{ '★'.repeat(resenaActual.valoracion) }}</span>
         </div>
+        <blockquote>
+          “{{ resenaActual.comentario }}”
+        </blockquote>
         <cite>
           <span class="author">{{ resenaActual.usuario }}</span>
           <span class="product">Pedido realizado el {{ resenaActual.fecha | date:'mediumDate' }}</span>
@@ -25,9 +29,8 @@
       </div>
     </div>
 
-    <!-- Flecha Derecha -->
     <button class="nav-arrow right" (click)="siguiente()" aria-label="Siguiente">
-      &#10095; <!-- Código de flecha derecha -->
+      &#10095;
     </button>
   </div>
 </section>

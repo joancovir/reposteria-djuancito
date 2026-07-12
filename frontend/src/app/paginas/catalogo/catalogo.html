@@ -3,8 +3,8 @@
   <!-- BARRA DE FILTROS -->
   <div class="filter-bar mb-4">
     <div class="search-group">
-      <input type="text" placeholder="BUSCAR PRODUCTO" [(ngModel)]="searchTerm" class="form-control">
-      <button (click)="buscarProductos()" class="btn-search">BUSCAR</button>
+      <input type="text" placeholder="BUSCAR PRODUCTO" [(ngModel)]="searchTerm" class="form-control" (keyup.enter)="buscarProductos()">
+      <button type="button" (click)="buscarProductos()" class="btn-search">BUSCAR</button>
     </div>
 
     <select class="form-select filter-select" (change)="filtrarProductos($event)" [value]="filtroActivo">

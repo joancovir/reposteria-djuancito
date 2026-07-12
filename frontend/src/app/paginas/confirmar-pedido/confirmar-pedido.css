@@ -1,0 +1,52 @@
+.confirmar-pedido-page {
+  padding: 36px 16px 56px;
+  background: linear-gradient(180deg, #fffaf4 0%, #fafafa 100%);
+}
+
+.confirmar-pedido-page .card {
+  border: 1px solid rgba(253, 126, 20, 0.12);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.08);
+}
+
+.confirmar-pedido-page .card-header {
+  background: linear-gradient(135deg, #fd7e14 0%, #eb7221 100%);
+  border: none;
+  padding: 20px 24px;
+}
+
+.confirmar-pedido-page .card-body {
+  padding: 24px;
+}
+
+.confirmar-pedido-page .list-group-item {
+  border: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.confirmar-pedido-page .alert-warning {
+  border-radius: 16px;
+  border: 1px solid rgba(253, 126, 20, 0.16);
+  background: #fff7ef;
+  color: #7a4518;
+}
+
+.confirmar-pedido-page .btn-success {
+  background: linear-gradient(135deg, #fd7e14 0%, #eb7221 100%);
+  border: none;
+  border-radius: 999px;
+  padding: 12px 16px;
+  box-shadow: 0 10px 20px rgba(253, 126, 20, 0.2);
+}
+
+.confirmar-pedido-page .btn-outline-secondary {
+  border-radius: 999px;
+}
+
+@media (max-width: 576px) {
+  .confirmar-pedido-page .card-body {
+    padding: 18px;
+  }
+}

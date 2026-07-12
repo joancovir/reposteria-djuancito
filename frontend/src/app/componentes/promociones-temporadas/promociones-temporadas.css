@@ -1,0 +1,50 @@
+.promociones-page {
+  padding: 42px 16px 60px;
+  background: linear-gradient(180deg, #fffaf4 0%, #ffffff 100%);
+}
+
+.promociones-page .card {
+  border: 1px solid rgba(253, 126, 20, 0.12);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+}
+
+.promociones-page .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.1);
+}
+
+.promociones-page .promo-image {
+  height: 220px;
+  object-fit: cover;
+}
+
+.promociones-page .btn-warning {
+  background: linear-gradient(135deg, #fd7e14 0%, #eb7221 100%);
+  border: none;
+  color: white;
+  border-radius: 999px;
+}
+
+.promociones-page .form-select,
+.promociones-page .form-check-input {
+  border-color: #f2c29b;
+}
+
+.promociones-page .form-check-input:checked {
+  background-color: #eb7221;
+  border-color: #eb7221;
+}
+
+.promociones-page h1,
+.promociones-page h3,
+.promociones-page h5 {
+  color: #2f2f2f;
+}
+
+@media (max-width: 768px) {
+  .promociones-page {
+    padding: 28px 12px 48px;
+  }
+}

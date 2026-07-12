@@ -32,6 +32,8 @@ export class App {
       this.usaLayoutPrincipal = 
         !event.urlAfterRedirects.startsWith('/admin') && 
         !event.urlAfterRedirects.startsWith('/cliente');
+
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     });
 
     window.addEventListener('agregar-al-carrito', (e: any) => {

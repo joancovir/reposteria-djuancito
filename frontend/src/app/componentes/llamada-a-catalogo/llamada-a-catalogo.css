@@ -1,92 +1,100 @@
 .call-to-action-section {
-  background-color: #f7e0d8; /* Rosa/Salmón claro con más cuerpo */
-  padding: 80px 40px; 
+  background: linear-gradient(135deg, #fbe9dd 0%, #fff7ef 100%);
+  padding: 72px 24px;
   text-align: center;
   font-family: 'Arial', sans-serif;
-  border-top: 1px solid #eb7221; 
-  /* Añadimos un sutil degradado o sombra si tu diseño lo permite */
+  border-top: 1px solid rgba(235, 114, 33, 0.18);
 }
 
 .cta-content {
-  max-width: 850px; 
+  max-width: 860px;
   margin: 0 auto;
 }
 
 .cta-content h2 {
-  font-size: 40px; 
-  color: #555; /* Color más neutral para el título */
-  margin-bottom: 10px;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  color: #3b3b3b;
+  margin-bottom: 12px;
   font-weight: 700;
-  letter-spacing: 1px; /* Añade un poco de separación a las letras */
 }
 
 .cta-content p {
-  font-size: 17px;
-  color: #777; 
-  line-height: 1.6;
-  margin-bottom: 35px;
+  font-size: 1rem;
+  color: #6f6f6f;
+  line-height: 1.7;
+  margin-bottom: 28px;
 }
 
-/* --- Estilo de Botones --- */
 .cta-buttons {
   display: flex;
   justify-content: center;
-  gap: 30px; 
+  gap: 18px;
+  flex-wrap: wrap;
 }
 
 .btn {
-  padding: 16px 35px; 
-  border-radius: 4px; /* Bordes un poco más rectos */
+  padding: 14px 24px;
+  border-radius: 999px;
   text-decoration: none;
-  font-weight: bold;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 0.95rem;
   transition: all 0.3s ease;
   border: 2px solid transparent;
-  text-transform: uppercase;
 }
 
-/* Botón Primario: Resaltamos el color principal */
 .btn-primary {
-  background-color: #eb7221; /* El color clave */
+  background: linear-gradient(135deg, #eb7221 0%, #fd7e14 100%);
   color: white;
   border-color: #eb7221;
+  box-shadow: 0 8px 18px rgba(235, 114, 33, 0.2);
 }
 
 .btn-primary:hover {
-  background-color: #eb7221;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .cta-icon {
-  font-size: 60px; /* Tamaño grande para el ícono/emoji */
+  font-size: 3rem;
   display: block;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .features-block {
   display: flex;
   justify-content: center;
-  gap: 30px;
-  margin-bottom: 50px;
-  margin-top: 40px;
+  gap: 20px;
+  margin: 36px 0 0;
+  flex-wrap: wrap;
 }
 
 .feature-item {
   flex: 1;
+  min-width: 180px;
   text-align: center;
-  padding: 15px;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.7); /* Fondo semi-transparente */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04);
 }
 
 .feature-item h3 {
-  font-size: 18px;
-  color: #eb7221; /* Título de la característica con color de marca */
-  margin-bottom: 5px;
+  font-size: 1rem;
+  color: #eb7221;
+  margin-bottom: 6px;
 }
 
 .feature-item p {
-  font-size: 14px;
-  color: #777;
+  font-size: 0.92rem;
+  color: #6e6e6e;
+  margin: 0;
+}
+
+@media (max-width: 576px) {
+  .call-to-action-section {
+    padding: 56px 16px;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+  }
 }

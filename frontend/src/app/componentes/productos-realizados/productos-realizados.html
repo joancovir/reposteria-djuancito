@@ -1,6 +1,6 @@
 <section class="galeria-productos">
   <div class="header-container">
-    <button (click)="volver()" class="btn-volver">
+    <button type="button" (click)="volver()" class="btn-volver">
       <span class="arrow">←</span> Volver a la página anterior
     </button>
     
@@ -27,9 +27,16 @@
          data-bs-target="#zoomModal"
          (click)="mostrarZoom(producto)">
       
-      <img [src]="producto.imagenUrl" [alt]="producto.nombre">
+      <div class="producto-media">
+        <img [src]="producto.imagenUrl" [alt]="producto.nombre">
+        <div class="card-overlay">
+          <span class="overlay-badge">Ampliar</span>
+          <p>Explora textura, colores y detalles</p>
+        </div>
+      </div>
       <div class="card-info">
         <h3>{{ producto.nombre }}</h3>
+        <p class="card-caption">Haz clic para ver la pieza con más detalle</p>
       </div>
     </div>
   </div>
@@ -56,15 +63,20 @@
 
 </section>
 
-<div class="modal fade" id="zoomModal" tabindex="-1" aria-labelledby="zoomModalLabel" aria-hidden="true">
+<div class="modal fade premium-zoom-modal" id="zoomModal" tabindex="-1" aria-labelledby="zoomModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="zoomModalLabel">{{ nombreZoom }}</h5>
+        <div>
+          <h5 class="modal-title" id="zoomModalLabel">{{ nombreZoom }}</h5>
+          <p class="modal-subtitle">Vista ampliada de la creación</p>
+        </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body text-center">
-        <img [src]="imagenZoom" [alt]="nombreZoom" class="img-fluid">
+        <div class="zoom-image-shell">
+          <img [src]="imagenZoom" [alt]="nombreZoom" class="img-fluid">
+        </div>
       </div>
     </div>
   </div>

@@ -1,17 +1,83 @@
+:root {
+  --color-primario: #fd7e14;
+  --color-primario-oscuro: #eb7221;
+  --color-fondo: #fffaf5;
+  --color-fondo-suave: #fff6ee;
+  --color-texto: #2f2f2f;
+  --color-texto-suave: #5e5e5e;
+  --color-borde: rgba(235, 114, 33, 0.16);
+  --color-sombra: rgba(0, 0, 0, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  background:
+    linear-gradient(135deg, rgba(255, 247, 239, 0.86) 0%, rgba(255, 255, 255, 0.9) 45%, rgba(255, 244, 231, 0.82) 100%),
+    radial-gradient(circle at top right, rgba(253, 126, 20, 0.12), transparent 30%),
+    radial-gradient(circle at bottom left, rgba(255, 192, 138, 0.16), transparent 28%);
+  background-attachment: fixed;
+  color: var(--color-texto);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.55) 0 2px, transparent 3px),
+    radial-gradient(circle at 80% 30%, rgba(253,126,20,0.08) 0 2px, transparent 3px),
+    radial-gradient(circle at 40% 80%, rgba(255,255,255,0.45) 0 2px, transparent 3px);
+  background-size: 220px 220px, 260px 260px, 240px 240px;
+  opacity: 0.7;
+}
+
+main {
+  min-height: 100vh;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(253, 126, 20, 0.2);
+  color: var(--color-texto);
+}
+
 /* Estilos personalizados para los controles del carrusel principal */
 app-carrusel-principal .carousel-control-prev,
 app-carrusel-principal .carousel-control-next {
-    background-color: rgba(0, 0, 0, 0.3); /* Fondo semitransparente */
-    width: 45px;
-    height: 45px;
-    border-radius: 50%; /* Lo hace circular */
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
+  background-color: rgba(0, 0, 0, 0.3);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
 }
 
 app-carrusel-principal .carousel-control-prev:hover,
 app-carrusel-principal .carousel-control-next:hover {
-    opacity: 1;
+  opacity: 1;
 }

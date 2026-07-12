@@ -1,11 +1,24 @@
-/* Fija el contenedor del encabezado en la parte superior */
+:host {
+  display: block;
+}
+
 .header-fijo-contenedor {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000; 
+  z-index: 1000;
 }
+
 .contenido-principal {
-  padding-top: 10px; 
+  padding-top: 10px;
+}
+
+main {
+  min-height: calc(100vh - 220px);
+  background: transparent;
+}
+
+router-outlet + * {
+  display: block;
 }
