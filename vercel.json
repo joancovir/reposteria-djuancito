@@ -1,0 +1,18 @@
+{
+  "version": 3,
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "frontend/dist/angular-temp/browser"
+      }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
