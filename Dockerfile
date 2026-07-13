@@ -11,7 +11,8 @@ WORKDIR /app/backend
 COPY backend/pom.xml .
 RUN mvn dependency:go-offline -B
 COPY backend/src ./src
-COPY --from=frontend /app/frontend/dist/angular-temp/browser ./src/main/resources/static
+# Angular builds to dist/angular-temp/browser/browser, así que copiamos esa carpeta dentro de static
+COPY --from=frontend /app/frontend/dist/angular-temp/browser/browser ./src/main/resources/static
 RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine
