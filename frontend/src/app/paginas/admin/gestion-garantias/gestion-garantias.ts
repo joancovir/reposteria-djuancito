@@ -3,12 +3,11 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GarantiaService, OpcionGarantia } from '../../../servicios/garantia';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-gestion-garantias',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './gestion-garantias.html',
   styleUrls: ['./gestion-garantias.css']
 })

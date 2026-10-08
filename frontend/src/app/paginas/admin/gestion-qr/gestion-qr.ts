@@ -3,7 +3,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
 import { environment } from '../../../../../src/environments/environment';
 
 interface QrPago {
@@ -18,7 +17,7 @@ interface QrPago {
 @Component({
   selector: 'app-gestion-qr',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './gestion-qr.html',
   styleUrls: ['./gestion-qr.css']
 })

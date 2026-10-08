@@ -21,13 +21,9 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // CORRECCIÓN APLICADA:
-  // 1. Mapeamos el array de objetos Rol[] a un array de strings (ej: ['ROLE_Administrador', 'ROLE_Cliente'])
-  const rolesUsuarioString = usuario.roles?.map((rol: any) => rol.nombre);
-
-  // 2. Verifica si el usuario tiene AL MENOS UNO de los roles requeridos, comparando los strings.
-  const tieneRolRequerido = rolesUsuarioString?.some((userRole: string) =>
-    rolesRequeridos.includes(userRole)
+  // Verifica si el usuario tiene AL MENOS UNO de los roles requeridos
+  const tieneRolRequerido = rolesRequeridos.some((reqRole: string) =>
+    authService.userHasRole(reqRole)
   );
 
   if (tieneRolRequerido) {

@@ -46,7 +46,7 @@
       </ng-container>
 
       <ng-container *ngIf="authService.estaLogueado()">
-        <span class="welcome-message">Hola, {{ authService.obtenerUsuarioActual }}</span>
+        <span class="welcome-message">Hola, {{ authService.obtenerUsuarioActual()?.nombre }}</span>
         <a routerLink="/cliente/pedidos" class="btn btn-secondary" (click)="closeMenu()">Mis Pedidos</a>
         <button (click)="cerrarSesion()" class="btn btn-light">Cerrar Sesión</button>
       </ng-container>

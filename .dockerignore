@@ -1,0 +1,21 @@
+# Control de versiones y CI
+.git
+.gitignore
+.github
+
+# Node y Angular
+node_modules
+**/node_modules
+frontend/dist
+frontend/.angular
+.npmrc
+
+# Java y Maven
+backend/target
+backend/.mvn
+
+# Editores y logs
+.vscode
+.idea
+*.iml
+*.log

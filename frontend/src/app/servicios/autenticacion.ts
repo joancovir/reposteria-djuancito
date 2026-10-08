@@ -84,21 +84,17 @@ export class AutenticacionService {
    */
   userHasRole(roleName: string): boolean {
     const user = this.obtenerUsuarioActual();
-    if (!user || !Array.isArray(user.roles)) {
-        return false;
+    if (!user || !user.roles || !Array.isArray(user.roles)) {
+      return false;
     }
-    
-    // Convertir el rol requerido a la autoridad completa en mayúsculas (ej: 'ROLE_ADMINISTRADOR')
-    const requiredAuthority = ('ROLE_' + roleName).toUpperCase();
 
-    // 1. Mapear el array de objetos a un array de strings (solo con el valor del 'nombre')
-    // 2. Convertir el nombre del rol a mayúsculas para la comparación
-    const userRoleNames = user.roles
-        .map((r: any) => r.nombre ? r.nombre.toUpperCase() : '') // Extrae 'nombre' y convierte a mayúsculas
-        .filter(Boolean); // Filtra cualquier rol vacío
+    const cleanTarget = roleName.toUpperCase().replace(/^ROLE_/, '');
 
-    // 3. Verificar si el rol requerido existe en los roles del usuario.
-    return userRoleNames.includes(requiredAuthority);
+    return user.roles.some((r: any) => {
+      const rawName = typeof r === 'string' ? r : (r?.nombre || '');
+      const cleanName = String(rawName).toUpperCase().replace(/^ROLE_/, '');
+      return cleanName === cleanTarget;
+    });
   }
 
   cerrarSesion(): void {

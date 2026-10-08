@@ -17,7 +17,7 @@ public class ConfigTiendaControlador {
     @Autowired
     private ConfiguracionTiendaRepositorio repo;
 
-    @GetMapping("/api/config-tienda")
+    @GetMapping("/config-tienda")
     public ResponseEntity<Map<String, Object>> obtenerConfig() {
         ConfiguracionTienda config = repo.findById(1L)
                 .orElseThrow(() -> new RuntimeException("Configuración no encontrada"));

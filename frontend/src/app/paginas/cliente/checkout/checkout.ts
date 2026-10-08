@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink,Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { CarritoService } from '../../../servicios/carrito';
 import { PedidoService } from '../../../servicios/pedido';
 import { GarantiaService } from '../../../servicios/garantia';
@@ -11,7 +11,7 @@ import { ItemCarrito } from '../../../modelos/item-carrito';
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './checkout.html',
   styleUrls: ['./checkout.css']
 })

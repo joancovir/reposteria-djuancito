@@ -37,7 +37,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + username));
 
         Set<GrantedAuthority> authorities = usuario.getRoles().stream()
-            .map(rol -> new SimpleGrantedAuthority(rol.getNombre())) // ¡SIN AGREGAR ROLE_!
+            .flatMap(rol -> {
+                String nombre = rol.getNombre();
+                String conPrefijo = nombre.startsWith("ROLE_") ? nombre : "ROLE_" + nombre;
+                String sinPrefijo = nombre.startsWith("ROLE_") ? nombre.substring(5) : nombre;
+                return java.util.stream.Stream.of(
+                    new SimpleGrantedAuthority(conPrefijo),
+                    new SimpleGrantedAuthority(sinPrefijo)
+                );
+            })
             .collect(Collectors.toSet());
 
         return new User(usuario.getEmail(), usuario.getPassword(), authorities);

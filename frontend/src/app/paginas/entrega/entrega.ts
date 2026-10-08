@@ -6,7 +6,7 @@ import { AutenticacionService } from '../../servicios/autenticacion';
 import { PedidoService } from '../../servicios/pedido';
 import { Router } from '@angular/router';
 import { ConfigTienda, TiendaService } from '../../servicios/tienda';
-import { UrlSeguraPipe } from '../../tuberías/url-segura.pipe';
+import { UrlSeguraPipe } from '../../tuberias/url-segura.pipe';
 
 @Component({
   selector: 'app-entrega',

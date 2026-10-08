@@ -53,7 +53,7 @@ export class IniciarSesion implements OnInit {
               // REDIRECCIÓN CUANDO CIERRE EL MODAL
               const modalElement = this.document.getElementById('modalExito');
               modalElement?.addEventListener('hidden.bs.modal', () => {
-                const esAdmin = usuarioCompleto.roles?.some((rol: any) => rol.nombre === 'ROLE_Administrador');
+                const esAdmin = this.authService.userHasRole('Administrador');
                 let ruta: string;
 
                 if (esAdmin) {

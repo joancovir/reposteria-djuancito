@@ -20,6 +20,6 @@ WORKDIR /app
 COPY --from=backend /app/backend/target/*.jar app.jar
 COPY --from=frontend /app/frontend/dist/angular-temp/browser ./static
 
-# ESTAS 2 LÍNEAS SON LAS QUE HACEN QUE RAILWAY FUNCIONE
+# Puerto dinámico asignado por Render (o 8080 por defecto)
 EXPOSE 8080
-CMD ["java", "-jar", "app.jar", "--server.port=${PORT:-8080}"]
+CMD ["sh", "-c", "java -jar app.jar --server.port=${PORT:-8080}"]

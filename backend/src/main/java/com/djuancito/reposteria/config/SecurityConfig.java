@@ -19,9 +19,12 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+
 import java.util.List; 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -63,11 +66,12 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             .requestMatchers(HttpMethod.GET,
                 "/api/productos/**",
                 "/api/categorias/**",
-                "/api/resenas", "/api/resenas/**",
+                "/api/resenas",
                 "/api/promociones/**", "/api/promociones/activas",
                 "/api/adicionales", "/api/adicionales/**",
-                "/api/temporada/activas", "/api/temporada/**",
-                "/api/config/**", "/api/config/garantia/**",
+                "/api/temporada/**",
+                "/api/config-tienda",
+                "/api/config/garantias", "/api/config/garantia/**",
                 "/api/config/qr/activos", "/api/qr/activos",
                 "/api/productos-realizados"
             ).permitAll()
@@ -75,25 +79,40 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             // === CONTACTO PÚBLICO ===
             .requestMatchers(HttpMethod.POST, "/api/contacto").permitAll()
 
-            // === CLIENTE AUTENTICADO (solo necesita estar logueado) ===
+            // === CLIENTE AUTENTICADO ===
             .requestMatchers(
-                "/api/pedidos", "/api/pedidos/**",
                 "/api/usuarios/mi-perfil",
-                "/api/pedidos/**/pago-garantia",
+                "/api/usuarios/cambiar-password",
+                "/api/pedidos", "/api/pedidos/**",
                 "/api/contacto/mi-historial"
             ).authenticated()
 
-            // === SOLO ADMINISTRADOR (CORREGIDOS - SIN DUPLICADOS) ===
+            // === SOLO ADMINISTRADOR ===
             .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_Administrador")
             .requestMatchers("/api/pedidos/todos", "/api/pedidos/**/estado").hasAuthority("ROLE_Administrador")
-            .requestMatchers("/api/contacto/todos").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/contacto/todos", "/api/contacto/usuario/**").hasAuthority("ROLE_Administrador")
             .requestMatchers("/api/pagos", "/api/pagos/**").hasAuthority("ROLE_Administrador")
-            .requestMatchers("/api/dashboard/admin").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/dashboard/**").hasAuthority("ROLE_Administrador")
             .requestMatchers("/api/resenas/todas").hasAuthority("ROLE_Administrador")
-            .requestMatchers("/api/config/qr/admin", "/api/config/qr/**").hasAuthority("ROLE_Administrador")
-            .requestMatchers("/api/config/garantias/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers(HttpMethod.PUT, "/api/resenas/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/config/qr", "/api/config/qr/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/config/garantias", "/api/config/garantias/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers(HttpMethod.POST, "/api/productos/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers(HttpMethod.POST, "/api/promociones/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers(HttpMethod.PUT, "/api/promociones/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers(HttpMethod.DELETE, "/api/promociones/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers(HttpMethod.POST, "/api/adicionales/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers(HttpMethod.PUT, "/api/adicionales/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers(HttpMethod.DELETE, "/api/adicionales/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/cloudinary/**").hasAuthority("ROLE_Administrador")
+            .requestMatchers("/api/archivos/**").hasAuthority("ROLE_Administrador")
 
-            // === CUALQUIER OTRA RUTA ===
+            // === CUALQUIER OTRA RUTA API REQUIERE AUTENTICACIÓN ===
+            .requestMatchers("/api/**").authenticated()
+
+            // === RUTAS DEL FRONTEND (SPA) ===
             .anyRequest().permitAll()
         )
         .authenticationProvider(authenticationProvider())
