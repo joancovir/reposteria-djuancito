@@ -1,65 +1,413 @@
+:host {
+  display: block;
+  width: 100%;
+  --carrusel-altura: 450px;
+  --color-primario: #fd7e14;
+  --color-primario-oscuro: #eb7221;
+}
+
+.promociones-hero-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: #1a0f07;
+}
+
 :host ::ng-deep .carousel {
-  height: 500px; /* Ajusta la altura de tu carrusel */
+  height: var(--carrusel-altura);
+  position: relative;
+  overflow: hidden;
+}
+
+:host ::ng-deep .carousel-inner,
+:host ::ng-deep .carousel-item {
+  height: 100%;
+}
+
+.promo-slide {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.slide-media-container {
+  position: relative;
+  width: 100%;
+  height: var(--carrusel-altura);
+  overflow: hidden;
 }
 
 .slide-image {
   width: 100%;
-  height: 500px;
-  object-fit: cover; 
-  filter: brightness(0.6); /* Oscurece la imagen para que el texto resalte */
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
+.slide-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(22, 12, 6, 0.32) 0%,
+    rgba(22, 12, 6, 0.52) 45%,
+    rgba(14, 7, 3, 0.84) 100%
+  );
+  pointer-events: none;
+}
+
+/* Contenedor del texto (Caption) */
 .carousel-caption {
-  /* Posicionamiento del texto */
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 720px;
+  padding: 0;
+  margin: 0;
   text-align: center;
-  color: white;
-  width: 80%;
-  max-width: 700px;
+  color: #ffffff;
+  z-index: 5;
 }
 
-.carousel-caption h1 {
-  font-size: 48px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+.caption-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
 }
 
-.carousel-caption p {
-  font-size: 20px;
-  margin-bottom: 30px;
-  text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.7);
+/* Badge de oferta */
+.promo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--color-primario-oscuro) 0%, var(--color-primario) 100%);
+  color: #ffffff;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 14px rgba(235, 114, 33, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 14px;
 }
 
-.carousel-caption .btn {
-  background-color: transparent;
-  color: white;
-  border: 2px solid white;
-  padding: 12px 30px;
-  font-size: 16px;
-  font-weight: bold;
+.badge-icon {
+  font-size: 0.9rem;
+}
+
+.badge-text {
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+/* Título de la promoción */
+.promo-title {
+  font-size: 2.35rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 12px 0;
+  line-height: 1.18;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  letter-spacing: -0.3px;
+}
+
+/* Descripción */
+.promo-description {
+  font-size: 1.05rem;
+  color: #fff4ea;
+  margin: 0 0 22px 0;
+  line-height: 1.5;
+  max-width: 580px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
+}
+
+/* Acciones / Botón */
+.promo-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-promo-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--color-primario-oscuro) 0%, var(--color-primario) 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 11px 28px;
+  border-radius: 999px;
   text-decoration: none;
-  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 6px 18px rgba(235, 114, 33, 0.42);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-promo-action:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-primario-oscuro) 100%);
+  box-shadow: 0 8px 24px rgba(235, 114, 33, 0.55);
+  color: #ffffff;
+}
+
+.btn-icon {
+  transition: transform 0.25s ease;
+}
+
+.btn-promo-action:hover .btn-icon {
+  transform: translateX(4px);
+}
+
+/* Indicadores de navegación (puntos inferiores) */
+:host ::ng-deep .carousel-indicators {
+  bottom: 12px;
+  margin: 0;
+  gap: 6px;
+  z-index: 6;
+}
+
+:host ::ng-deep .carousel-indicators button {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.55);
+  border: none;
+  margin: 0 3px;
+  padding: 0;
   transition: all 0.3s ease;
 }
 
-.carousel-caption .btn:hover {
-  background-color: white;
-  color: #333;
-}
-
-/* Estilo para los indicadores (los puntos de abajo) */
-:host ::ng-deep .carousel-indicators button {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin: 0 8px;
-  background-color: rgba(255, 255, 255, 0.5);
-}
-
 :host ::ng-deep .carousel-indicators .active {
-  background-color: white;
+  background-color: var(--color-primario);
+  width: 24px;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(253, 126, 20, 0.6);
+}
+
+/* Flechas de control (Anterior / Siguiente) */
+:host ::ng-deep .carousel-control-prev,
+:host ::ng-deep .carousel-control-next {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: rgba(20, 12, 6, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.8;
+  transition: all 0.25s ease;
+  z-index: 6;
+}
+
+:host ::ng-deep .carousel-control-prev {
+  left: 20px;
+}
+
+:host ::ng-deep .carousel-control-next {
+  right: 20px;
+}
+
+:host ::ng-deep .carousel-control-prev:hover,
+:host ::ng-deep .carousel-control-next:hover {
+  background-color: var(--color-primario-oscuro);
+  border-color: var(--color-primario-oscuro);
+  opacity: 1;
+  transform: translateY(-50%) scale(1.06);
+}
+
+/* ==============================================================
+   RESPONSIVO: TABLET (máx 991px)
+   ============================================================== */
+@media (max-width: 991px) {
+  :host {
+    --carrusel-altura: 340px;
+  }
+
+  .slide-media-container {
+    height: 340px;
+  }
+
+  :host ::ng-deep .carousel {
+    height: 340px;
+  }
+
+  .promo-title {
+    font-size: 1.75rem;
+    margin-bottom: 8px;
+  }
+
+  .promo-description {
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+  }
+
+  .btn-promo-action {
+    padding: 9px 22px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ==============================================================
+   RESPONSIVO: MÓVIL (máx 767px) - Más pequeño y diseño tipo tarjeta adaptada
+   ============================================================== */
+@media (max-width: 767px) {
+  :host {
+    --carrusel-altura: 275px;
+  }
+
+  .slide-media-container {
+    height: 275px;
+  }
+
+  :host ::ng-deep .carousel {
+    height: 275px;
+  }
+
+  .carousel-caption {
+    width: 86%;
+    max-width: 440px;
+  }
+
+  /* En móvil toma apariencia de tarjeta compacta con efecto difuminado y borde del color del logo */
+  .caption-card {
+    background: rgba(22, 13, 7, 0.58);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 16px;
+    border: 1px solid rgba(253, 126, 20, 0.28);
+    padding: 12px 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38);
+  }
+
+  .promo-badge {
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    gap: 4px;
+    margin-bottom: 6px;
+    box-shadow: 0 2px 8px rgba(235, 114, 33, 0.35);
+  }
+
+  .badge-icon {
+    font-size: 0.78rem;
+  }
+
+  .promo-title {
+    font-size: 1.18rem;
+    line-height: 1.25;
+    margin-bottom: 6px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  }
+
+  .promo-description {
+    font-size: 0.82rem;
+    line-height: 1.35;
+    margin-bottom: 10px;
+    color: #ffe8d6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .btn-promo-action {
+    padding: 6px 18px;
+    font-size: 0.82rem;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(235, 114, 33, 0.35);
+  }
+
+  .btn-icon {
+    width: 13px;
+    height: 13px;
+  }
+
+  /* Controles y puntos reducidos en móvil para no estorbar el contenido */
+  :host ::ng-deep .carousel-control-prev,
+  :host ::ng-deep .carousel-control-next {
+    width: 28px;
+    height: 28px;
+    opacity: 0.65;
+  }
+
+  :host ::ng-deep .carousel-control-prev {
+    left: 6px;
+  }
+
+  :host ::ng-deep .carousel-control-next {
+    right: 6px;
+  }
+
+  :host ::ng-deep .carousel-indicators {
+    bottom: 5px;
+  }
+
+  :host ::ng-deep .carousel-indicators button {
+    width: 6px;
+    height: 6px;
+    margin: 0 2px;
+  }
+
+  :host ::ng-deep .carousel-indicators .active {
+    width: 16px;
+  }
+}
+
+/* ==============================================================
+   RESPONSIVO: MÓVIL PEQUEÑO (máx 480px)
+   ============================================================== */
+@media (max-width: 480px) {
+  :host {
+    --carrusel-altura: 235px;
+  }
+
+  .slide-media-container {
+    height: 235px;
+  }
+
+  :host ::ng-deep .carousel {
+    height: 235px;
+  }
+
+  .carousel-caption {
+    width: 88%;
+  }
+
+  .caption-card {
+    padding: 10px 12px;
+    border-radius: 13px;
+  }
+
+  .promo-badge {
+    font-size: 0.67rem;
+    padding: 2px 8px;
+    margin-bottom: 4px;
+  }
+
+  .promo-title {
+    font-size: 1.05rem;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .promo-description {
+    font-size: 0.74rem;
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+
+  .btn-promo-action {
+    padding: 5px 14px;
+    font-size: 0.76rem;
+  }
 }

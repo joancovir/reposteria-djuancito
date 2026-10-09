@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { Promocion } from '../../modelos/promocion';
 import { PromocionService } from '../../servicios/promocion';
-import { RouterLink } from '@angular/router'; 
+import { RouterLink } from '@angular/router';
+
 @Component({
   selector: 'app-carrusel-principal',
   standalone: true,
   imports: [CommonModule, CarouselModule, RouterLink], 
-  templateUrl: './/carrusel-principal.html',
-  styleUrl: './/carrusel-principal.css'
+  templateUrl: './carrusel-principal.html',
+  styleUrl: './carrusel-principal.css'
 })
 export class CarruselPrincipalComponent implements OnInit {
 
@@ -18,8 +19,14 @@ export class CarruselPrincipalComponent implements OnInit {
   constructor(private promocionService: PromocionService) {}
 
   ngOnInit(): void {
-    this.promocionService.getPromocionesActivas().subscribe(data => {
-      this.promociones = data;
+    this.promocionService.getPromocionesActivas().subscribe({
+      next: (data) => {
+        this.promociones = data || [];
+      },
+      error: (err) => {
+        console.warn('No se pudieron obtener promociones activas:', err);
+        this.promociones = [];
+      }
     });
   }
 }

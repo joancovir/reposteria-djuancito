@@ -81,3 +81,11 @@ app-carrusel-principal .carousel-control-prev:hover,
 app-carrusel-principal .carousel-control-next:hover {
   opacity: 1;
 }
+
+@media (max-width: 768px) {
+  app-carrusel-principal .carousel-control-prev,
+  app-carrusel-principal .carousel-control-next {
+    width: 28px;
+    height: 28px;
+  }
+}
