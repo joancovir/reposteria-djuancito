@@ -1,39 +1,72 @@
 <div class="promociones-hero-wrapper" id="carrusel" *ngIf="promociones && promociones.length > 0">
   <carousel [isAnimated]="true" [showIndicators]="promociones.length > 1" [interval]="5000">
     <slide *ngFor="let promo of promociones" class="promo-slide">
-      <div class="slide-media-container">
-        <img 
-          [src]="promo.imagenUrl || 'assets/imagenes/promocion/oferta-general.png'" 
-          [alt]="promo.titulo || 'Promoción Repostería D\'Juancito'" 
-          class="slide-image"
-          loading="eager"
-        >
-        <div class="slide-overlay"></div>
-      </div>
+      
+      <!-- ====================================================
+           VISTA ESCRITORIO / TABLET (> 768px): Banner Hero Visual
+           ==================================================== -->
+      <div class="desktop-banner-view">
+        <div class="slide-media-container">
+          <img 
+            [src]="promo.imagenUrl || 'assets/imagenes/promocion/oferta-general.png'" 
+            [alt]="promo.titulo || 'Promoción Repostería D\'Juancito'" 
+            class="slide-image"
+            loading="eager"
+          >
+          <div class="slide-overlay"></div>
+        </div>
 
-      <div class="carousel-caption">
-        <div class="caption-card">
-          <div class="promo-badge" *ngIf="promo.descuento">
-            <span class="badge-icon">🏷️</span>
-            <span class="badge-text">¡{{ promo.descuento }}% DE DESCUENTO!</span>
-          </div>
+        <div class="carousel-caption">
+          <div class="caption-card">
+            <div class="promo-badge" *ngIf="promo.descuento">
+              <span class="badge-icon">🏷️</span>
+              <span class="badge-text">¡{{ promo.descuento }}% DE DESCUENTO!</span>
+            </div>
 
-          <h2 class="promo-title">{{ promo.titulo }}</h2>
+            <h2 class="promo-title">{{ promo.titulo }}</h2>
 
-          <p class="promo-description" *ngIf="promo.descripcion">
-            {{ promo.descripcion }}
-          </p>
+            <p class="promo-description" *ngIf="promo.descripcion">
+              {{ promo.descripcion }}
+            </p>
 
-          <div class="promo-actions">
-            <a [routerLink]="['/ofertas']" class="btn-promo-action">
-              <span>Ver Más Ofertas</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="btn-icon">
-                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
-              </svg>
-            </a>
+            <div class="promo-actions">
+              <a [routerLink]="['/ofertas']" class="btn-promo-action">
+                <span>Ver Más Ofertas</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="btn-icon">
+                  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- ====================================================
+           VISTA MÓVIL / CELULAR (<= 768px): Línea Adicional Compacta
+           ==================================================== -->
+      <div class="mobile-line-view">
+        <div class="mobile-line-bar">
+          <span class="mobile-line-badge" *ngIf="promo.descuento">
+            🔥 -{{ promo.descuento }}%
+          </span>
+          <span class="mobile-line-badge tag-oferta" *ngIf="!promo.descuento">
+            ✨ Oferta
+          </span>
+
+          <div class="mobile-line-text">
+            <span class="mobile-line-title">{{ promo.titulo }}</span>
+            <span class="mobile-line-desc" *ngIf="promo.descripcion"> — {{ promo.descripcion }}</span>
+          </div>
+
+          <a [routerLink]="['/ofertas']" class="mobile-line-btn">
+            <span>Ver</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
     </slide>
   </carousel>
 </div>

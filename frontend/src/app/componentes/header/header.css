@@ -3,16 +3,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 32px;
-  background: rgba(255, 255, 255, 0.96);
+  padding: 10px 28px;
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(10px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
   width: 100%;
   z-index: 1000;
-  min-height: 76px;
-  border-bottom: 1px solid rgba(253, 126, 20, 0.12);
+  min-height: 72px;
+  border-bottom: 1px solid rgba(253, 126, 20, 0.15);
 }
 
 .logo {
@@ -27,34 +28,39 @@
 }
 
 .logo img {
-  height: 50px;
-  width: 50px;
+  height: 48px;
+  width: 48px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #fd7e14;
-  box-shadow: 0 4px 12px rgba(253, 126, 20, 0.2);
+  box-shadow: 0 3px 10px rgba(253, 126, 20, 0.22);
 }
 
 .logo span {
-  font-size: 24px;
-  font-weight: 700;
-  color: #333;
+  font-size: 22px;
+  font-weight: 800;
+  color: #2f2f2f;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
 }
 
+/* Contenedor de Navegación y Acciones */
 .nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 0;
+  margin-left: 24px;
+}
+
+.main-nav {
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 1;
   min-width: 0;
-  gap: 24px;
-}
-
-.main-nav {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  min-width: 0;
+  padding: 0 12px;
 }
 
 .main-nav ul {
@@ -62,58 +68,70 @@
   padding: 0;
   list-style: none;
   display: flex;
-  gap: 20px;
+  gap: 6px;
+  align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+}
+
+.main-nav li {
+  flex-shrink: 0;
 }
 
 .main-nav a {
   text-decoration: none;
-  color: #333;
-  font-size: 15px;
+  color: #3f3f3f;
+  font-size: 14px;
   font-weight: 600;
-  padding: 8px 12px;
+  padding: 7px 12px;
   border-radius: 999px;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  display: block;
 }
 
 .main-nav a:hover,
 .main-nav a.active-link {
   color: #fd7e14;
-  background: rgba(253, 126, 20, 0.12);
-  box-shadow: inset 0 0 0 1px rgba(253, 126, 20, 0.16);
+  background: rgba(253, 126, 20, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(253, 126, 20, 0.18);
 }
 
+/* Acciones de Usuario (Botones) */
 .user-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .btn {
-  padding: 8px 16px;
+  padding: 7px 14px;
   border-radius: 999px;
   text-decoration: none;
   font-weight: 700;
-  font-size: 14px;
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
-  display: flex;
+  font-size: 13px;
+  border: 1px solid transparent;
+  transition: all 0.25s ease;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   letter-spacing: 0.01em;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, #fd7e14 0%, #eb7221 100%);
   color: white;
-  box-shadow: 0 8px 16px rgba(253, 126, 20, 0.2);
+  box-shadow: 0 4px 12px rgba(253, 126, 20, 0.25);
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(253, 126, 20, 0.24);
+  box-shadow: 0 6px 16px rgba(253, 126, 20, 0.35);
+  color: white;
 }
 
 .btn-secondary {
@@ -126,11 +144,13 @@
   border-color: #fd7e14;
   background-color: #fff8f0;
   transform: translateY(-1px);
+  color: #fd7e14;
 }
 
 .btn-light {
   background-color: #f8f9fa;
   color: #424242;
+  border-color: #e5e5e5;
 }
 
 .btn-light:hover {
@@ -138,11 +158,19 @@
   transform: translateY(-1px);
 }
 
+.welcome-message {
+  font-weight: 700;
+  color: #eb7221;
+  font-size: 14px;
+  margin-right: 4px;
+}
+
+/* Contador de carrito */
 .badge {
   font-size: 0.65rem;
   min-width: 18px;
   height: 18px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0 4px;
@@ -152,29 +180,64 @@
   border: 2px solid white;
 }
 
+/* Botón Hamburguesa Móvil */
 .mobile-nav-toggle {
   display: none;
   background: transparent;
   border: none;
   cursor: pointer;
-  z-index: 1100;
-  padding: 0;
-  width: 30px;
-  height: 25px;
+  z-index: 1200;
+  padding: 6px;
+  width: 38px;
+  height: 38px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.mobile-nav-toggle:hover {
+  background-color: rgba(253, 126, 20, 0.1);
 }
 
 .mobile-nav-toggle span {
   display: block;
-  width: 100%;
-  height: 3px;
-  background-color: #333;
+  width: 22px;
+  height: 2.5px;
+  background-color: #2f2f2f;
   border-radius: 2px;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@media (max-width: 1024px) {
+/* Animación de la hamburguesa a X cuando el menú está abierto */
+.main-header.nav-open .mobile-nav-toggle span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+  background-color: #fd7e14;
+}
+
+.main-header.nav-open .mobile-nav-toggle span:nth-child(2) {
+  opacity: 0;
+  transform: scale(0);
+}
+
+.main-header.nav-open .mobile-nav-toggle span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+  background-color: #fd7e14;
+}
+
+/* ==============================================================
+   RESPONSIVO: MÓVIL Y TABLET (Breakpoint optimizado en 1140px)
+   ============================================================== */
+@media (max-width: 1140px) {
   .main-header {
-    padding: 12px 20px;
+    padding: 10px 18px;
+    min-height: 64px;
+  }
+
+  .mobile-nav-toggle {
+    display: flex;
   }
 
   .nav-container {
@@ -184,13 +247,17 @@
     left: -100%;
     width: 100%;
     height: 100vh;
-    background: linear-gradient(145deg, #222222 0%, #2f2f2f 100%);
+    background: linear-gradient(160deg, #1f1a16 0%, #291c13 100%);
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    z-index: 1050;
-    transition: left 0.4s ease-in-out;
-    gap: 0;
+    z-index: 1100;
+    transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-left: 0;
+    padding: 85px 24px 40px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.4);
   }
 
   .nav-container.nav-open {
@@ -198,50 +265,64 @@
     left: 0;
   }
 
-  .main-nav ul,
-  .user-actions {
+  .main-nav {
+    width: 100%;
+    max-width: 380px;
+    padding: 0;
+  }
+
+  .main-nav ul {
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .main-nav li {
+    width: 100%;
   }
 
   .main-nav a {
-    font-size: 20px;
-    color: #f8f9fa;
+    font-size: 16px;
+    color: #ffffff;
+    padding: 11px 16px;
+    width: 100%;
+    text-align: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .main-nav a:hover,
+  .main-nav a.active-link {
+    background: rgba(253, 126, 20, 0.25);
+    color: #fd7e14;
+    border-color: rgba(253, 126, 20, 0.5);
   }
 
   .user-actions {
-    margin-top: 32px;
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    padding-top: 32px;
-    width: 80%;
+    margin-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-top: 24px;
+    width: 100%;
+    max-width: 380px;
+    flex-direction: column;
+    gap: 12px;
   }
 
   .user-actions .btn {
     width: 100%;
     justify-content: center;
     padding: 12px;
+    font-size: 15px;
+    border-radius: 12px;
+  }
+
+  .welcome-message {
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 6px;
     font-size: 16px;
-  }
-
-  .mobile-nav-toggle {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-  }
-
-  .main-header.nav-open .mobile-nav-toggle span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-    background-color: white;
-  }
-
-  .main-header.nav-open .mobile-nav-toggle span:nth-child(2) {
-    opacity: 0;
-  }
-
-  .main-header.nav-open .mobile-nav-toggle span:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -6px);
-    background-color: white;
   }
 }
 
@@ -251,7 +332,7 @@
   }
 
   .logo img {
-    height: 42px;
-    width: 42px;
+    height: 40px;
+    width: 40px;
   }
 }

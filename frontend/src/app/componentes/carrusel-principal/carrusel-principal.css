@@ -1,7 +1,6 @@
 :host {
   display: block;
   width: 100%;
-  --carrusel-altura: 450px;
   --color-primario: #fd7e14;
   --color-primario-oscuro: #eb7221;
 }
@@ -10,11 +9,20 @@
   position: relative;
   width: 100%;
   overflow: hidden;
-  background-color: #1a0f07;
+}
+
+/* ==============================================================
+   1. VISTA ESCRITORIO (> 768px): Banner Hero Visual
+   ============================================================== */
+.desktop-banner-view {
+  display: block;
+  width: 100%;
+  height: 380px;
+  position: relative;
 }
 
 :host ::ng-deep .carousel {
-  height: var(--carrusel-altura);
+  height: 380px;
   position: relative;
   overflow: hidden;
 }
@@ -33,8 +41,9 @@
 .slide-media-container {
   position: relative;
   width: 100%;
-  height: var(--carrusel-altura);
+  height: 380px;
   overflow: hidden;
+  background-color: #1a0f07;
 }
 
 .slide-image {
@@ -50,14 +59,13 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(22, 12, 6, 0.32) 0%,
+    rgba(22, 12, 6, 0.3) 0%,
     rgba(22, 12, 6, 0.52) 45%,
-    rgba(14, 7, 3, 0.84) 100%
+    rgba(14, 7, 3, 0.82) 100%
   );
   pointer-events: none;
 }
 
-/* Contenedor del texto (Caption) */
 .carousel-caption {
   position: absolute;
   top: 50%;
@@ -80,55 +88,46 @@
   padding: 16px;
 }
 
-/* Badge de oferta */
 .promo-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   background: linear-gradient(135deg, var(--color-primario-oscuro) 0%, var(--color-primario) 100%);
   color: #ffffff;
-  padding: 6px 16px;
+  padding: 5px 14px;
   border-radius: 999px;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  box-shadow: 0 4px 14px rgba(235, 114, 33, 0.45);
+  box-shadow: 0 4px 12px rgba(235, 114, 33, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .badge-icon {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
-.badge-text {
-  font-weight: 800;
-  letter-spacing: 0.5px;
-}
-
-/* Título de la promoción */
 .promo-title {
-  font-size: 2.35rem;
+  font-size: 2.2rem;
   font-weight: 800;
   color: #ffffff;
-  margin: 0 0 12px 0;
-  line-height: 1.18;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  margin: 0 0 10px 0;
+  line-height: 1.15;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
   letter-spacing: -0.3px;
 }
 
-/* Descripción */
 .promo-description {
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: #fff4ea;
-  margin: 0 0 22px 0;
-  line-height: 1.5;
+  margin: 0 0 20px 0;
+  line-height: 1.45;
   max-width: 580px;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
 }
 
-/* Acciones / Botón */
 .promo-actions {
   display: flex;
   justify-content: center;
@@ -142,19 +141,19 @@
   background: linear-gradient(135deg, var(--color-primario-oscuro) 0%, var(--color-primario) 100%);
   color: #ffffff;
   font-weight: 700;
-  font-size: 0.95rem;
-  padding: 11px 28px;
+  font-size: 0.92rem;
+  padding: 10px 26px;
   border-radius: 999px;
   text-decoration: none;
   border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 6px 18px rgba(235, 114, 33, 0.42);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 6px 16px rgba(235, 114, 33, 0.4);
+  transition: all 0.25s ease;
 }
 
 .btn-promo-action:hover {
   transform: translateY(-2px);
   background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-primario-oscuro) 100%);
-  box-shadow: 0 8px 24px rgba(235, 114, 33, 0.55);
+  box-shadow: 0 8px 22px rgba(235, 114, 33, 0.55);
   color: #ffffff;
 }
 
@@ -166,7 +165,7 @@
   transform: translateX(4px);
 }
 
-/* Indicadores de navegación (puntos inferiores) */
+/* Indicadores de carrusel (escritorio) */
 :host ::ng-deep .carousel-indicators {
   bottom: 12px;
   margin: 0;
@@ -187,16 +186,16 @@
 
 :host ::ng-deep .carousel-indicators .active {
   background-color: var(--color-primario);
-  width: 24px;
+  width: 22px;
   border-radius: 999px;
   box-shadow: 0 2px 6px rgba(253, 126, 20, 0.6);
 }
 
-/* Flechas de control (Anterior / Siguiente) */
+/* Flechas de carrusel (escritorio) */
 :host ::ng-deep .carousel-control-prev,
 :host ::ng-deep .carousel-control-next {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: rgba(20, 12, 6, 0.45);
   backdrop-filter: blur(4px);
@@ -226,188 +225,124 @@
 }
 
 /* ==============================================================
-   RESPONSIVO: TABLET (máx 991px)
+   2. VISTA MÓVIL (<= 768px): LÍNEA ADICIONAL COMPACTA
    ============================================================== */
-@media (max-width: 991px) {
-  :host {
-    --carrusel-altura: 340px;
-  }
-
-  .slide-media-container {
-    height: 340px;
-  }
-
-  :host ::ng-deep .carousel {
-    height: 340px;
-  }
-
-  .promo-title {
-    font-size: 1.75rem;
-    margin-bottom: 8px;
-  }
-
-  .promo-description {
-    font-size: 0.95rem;
-    margin-bottom: 16px;
-  }
-
-  .btn-promo-action {
-    padding: 9px 22px;
-    font-size: 0.9rem;
-  }
+.mobile-line-view {
+  display: none;
 }
 
-/* ==============================================================
-   RESPONSIVO: MÓVIL (máx 767px) - Más pequeño y diseño tipo tarjeta adaptada
-   ============================================================== */
-@media (max-width: 767px) {
-  :host {
-    --carrusel-altura: 275px;
+@media (max-width: 768px) {
+  /* Ocultar banner grande de escritorio */
+  .desktop-banner-view {
+    display: none !important;
   }
 
-  .slide-media-container {
-    height: 275px;
-  }
-
+  /* Reducir altura del carrusel a una línea adicional delgada */
   :host ::ng-deep .carousel {
-    height: 275px;
+    height: 44px !important;
   }
 
-  .carousel-caption {
-    width: 86%;
-    max-width: 440px;
+  :host ::ng-deep .carousel-inner,
+  :host ::ng-deep .carousel-item {
+    height: 44px !important;
   }
 
-  /* En móvil toma apariencia de tarjeta compacta con efecto difuminado y borde del color del logo */
-  .caption-card {
-    background: rgba(22, 13, 7, 0.58);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 16px;
-    border: 1px solid rgba(253, 126, 20, 0.28);
-    padding: 12px 14px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38);
+  .promo-slide {
+    height: 44px !important;
   }
 
-  .promo-badge {
-    font-size: 0.72rem;
-    padding: 3px 10px;
-    gap: 4px;
-    margin-bottom: 6px;
-    box-shadow: 0 2px 8px rgba(235, 114, 33, 0.35);
-  }
-
-  .badge-icon {
-    font-size: 0.78rem;
-  }
-
-  .promo-title {
-    font-size: 1.18rem;
-    line-height: 1.25;
-    margin-bottom: 6px;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
-  }
-
-  .promo-description {
-    font-size: 0.82rem;
-    line-height: 1.35;
-    margin-bottom: 10px;
-    color: #ffe8d6;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .btn-promo-action {
-    padding: 6px 18px;
-    font-size: 0.82rem;
-    gap: 6px;
-    box-shadow: 0 4px 12px rgba(235, 114, 33, 0.35);
-  }
-
-  .btn-icon {
-    width: 13px;
-    height: 13px;
-  }
-
-  /* Controles y puntos reducidos en móvil para no estorbar el contenido */
+  /* Ocultar indicadores y flechas grandes en móvil */
+  :host ::ng-deep .carousel-indicators,
   :host ::ng-deep .carousel-control-prev,
   :host ::ng-deep .carousel-control-next {
-    width: 28px;
-    height: 28px;
-    opacity: 0.65;
+    display: none !important;
   }
 
-  :host ::ng-deep .carousel-control-prev {
-    left: 6px;
+  /* Contenedor de la línea adicional */
+  .mobile-line-view {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 44px;
+    background: linear-gradient(90deg, #d35400 0%, #eb7221 40%, #fd7e14 100%);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   }
 
-  :host ::ng-deep .carousel-control-next {
-    right: 6px;
+  .mobile-line-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 600px;
+    height: 100%;
+    padding: 0 12px;
+    gap: 8px;
   }
 
-  :host ::ng-deep .carousel-indicators {
-    bottom: 5px;
+  .mobile-line-badge {
+    background: #ffffff;
+    color: #d35400;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    letter-spacing: 0.2px;
   }
 
-  :host ::ng-deep .carousel-indicators button {
-    width: 6px;
-    height: 6px;
-    margin: 0 2px;
+  .mobile-line-badge.tag-oferta {
+    background: rgba(255, 255, 255, 0.9);
+    color: #eb7221;
   }
 
-  :host ::ng-deep .carousel-indicators .active {
-    width: 16px;
-  }
-}
-
-/* ==============================================================
-   RESPONSIVO: MÓVIL PEQUEÑO (máx 480px)
-   ============================================================== */
-@media (max-width: 480px) {
-  :host {
-    --carrusel-altura: 235px;
-  }
-
-  .slide-media-container {
-    height: 235px;
+  .mobile-line-text {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.78rem;
+    color: #ffffff;
+    line-height: 1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
 
-  :host ::ng-deep .carousel {
-    height: 235px;
+  .mobile-line-title {
+    font-weight: 700;
   }
 
-  .carousel-caption {
-    width: 88%;
+  .mobile-line-desc {
+    font-weight: 400;
+    opacity: 0.92;
   }
 
-  .caption-card {
-    padding: 10px 12px;
-    border-radius: 13px;
+  .mobile-line-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
   }
 
-  .promo-badge {
-    font-size: 0.67rem;
-    padding: 2px 8px;
-    margin-bottom: 4px;
+  .mobile-line-btn:active {
+    background: #ffffff;
+    color: #eb7221;
   }
 
-  .promo-title {
-    font-size: 1.05rem;
-    line-height: 1.2;
-    margin-bottom: 4px;
-  }
-
-  .promo-description {
-    font-size: 0.74rem;
-    line-height: 1.25;
-    margin-bottom: 8px;
-  }
-
-  .btn-promo-action {
-    padding: 5px 14px;
-    font-size: 0.76rem;
+  .mobile-line-btn svg {
+    width: 10px;
+    height: 10px;
   }
 }
