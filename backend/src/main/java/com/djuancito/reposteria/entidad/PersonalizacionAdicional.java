@@ -5,7 +5,7 @@
 
     @Data
     @Entity
-    @Table(name = "PersonalizacionAdicional")
+    @Table(name = "personalizacionadicional")
     public class PersonalizacionAdicional {
         @EmbeddedId
         private PersonalizacionAdicionalId id;

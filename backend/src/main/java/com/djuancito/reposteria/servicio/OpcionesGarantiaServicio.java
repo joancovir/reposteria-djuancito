@@ -22,9 +22,13 @@ public class OpcionesGarantiaServicio {
     }
 
     public Integer getGarantiaPrincipal() {
-        return repo.findById(1L)
+        return repo.findAll().stream()
+                   .filter(o -> Boolean.TRUE.equals(o.getEsPrincipal()) && Boolean.TRUE.equals(o.getActivo()))
+                   .findFirst()
                    .map(OpcionesGarantia::getPorcentaje)
-                   .orElse(50);
+                   .orElseGet(() -> repo.findById(1L)
+                       .map(OpcionesGarantia::getPorcentaje)
+                       .orElse(50));
     }
 
     // === NUEVOS MÉTODOS PARA ADMIN (CRUD) ===

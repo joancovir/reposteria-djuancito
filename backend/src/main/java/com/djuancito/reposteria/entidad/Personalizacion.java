@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "Personalizacion")
+@Table(name = "personalizacion")
 public class Personalizacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class Personalizacion {
 
     @ManyToMany(fetch = FetchType.EAGER) 
     @JoinTable(
-        name = "PersonalizacionAdicional",
+        name = "personalizacionadicional",
         joinColumns = @JoinColumn(name = "personalizacionId"), 
         inverseJoinColumns = @JoinColumn(name = "adicionalId")
     )

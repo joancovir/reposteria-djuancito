@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "TemporadaProducto")
+@Table(name = "temporadaproducto")
 public class TemporadaProducto {
     
     @EmbeddedId

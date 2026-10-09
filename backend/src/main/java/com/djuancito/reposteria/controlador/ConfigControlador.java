@@ -5,11 +5,13 @@ import com.djuancito.reposteria.servicio.OpcionesGarantiaServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.http.ResponseEntity;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/config")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class ConfigControlador {
 
     @Autowired
@@ -43,6 +45,12 @@ public class ConfigControlador {
     @PatchMapping("/garantias/{id}/toggle")
     public OpcionesGarantia toggleActivo(@PathVariable Long id) {
         return servicio.toggleActivo(id);
+    }
+
+    @PatchMapping("/garantias/{id}/principal")
+    public ResponseEntity<Void> establecerPrincipal(@PathVariable Long id) {
+        servicio.establecerPrincipal(id);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/garantias/{id}")

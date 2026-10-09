@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "Usuario")
+@Table(name = "usuario")
 public class Usuario {
 
     @Id
@@ -44,7 +44,7 @@ public class Usuario {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "UsuarioRol",
+        name = "usuariorol",
         joinColumns = @JoinColumn(name = "usuarioId"),
         inverseJoinColumns = @JoinColumn(name = "rolId")
     )

@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "QrPagos")
+@Table(name = "qrpagos")
 public class QrPago {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

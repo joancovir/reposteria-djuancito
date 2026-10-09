@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
 @Entity
-@Table(name = "DetallePedido")
+@Table(name = "detallepedido")
 public class DetallePedido {
 
     @Id

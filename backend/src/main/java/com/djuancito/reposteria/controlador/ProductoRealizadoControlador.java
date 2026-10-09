@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/productos-realizados")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class ProductoRealizadoControlador {
 @Autowired
     private ProductoRealizadoServicio service;
