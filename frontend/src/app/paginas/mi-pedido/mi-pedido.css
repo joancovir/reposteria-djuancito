@@ -86,6 +86,19 @@
   color: #2e7d32;
 }
 
+.resumen-pedido-card {
+  position: sticky;
+  top: 90px;
+  z-index: 20;
+}
+
+@media (max-width: 991px) {
+  .resumen-pedido-card {
+    position: static;
+    top: auto;
+  }
+}
+
 /* Resumen */
 .cart-summary {
   flex: 1;

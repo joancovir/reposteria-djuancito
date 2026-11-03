@@ -99,7 +99,7 @@ export const routes: Routes = [
 
 
 
-        { path: '', redirectTo: 'bienvenida', pathMatch: 'full' } 
+        { path: '', redirectTo: 'pedidos', pathMatch: 'full' } 
       ]
     },
     { path: '**', redirectTo: '', pathMatch: 'full' }

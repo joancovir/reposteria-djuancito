@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { UsuarioService } from '../../servicios/usuario';
 import { AutenticacionService } from '../../servicios/autenticacion';
 
@@ -14,13 +14,16 @@ import { AutenticacionService } from '../../servicios/autenticacion';
 })
 export class IniciarSesion implements OnInit {
   loginForm: FormGroup;
-  defaultClientUrl: string = '/cliente/bienvenida';
+  defaultClientUrl: string = '/cliente/pedidos';
+  cargando: boolean = false;
+  mensajeError: string = '';
 
   constructor(
     private fb: FormBuilder,
     private usuarioService: UsuarioService,
     private authService: AutenticacionService,
     private router: Router,
+    private route: ActivatedRoute,
     @Inject(DOCUMENT) private document: Document
   ) {
     this.loginForm = this.fb.group({
@@ -33,6 +36,9 @@ export class IniciarSesion implements OnInit {
 
   onSubmit(): void {
     if (this.loginForm.valid) {
+      this.cargando = true;
+      this.mensajeError = '';
+
       this.usuarioService.login(this.loginForm.value).subscribe({
         next: (respuesta: any) => {
           this.authService.guardarSesion(respuesta.token);
@@ -41,52 +47,42 @@ export class IniciarSesion implements OnInit {
             next: (usuarioCompleto: any) => {
               this.authService.guardarUsuarioCompleto(usuarioCompleto);
 
-              // MOSTRAR MODAL DE ÉXITO
-              const nombreEl = this.document.getElementById('nombreUsuarioExito');
-              if (nombreEl) nombreEl.textContent = `${usuarioCompleto.nombre} `;
+              this.limpiarModalesResiduales();
 
-              const modalExito = new (window as any).bootstrap.Modal(
-                this.document.getElementById('modalExito')
-              );
-              modalExito.show();
+              const esAdmin = this.authService.userHasRole('Administrador');
+              let ruta: string;
 
-              // REDIRECCIÓN CUANDO CIERRE EL MODAL
-              const modalElement = this.document.getElementById('modalExito');
-              modalElement?.addEventListener('hidden.bs.modal', () => {
-                const esAdmin = this.authService.userHasRole('Administrador');
-                let ruta: string;
+              if (esAdmin) {
+                ruta = '/admin/dashboard';
+              } else {
+                const returnUrl = this.route.snapshot.queryParams['returnUrl'];
+                const redirectStorage = localStorage.getItem('redirect_after_login');
+                localStorage.removeItem('redirect_after_login');
 
-                if (esAdmin) {
-                  ruta = '/admin/dashboard';
-                } else {
-                  const redirect = localStorage.getItem('redirect_after_login');
-                  ruta = redirect === '/cliente/mi-pedido' ? '/cliente/mi-pedido' : this.defaultClientUrl;
-                  localStorage.removeItem('redirect_after_login');
-                }
+                ruta = returnUrl || redirectStorage || this.defaultClientUrl;
+              }
 
-                this.router.navigate([ruta]);
-              }, { once: true });
+              this.router.navigate([ruta]);
             },
             error: () => {
-              this.mostrarModalError('Error al cargar tu perfil. Intenta más tarde.');
+              this.cargando = false;
+              this.mensajeError = 'Error al cargar tu perfil. Intenta más tarde.';
             }
           });
         },
         error: (err) => {
-          const msg = err.error?.message || 'Credenciales inválidas. Verifica tu correo y contraseña.';
-          this.mostrarModalError(msg);
+          this.cargando = false;
+          this.mensajeError = err.error?.message || 'Credenciales inválidas. Verifica tu correo y contraseña.';
         }
       });
     }
   }
 
-  private mostrarModalError(mensaje: string): void {
-    const msgEl = this.document.getElementById('mensajeErrorModal');
-    if (msgEl) msgEl.textContent = mensaje;
-
-    const modalError = new (window as any).bootstrap.Modal(
-      this.document.getElementById('modalError')
-    );
-    modalError.show();
+  private limpiarModalesResiduales(): void {
+    const backdrops = this.document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach(b => b.remove());
+    this.document.body.classList.remove('modal-open');
+    this.document.body.style.removeProperty('overflow');
+    this.document.body.style.removeProperty('padding-right');
   }
 }
