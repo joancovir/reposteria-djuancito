@@ -101,10 +101,12 @@ onSubmit() {
     personalizacion: {
       descripcionExtra: this.tortaPersonalizada.descripcionCompleta || 'Torta personalizada',
       costoAdicional: this.tortaPersonalizada.costoAdicionales || 0,
-      // AQUÍ ESTÁ EL FIX: SOLO ENVÍAS LOS IDs, NADA MÁS
       adicionalesSeleccionados: adicionales
-        .map((a: any) => a.adicionalId)
-        .filter((id: any) => id !== null && id !== undefined)
+        .map((a: any) => ({
+          adicionalId: a.adicionalId || a.id,
+          nombre: a.nombre || 'Adicional',
+          precio: a.costoAdicional || a.precio || 0
+        }))
     }
   };
 
@@ -141,9 +143,11 @@ onSubmit() {
           localStorage.removeItem('torta_pendiente');
           localStorage.setItem('pedido_actual_id', pedido.pedidoId.toString());
           localStorage.setItem('pago_garantia', JSON.stringify({
+            pedidoId: pedido.pedidoId,
             garantia: 0,
             resto: this.tortaPersonalizada.precioCalculado,
-            subtotal: this.tortaPersonalizada.precioCalculado
+            subtotal: this.tortaPersonalizada.precioCalculado,
+            total: this.tortaPersonalizada.precioCalculado
           }));
           this.router.navigate(['/cliente/pago-garantia']);
         },

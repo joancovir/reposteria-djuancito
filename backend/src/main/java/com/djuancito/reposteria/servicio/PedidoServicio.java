@@ -24,12 +24,13 @@ public class PedidoServicio {
     @Autowired private UsuarioRepositorio usuarioRepo;
     @Autowired private ProductoRepositorio productoRepo;
     @Autowired private PromocionRepositorio promocionRepo;
+    @Autowired private AdicionalRepositorio adicionalRepo;
     @Autowired private OpcionesGarantiaServicio opcionesGarantiaServicio;
 
     @Transactional
     public Pedido crearPedido(PedidoRequestDTO dto) {
         Usuario usuario = usuarioRepo.findById(dto.getUsuarioId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + dto.getUsuarioId()));
 
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
@@ -41,17 +42,19 @@ public class PedidoServicio {
         BigDecimal totalCalculado = BigDecimal.ZERO;
 
         for (DetalleRequestDTO detDTO : dto.getDetalles()) {
-            Producto producto = productoRepo.findById(detDTO.getProductoId())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+            Producto producto = null;
+            if (detDTO.getProductoId() != null) {
+                producto = productoRepo.findById(detDTO.getProductoId()).orElse(null);
+            }
 
             DetallePedido detalle = new DetallePedido();
             detalle.setPedido(pedido);
             detalle.setProducto(producto);
-            detalle.setCantidad(detDTO.getCantidad());
+            detalle.setCantidad(detDTO.getCantidad() != null ? detDTO.getCantidad() : 1);
 
             BigDecimal precioUnitario = detDTO.getPrecioUnitario() != null
                     ? detDTO.getPrecioUnitario()
-                    : producto.getPrecioBase();
+                    : (producto != null && producto.getPrecioBase() != null ? producto.getPrecioBase() : BigDecimal.ZERO);
             detalle.setPrecioUnitario(precioUnitario);
             detalle.setSubtotal(precioUnitario.multiply(BigDecimal.valueOf(detalle.getCantidad())));
 
@@ -61,32 +64,38 @@ public class PedidoServicio {
                 detalle.setPromocion(promo);
             }
 
-            // PERSONALIZACIÓN - VERSIÓN FINAL 100% FUNCIONAL
+            // PERSONALIZACIÓN
             if (detDTO.getPersonalizacion() != null) {
                 Personalizacion personalizacion = new Personalizacion();
-                personalizacion.setDescripcionExtra(detDTO.getPersonalizacion().getDescripcionExtra());
+                String descExtra = detDTO.getPersonalizacion().getDescripcionExtra();
+                personalizacion.setDescripcionExtra(descExtra != null && !descExtra.trim().isEmpty() ? descExtra : "Personalización solicitada");
                 personalizacion.setCostoAdicional(
                         detDTO.getPersonalizacion().getCostoAdicional() != null
                                 ? detDTO.getPersonalizacion().getCostoAdicional()
                                 : BigDecimal.ZERO
                 );
 
-                // ADICIONALES: VIENEN COMO LISTA DE AdicionalDTO
+                // ADICIONALES
                 if (detDTO.getPersonalizacion().getAdicionalesSeleccionados() != null
                         && !detDTO.getPersonalizacion().getAdicionalesSeleccionados().isEmpty()) {
 
                     Set<Adicional> adicionales = detDTO.getPersonalizacion().getAdicionalesSeleccionados()
                             .stream()
-                            .map(adicionalDto -> {  // AQUÍ ESTABA EL ERROR → usábamos "dto", ahora "adicionalDto"
-                                Adicional adicional = new Adicional();
-                                adicional.setAdicionalId(
-                                        adicionalDto.getAdicionalId() != null
-                                                ? adicionalDto.getAdicionalId().intValue()
-                                                : null
-                                );
-                                adicional.setNombre(adicionalDto.getNombre());
-                                adicional.setCostoAdicional(adicionalDto.getPrecio());
-                                return adicional;
+                            .map(adicionalDto -> {
+                                if (adicionalDto.getAdicionalId() != null) {
+                                    return adicionalRepo.findById(adicionalDto.getAdicionalId().intValue())
+                                            .orElseGet(() -> {
+                                                Adicional a = new Adicional();
+                                                a.setAdicionalId(adicionalDto.getAdicionalId().intValue());
+                                                a.setNombre(adicionalDto.getNombre() != null ? adicionalDto.getNombre() : "Adicional");
+                                                a.setCostoAdicional(adicionalDto.getPrecio() != null ? adicionalDto.getPrecio() : BigDecimal.ZERO);
+                                                return a;
+                                            });
+                                }
+                                Adicional a = new Adicional();
+                                a.setNombre(adicionalDto.getNombre() != null ? adicionalDto.getNombre() : "Adicional");
+                                a.setCostoAdicional(adicionalDto.getPrecio() != null ? adicionalDto.getPrecio() : BigDecimal.ZERO);
+                                return a;
                             })
                             .collect(Collectors.toSet());
 
@@ -118,14 +127,22 @@ public class PedidoServicio {
         return pedidoRepo.save(pedido);
     }
 
+    @Transactional(readOnly = true)
     public List<Pedido> obtenerPedidosPorUsuario(Long usuarioId) {
         return pedidoRepo.findByUsuarioUsuarioId(usuarioId);
     }
 
+    @Transactional(readOnly = true)
+    public List<Pedido> obtenerPedidosPorUsuario(Integer usuarioId) {
+        return pedidoRepo.findByUsuarioUsuarioId(usuarioId);
+    }
+
+    @Transactional(readOnly = true)
     public List<Pedido> obtenerTodosLosPedidos() {
         return pedidoRepo.findAll();
     }
 
+    @Transactional
     public Pedido actualizarEstadoPedido(Integer pedidoId, EstadoPedido nuevoEstado) {
         Pedido pedido = pedidoRepo.findById(pedidoId)
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
@@ -133,6 +150,7 @@ public class PedidoServicio {
         return pedidoRepo.save(pedido);
     }
 
+    @Transactional
     public Pedido confirmarPedido(Integer pedidoId) {
         Pedido pedido = pedidoRepo.findById(pedidoId).orElse(null);
         if (pedido == null) return null;
@@ -140,11 +158,11 @@ public class PedidoServicio {
         return pedidoRepo.save(pedido);
     }
 
+    @Transactional(readOnly = true)
     public Pedido obtenerPorId(Integer pedidoId) {
-    return pedidoRepo.findById(pedidoId).orElse(null);
-   }
+        return pedidoRepo.findById(pedidoId).orElse(null);
+    }
 
-    
     @Transactional
     public Pedido crearPedidoConConfirmacion(PedidoRequestDTO dto) {
         Pedido pedido = crearPedido(dto);

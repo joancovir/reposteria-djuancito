@@ -81,9 +81,16 @@ export class Checkout {
 
   this.pedidoService.crear(pedidoDto).subscribe({
     next: (respuesta: any) => {
-      // Guardamos el ID para el pago de garantía
+      // Guardamos los datos para el pago de garantía
       localStorage.setItem('pedido_actual_id', respuesta.pedidoId);
       localStorage.setItem('monto_garantia', this.garantia.toString());
+      localStorage.setItem('pago_garantia', JSON.stringify({
+        pedidoId: respuesta.pedidoId,
+        garantia: this.garantia,
+        resto: this.resto,
+        subtotal: this.total,
+        total: this.total
+      }));
 
       alert(`¡PEDIDO #${respuesta.pedidoId} CONFIRMADO!\nPaga S/ ${this.garantia} de garantía ahora`);
 

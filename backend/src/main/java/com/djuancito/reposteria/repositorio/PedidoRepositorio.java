@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface PedidoRepositorio extends JpaRepository<Pedido, Integer> {
 
-List<Pedido> findByUsuarioUsuarioId(Long usuarioId);
+    List<Pedido> findByUsuarioUsuarioId(Long usuarioId);
+    List<Pedido> findByUsuarioUsuarioId(Integer usuarioId);
     @Query("SELECT p FROM Pedido p ORDER BY p.fechaPedido DESC")
     List<Pedido> findAllOrderedByFecha();
 
